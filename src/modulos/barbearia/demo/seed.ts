@@ -18,9 +18,9 @@ export const seedBarbearia = {
     { id: 'c3', nome: 'Rafael Lima', telefone: '(79) 99999-0003', ultimaVisita: '2025-04-05' },
   ],
   agendamentos: [
-    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's3', data: 'hoje', hora: '09:00', status: 'confirmado' },
-    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's1', data: 'hoje', hora: '10:00', status: 'agendado' },
-    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's2', data: 'hoje', hora: '11:30', status: 'agendado' },
+    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's3', data: 'hoje', hora: '09:00', status: 'confirmado' as const },
+    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's1', data: 'hoje', hora: '10:00', status: 'agendado' as const },
+    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's2', data: 'hoje', hora: '11:30', status: 'agendado' as const },
   ],
   filaDeEspera: [
     { posicao: 1, nome: 'André Costa', servico: 'Corte', espera: '5 min' },

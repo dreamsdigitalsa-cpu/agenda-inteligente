@@ -18,9 +18,9 @@ export const seedTatuagem = {
     { id: 'c3', nome: 'Isabela Rocha', telefone: '(79) 99999-3003', ultimaVisita: '2025-04-13' },
   ],
   agendamentos: [
-    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's2', data: 'hoje', hora: '10:00', status: 'confirmado' },
-    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's1', data: 'hoje', hora: '14:00', status: 'agendado' },
-    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's4', data: 'hoje', hora: '17:00', status: 'agendado' },
+    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's2', data: 'hoje', hora: '10:00', status: 'confirmado' as const },
+    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's1', data: 'hoje', hora: '14:00', status: 'agendado' as const },
+    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's4', data: 'hoje', hora: '17:00', status: 'agendado' as const },
   ],
   financeiro: { receitaHoje: 850, receitaMes: 18750, ticketMedio: 480 },
 }

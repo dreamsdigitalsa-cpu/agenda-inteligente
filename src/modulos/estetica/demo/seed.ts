@@ -18,9 +18,9 @@ export const seedEstetica = {
     { id: 'c3', nome: 'Cristina Alves', telefone: '(79) 99999-2003', ultimaVisita: '2025-03-28' },
   ],
   agendamentos: [
-    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's1', data: 'hoje', hora: '09:30', status: 'confirmado' },
-    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's2', data: 'hoje', hora: '11:00', status: 'agendado' },
-    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's3', data: 'hoje', hora: '15:00', status: 'agendado' },
+    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's1', data: 'hoje', hora: '09:30', status: 'confirmado' as const },
+    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's2', data: 'hoje', hora: '11:00', status: 'agendado' as const },
+    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's3', data: 'hoje', hora: '15:00', status: 'agendado' as const },
   ],
   financeiro: { receitaHoje: 490, receitaMes: 12300, ticketMedio: 165 },
 }

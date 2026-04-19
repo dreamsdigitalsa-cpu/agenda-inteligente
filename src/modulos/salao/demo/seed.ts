@@ -19,9 +19,9 @@ export const seedSalao = {
     { id: 'c3', nome: 'Fernanda Reis', telefone: '(79) 99999-1003', ultimaVisita: '2025-04-02' },
   ],
   agendamentos: [
-    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's2', data: 'hoje', hora: '09:00', status: 'confirmado' },
-    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's1', data: 'hoje', hora: '11:00', status: 'agendado' },
-    { id: 'a3', clienteId: 'c3', profissionalId: 'p3', servicoId: 's4', data: 'hoje', hora: '14:30', status: 'agendado' },
+    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's2', data: 'hoje', hora: '09:00', status: 'confirmado' as const },
+    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's1', data: 'hoje', hora: '11:00', status: 'agendado' as const },
+    { id: 'a3', clienteId: 'c3', profissionalId: 'p3', servicoId: 's4', data: 'hoje', hora: '14:30', status: 'agendado' as const },
   ],
   financeiro: { receitaHoje: 330, receitaMes: 8420, ticketMedio: 145 },
 }

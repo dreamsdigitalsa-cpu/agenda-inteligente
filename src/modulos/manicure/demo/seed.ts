@@ -18,9 +18,9 @@ export const seedManicure = {
     { id: 'c3', nome: 'Bianca Ferreira', telefone: '(79) 99999-4003', ultimaVisita: '2025-04-14' },
   ],
   agendamentos: [
-    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's3', data: 'hoje', hora: '09:00', status: 'confirmado' },
-    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's4', data: 'hoje', hora: '10:30', status: 'agendado' },
-    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's1', data: 'hoje', hora: '13:00', status: 'agendado' },
+    { id: 'a1', clienteId: 'c1', profissionalId: 'p1', servicoId: 's3', data: 'hoje', hora: '09:00', status: 'confirmado' as const },
+    { id: 'a2', clienteId: 'c2', profissionalId: 'p2', servicoId: 's4', data: 'hoje', hora: '10:30', status: 'agendado' as const },
+    { id: 'a3', clienteId: 'c3', profissionalId: 'p1', servicoId: 's1', data: 'hoje', hora: '13:00', status: 'agendado' as const },
   ],
   financeiro: { receitaHoje: 220, receitaMes: 5680, ticketMedio: 58 },
 }
