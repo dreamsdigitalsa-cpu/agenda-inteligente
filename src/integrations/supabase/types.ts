@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      agendamentos: {
+        Row: {
+          atualizado_em: string
+          cliente_id: string
+          confirmacao_manual_necessaria: boolean
+          criado_em: string
+          data_hora_fim: string
+          data_hora_inicio: string
+          id: string
+          observacoes: string | null
+          origem: Database["public"]["Enums"]["origem_agendamento"]
+          profissional_id: string
+          servico_id: string
+          status: Database["public"]["Enums"]["status_agendamento"]
+          tenant_id: string
+          unidade_id: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          cliente_id: string
+          confirmacao_manual_necessaria?: boolean
+          criado_em?: string
+          data_hora_fim: string
+          data_hora_inicio: string
+          id?: string
+          observacoes?: string | null
+          origem?: Database["public"]["Enums"]["origem_agendamento"]
+          profissional_id: string
+          servico_id: string
+          status?: Database["public"]["Enums"]["status_agendamento"]
+          tenant_id: string
+          unidade_id?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          cliente_id?: string
+          confirmacao_manual_necessaria?: boolean
+          criado_em?: string
+          data_hora_fim?: string
+          data_hora_inicio?: string
+          id?: string
+          observacoes?: string | null
+          origem?: Database["public"]["Enums"]["origem_agendamento"]
+          profissional_id?: string
+          servico_id?: string
+          status?: Database["public"]["Enums"]["status_agendamento"]
+          tenant_id?: string
+          unidade_id?: string | null
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           ativo: boolean
@@ -439,6 +490,7 @@ export type Database = {
         | "profissional"
         | "recepcionista"
         | "cliente"
+      origem_agendamento: "painel" | "online" | "whatsapp" | "telefone"
       plano_tenant: "freemium" | "profissional"
       segmento_tenant:
         | "salao"
@@ -446,6 +498,13 @@ export type Database = {
         | "estetica"
         | "tatuagem"
         | "manicure"
+      status_agendamento:
+        | "agendado"
+        | "confirmado"
+        | "em_atendimento"
+        | "concluido"
+        | "cancelado"
+        | "faltou"
       status_tenant: "ativo" | "suspenso" | "cancelado"
     }
     CompositeTypes: {
@@ -581,6 +640,7 @@ export const Constants = {
         "recepcionista",
         "cliente",
       ],
+      origem_agendamento: ["painel", "online", "whatsapp", "telefone"],
       plano_tenant: ["freemium", "profissional"],
       segmento_tenant: [
         "salao",
@@ -588,6 +648,14 @@ export const Constants = {
         "estetica",
         "tatuagem",
         "manicure",
+      ],
+      status_agendamento: [
+        "agendado",
+        "confirmado",
+        "em_atendimento",
+        "concluido",
+        "cancelado",
+        "faltou",
       ],
       status_tenant: ["ativo", "suspenso", "cancelado"],
     },
