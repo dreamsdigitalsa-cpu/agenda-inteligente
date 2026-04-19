@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      clientes: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          como_conheceu: string | null
+          criado_em: string
+          data_nascimento: string | null
+          email: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          telefone: string
+          tem_conta: boolean
+          tenant_id: string
+          usuario_id: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          como_conheceu?: string | null
+          criado_em?: string
+          data_nascimento?: string | null
+          email?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          telefone: string
+          tem_conta?: boolean
+          tenant_id: string
+          usuario_id?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          como_conheceu?: string | null
+          criado_em?: string
+          data_nascimento?: string | null
+          email?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          telefone?: string
+          tem_conta?: boolean
+          tenant_id?: string
+          usuario_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clientes_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clientes_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       configuracoes_tenant: {
         Row: {
           atualizado_em: string
