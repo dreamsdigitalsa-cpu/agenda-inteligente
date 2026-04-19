@@ -14,6 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
+      configuracoes_tenant: {
+        Row: {
+          atualizado_em: string
+          cor_principal: string | null
+          criado_em: string
+          endereco: string | null
+          horario_funcionamento: Json
+          id: string
+          logo_url: string | null
+          tenant_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          cor_principal?: string | null
+          criado_em?: string
+          endereco?: string | null
+          horario_funcionamento?: Json
+          id?: string
+          logo_url?: string | null
+          tenant_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          cor_principal?: string | null
+          criado_em?: string
+          endereco?: string | null
+          horario_funcionamento?: Json
+          id?: string
+          logo_url?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "configuracoes_tenant_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profissionais: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          criado_em: string
+          especialidade: string | null
+          id: string
+          nome: string
+          telefone: string | null
+          tenant_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          especialidade?: string | null
+          id?: string
+          nome: string
+          telefone?: string | null
+          tenant_id: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          especialidade?: string | null
+          id?: string
+          nome?: string
+          telefone?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profissionais_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      servicos: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string
+          criado_em: string
+          duracao_minutos: number
+          id: string
+          nome: string
+          preco_centavos: number
+          tenant_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          duracao_minutos?: number
+          id?: string
+          nome: string
+          preco_centavos?: number
+          tenant_id: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string
+          criado_em?: string
+          duracao_minutos?: number
+          id?: string
+          nome?: string
+          preco_centavos?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "servicos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenants: {
         Row: {
           atualizado_em: string
@@ -22,6 +145,7 @@ export type Database = {
           nome: string
           plano: Database["public"]["Enums"]["plano_tenant"]
           segmento: Database["public"]["Enums"]["segmento_tenant"]
+          slug: string | null
           status: Database["public"]["Enums"]["status_tenant"]
         }
         Insert: {
@@ -31,6 +155,7 @@ export type Database = {
           nome: string
           plano?: Database["public"]["Enums"]["plano_tenant"]
           segmento: Database["public"]["Enums"]["segmento_tenant"]
+          slug?: string | null
           status?: Database["public"]["Enums"]["status_tenant"]
         }
         Update: {
@@ -40,6 +165,7 @@ export type Database = {
           nome?: string
           plano?: Database["public"]["Enums"]["plano_tenant"]
           segmento?: Database["public"]["Enums"]["segmento_tenant"]
+          slug?: string | null
           status?: Database["public"]["Enums"]["status_tenant"]
         }
         Relationships: []
