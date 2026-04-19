@@ -29,6 +29,7 @@ import PaginaAgenda from "@/app/(painel)/agenda/page"
 import PaginaClientes from "@/app/(painel)/clientes/page"
 import PaginaDetalheCliente from "@/app/(painel)/clientes/[id]/page"
 import PaginaFinanceiro from "@/app/(painel)/financeiro/page"
+import PaginaCaixa from "@/app/(painel)/financeiro/caixa/page"
 import PaginaEstoque from "@/app/(painel)/estoque/page"
 import PaginaRelatorios from "@/app/(painel)/relatorios/page"
 import PaginaConfiguracoes from "@/app/(painel)/configuracoes/page"
@@ -82,6 +83,7 @@ const App = () => (
               <Route path="clientes" element={<PaginaClientes />} />
               <Route path="clientes/:id" element={<PaginaDetalheCliente />} />
               <Route path="financeiro" element={<PaginaFinanceiro />} />
+              <Route path="financeiro/caixa" element={<PaginaCaixa />} />
               <Route path="estoque" element={<PaginaEstoque />} />
               <Route path="relatorios" element={<PaginaRelatorios />} />
               <Route path="configuracoes" element={<PaginaConfiguracoes />} />
