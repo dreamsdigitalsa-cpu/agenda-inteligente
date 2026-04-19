@@ -22,6 +22,7 @@ import AgendamentoOnline from "@/app/agendar/[slug]/page"
 import Login from "@/app/(auth)/login/page"
 import Cadastro from "@/app/(auth)/cadastro/page"
 import RecuperarSenha from "@/app/(auth)/recuperar-senha/page"
+import RedefinirSenha from "@/app/(auth)/redefinir-senha/page"
 
 // Painel
 import PaginaAgenda from "@/app/(painel)/agenda/page"
@@ -67,6 +68,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
 
           {/* Painel (protegido) */}
           <Route element={<RotaProtegida />}>
