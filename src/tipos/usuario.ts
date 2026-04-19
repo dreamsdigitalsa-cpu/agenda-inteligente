@@ -1,18 +1,15 @@
-// Tipos do usuário autenticado dentro de um tenant
-import type { CodigoPermissao } from '../lib/constantes/permissoes'
+// Tipos do usuário autenticado e seus papéis (roles).
+// IMPORTANTE: roles vêm da tabela `user_roles`, NUNCA de uma coluna em `usuarios`.
+// Isso previne escalada de privilégios.
+export type AppRole = 'super_admin' | 'admin' | 'profissional' | 'recepcionista'
 
-export type PerfilUsuario =
-  | 'super_admin'
-  | 'dono'
-  | 'gerente'
-  | 'profissional'
-  | 'recepcao'
-
-export interface Usuario {
+export interface UsuarioLogado {
   id: string
+  authUserId: string
   tenantId: string | null
+  unidadeId: string | null
   nome: string
   email: string
-  perfil: PerfilUsuario
-  permissoes?: CodigoPermissao[]
+  ativo: boolean
+  roles: AppRole[]
 }
