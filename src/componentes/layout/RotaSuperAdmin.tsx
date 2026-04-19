@@ -1,43 +1,32 @@
-// Guard de rota do super admin.
-// Responsabilidade:
-//  - Verifica a sessão atual no Supabase.
-//  - Se não houver sessão, redireciona para /login.
-//  - Se o usuário NÃO for super_admin, redireciona para /painel.
-//  - Caso contrário, renderiza <Outlet /> (a rota filha).
-//
-// O perfil é lido a partir do JWT (app_metadata.perfil), que deve ser
-// preenchido pelo backend no momento do login para evitar escalonamento.
+// Guard de rota /super-admin/*.
+//  - Sem sessão → /login
+//  - Sessão sem role super_admin → /painel
+//  - Caso contrário → renderiza <Outlet />
 import { useEffect, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase/cliente'
 
-type EstadoSessao = 'carregando' | 'autorizado' | 'nao_autorizado' | 'anonimo'
+type Estado = 'carregando' | 'autorizado' | 'nao_autorizado' | 'anonimo'
 
 export const RotaSuperAdmin = () => {
-  const [estado, setEstado] = useState<EstadoSessao>('carregando')
+  const [estado, setEstado] = useState<Estado>('carregando')
 
   useEffect(() => {
-    const avaliar = (sessao: Session | null) => {
-      if (!sessao) {
-        setEstado('anonimo')
-        return
-      }
-      const perfil =
-        (sessao.user.app_metadata as Record<string, unknown> | undefined)?.perfil ??
-        (sessao.user.user_metadata as Record<string, unknown> | undefined)?.perfil
-      setEstado(perfil === 'super_admin' ? 'autorizado' : 'nao_autorizado')
+    const avaliar = async (userId: string | null) => {
+      if (!userId) return setEstado('anonimo')
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+      const ehSuper = (data ?? []).some((r) => r.role === 'super_admin')
+      setEstado(ehSuper ? 'autorizado' : 'nao_autorizado')
     }
 
-    const { data: assinatura } = supabase.auth.onAuthStateChange((_evento, novaSessao) => {
-      avaliar(novaSessao)
+    const { data: assinatura } = supabase.auth.onAuthStateChange((_evt, sessao) => {
+      setTimeout(() => avaliar(sessao?.user.id ?? null), 0)
     })
-
-    supabase.auth.getSession().then(({ data }) => avaliar(data.session))
-
-    return () => {
-      assinatura.subscription.unsubscribe()
-    }
+    supabase.auth.getSession().then(({ data }) => avaliar(data.session?.user.id ?? null))
+    return () => assinatura.subscription.unsubscribe()
   }, [])
 
   if (estado === 'carregando') {

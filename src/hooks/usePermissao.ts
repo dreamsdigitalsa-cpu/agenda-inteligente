@@ -1,18 +1,24 @@
-// Hook para verificar permissões do usuário logado
-// Sempre usar este hook antes de renderizar ações sensíveis
-// Nunca verificar permissão manualmente fora deste hook
+// Hook para verificar papéis (roles) do usuário logado.
+// Roles vêm da tabela user_roles, lida via useTenant.
+// Sempre usar este hook antes de renderizar ações sensíveis.
 import { useCallback } from 'react'
 import { useTenant } from './useTenant'
-import type { CodigoPermissao } from '../lib/constantes/permissoes'
+import type { AppRole } from '@/tipos/usuario'
 
 export function usePermissao() {
   const { usuario } = useTenant()
 
-  const temPermissao = useCallback((codigo: CodigoPermissao): boolean => {
-    if (!usuario) return false
-    if (usuario.perfil === 'super_admin') return true
-    return usuario.permissoes?.includes(codigo) ?? false
-  }, [usuario])
+  const temRole = useCallback(
+    (role: AppRole): boolean => {
+      if (!usuario) return false
+      if (usuario.roles.includes('super_admin')) return true
+      return usuario.roles.includes(role)
+    },
+    [usuario],
+  )
 
-  return { temPermissao }
+  const ehSuperAdmin = !!usuario?.roles.includes('super_admin')
+  const ehAdmin = !!usuario?.roles.includes('admin') || ehSuperAdmin
+
+  return { temRole, ehSuperAdmin, ehAdmin }
 }
