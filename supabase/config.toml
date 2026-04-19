@@ -1,1 +1,14 @@
 project_id = "fweewtfmyarpskculiht"
+
+[auth]
+# Desativa confirmação de e-mail (usuário entra direto após cadastro).
+# Em produção, considere ativar e configurar templates de e-mail.
+enable_confirmations = false
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+[functions.criar-tenant]
+verify_jwt = false
