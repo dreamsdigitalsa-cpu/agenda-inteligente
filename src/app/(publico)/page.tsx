@@ -1,5 +1,3 @@
 // Página pública: home / landing do produto.
-const PaginaHome = () => {
-  return <div>Home pública</div>
-}
-export default PaginaHome
+const LandingPage = () => <div>/ — LandingPage</div>
+export default LandingPage

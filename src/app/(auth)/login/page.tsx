@@ -1,5 +1,3 @@
 // Página de autenticação: login.
-const PaginaLogin = () => {
-  return <div>Login</div>
-}
-export default PaginaLogin
+const Login = () => <div>/login — Login</div>
+export default Login

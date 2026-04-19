@@ -1,3 +1,3 @@
 // Painel: clientes do tenant.
-const PaginaClientes = () => <div>Clientes</div>
+const PaginaClientes = () => <div>/painel/clientes — Clientes</div>
 export default PaginaClientes
