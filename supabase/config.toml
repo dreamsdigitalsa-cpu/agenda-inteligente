@@ -12,3 +12,6 @@ enable_confirmations = false
 
 [functions.criar-tenant]
 verify_jwt = false
+
+[functions.agendamento-publico]
+verify_jwt = false
