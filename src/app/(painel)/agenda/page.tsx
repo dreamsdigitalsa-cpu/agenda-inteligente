@@ -1,3 +1,3 @@
 // Painel: agenda do dia / semana.
-const PaginaAgenda = () => <div>Agenda</div>
+const PaginaAgenda = () => <div>/painel/agenda — Agenda</div>
 export default PaginaAgenda

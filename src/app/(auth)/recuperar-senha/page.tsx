@@ -1,5 +1,3 @@
 // Página de autenticação: solicitar recuperação de senha.
-const PaginaRecuperarSenha = () => {
-  return <div>Recuperar senha</div>
-}
-export default PaginaRecuperarSenha
+const RecuperarSenha = () => <div>/recuperar-senha — RecuperarSenha</div>
+export default RecuperarSenha
