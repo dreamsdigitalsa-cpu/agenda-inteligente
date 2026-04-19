@@ -111,7 +111,16 @@ export async function criarCliente(tenantId: string, dados: NovoCliente) {
 }
 
 export async function atualizarCliente(id: string, dados: Partial<NovoCliente> & { ativo?: boolean }) {
-  const patch: Record<string, unknown> = {}
+  const patch: {
+    nome?: string
+    telefone?: string
+    email?: string | null
+    data_nascimento?: string | null
+    como_conheceu?: string | null
+    observacoes?: string | null
+    tem_conta?: boolean
+    ativo?: boolean
+  } = {}
   if (dados.nome !== undefined) patch.nome = dados.nome
   if (dados.telefone !== undefined) patch.telefone = dados.telefone
   if (dados.email !== undefined) patch.email = dados.email
