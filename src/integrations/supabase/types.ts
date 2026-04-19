@@ -118,6 +118,70 @@ export type Database = {
           },
         ]
       }
+      perfis_permissao: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          descricao: string | null
+          id: string
+          nome: string
+          padrao: boolean
+          tenant_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          descricao?: string | null
+          id?: string
+          nome: string
+          padrao?: boolean
+          tenant_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          descricao?: string | null
+          id?: string
+          nome?: string
+          padrao?: boolean
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "perfis_permissao_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      permissoes_do_perfil: {
+        Row: {
+          codigo_permissao: string
+          criado_em: string
+          perfil_id: string
+        }
+        Insert: {
+          codigo_permissao: string
+          criado_em?: string
+          perfil_id: string
+        }
+        Update: {
+          codigo_permissao?: string
+          criado_em?: string
+          perfil_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "permissoes_do_perfil_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis_permissao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profissionais: {
         Row: {
           ativo: boolean
@@ -298,6 +362,7 @@ export type Database = {
           email: string
           id: string
           nome: string
+          perfil_id: string | null
           tenant_id: string | null
           unidade_id: string | null
         }
@@ -309,6 +374,7 @@ export type Database = {
           email: string
           id?: string
           nome: string
+          perfil_id?: string | null
           tenant_id?: string | null
           unidade_id?: string | null
         }
@@ -320,10 +386,18 @@ export type Database = {
           email?: string
           id?: string
           nome?: string
+          perfil_id?: string | null
           tenant_id?: string | null
           unidade_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "usuarios_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis_permissao"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "usuarios_tenant_id_fkey"
             columns: ["tenant_id"]
@@ -351,6 +425,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      tem_permissao: {
+        Args: { _codigo: string; _user_id: string }
         Returns: boolean
       }
     }
