@@ -190,7 +190,7 @@ const PaginaConfiguracoesNotificacoes = () => {
 
     const { error } = await supabase
       .from('configuracoes_notificacoes' as never)
-      .upsert({ tenant_id: tenant.id, ...config }, { onConflict: 'tenant_id' })
+      .upsert({ tenant_id: tenant.id, ...config } as never, { onConflict: 'tenant_id' })
 
     if (error) {
       toast.error('Erro ao salvar configurações')
@@ -218,7 +218,7 @@ const PaginaConfiguracoesNotificacoes = () => {
           plataforma:   'zapi',
           credenciais:  creds,
           ativo:        config.canal_whatsapp_ativo,
-        },
+        } as never,
         { onConflict: 'tenant_id,plataforma' },
       )
 

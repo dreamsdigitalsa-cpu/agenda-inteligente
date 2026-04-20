@@ -102,25 +102,22 @@ Deno.serve(async (req) => {
       em_trial:   tenants.filter((t) => t.status === 'trial').length,
     }
 
-    // MRR: buscar preços dos planos ativos
+    // MRR: mapa hardcoded de preços por plano (slug → centavos).
+    // TODO: substituir por query .from('planos') quando a tabela estiver no schema gerado.
+    const PRECO_POR_PLANO: Record<string, number> = {
+      freemium:     0,
+      basico:       4900,   // R$ 49,00
+      profissional: 9900,   // R$ 99,00
+    }
     const tenantsPorPlano = (planoRows ?? []) as Array<{ plano: string }>
-    const { data: planosData } = await supaAdmin
-      .from('planos')
-      .select('slug, preco_centavos')
-      .eq('ativo', true)
-    const precoPorSlug = Object.fromEntries(
-      (planosData ?? []).map((p: { slug: string; preco_centavos: number }) => [p.slug, p.preco_centavos]),
-    )
-    const tenantStatusMap = Object.fromEntries(
-      (tenantRows ?? []).map((t: { status: string }) => [t, t.status]),
-    )
+
     // MRR apenas de tenants ativos
     const { data: ativosPlanoRows } = await supaAdmin
       .from('tenants')
       .select('plano')
       .eq('status', 'ativo')
     const mrrCentavos = (ativosPlanoRows ?? []).reduce((acc: number, t: { plano: string }) => {
-      return acc + (precoPorSlug[t.plano] ?? 0)
+      return acc + (PRECO_POR_PLANO[t.plano] ?? 0)
     }, 0)
 
     // Novos cadastros
