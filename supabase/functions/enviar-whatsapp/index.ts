@@ -68,13 +68,14 @@ Deno.serve(async (req) => {
     }
 
     // Buscar credenciais Z-API do tenant
-    const { data: integracao } = await supaAdmin
+    const { data: integracao } = (await supaAdmin
       .from('integracoes_plataforma' as never)
       .select('credenciais, ativo')
       .eq('tenant_id', body.tenant_id)
       .eq('plataforma', 'zapi')
-      .maybeSingle()
-      as unknown as { data: { credenciais: CredenciaisZApi; ativo: boolean } | null }
+      .maybeSingle()) as unknown as {
+        data: { credenciais: CredenciaisZApi; ativo: boolean } | null
+      }
 
     if (!integracao) {
       return json({ erro: 'integracao_zapi_nao_encontrada' }, 404)

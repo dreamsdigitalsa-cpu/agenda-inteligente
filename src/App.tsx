@@ -99,7 +99,7 @@ const App = () => (
           {/* Super admin (protegido) */}
           <Route element={<RotaSuperAdmin />}>
             <Route path="/super-admin" element={<LayoutSuperAdmin />}>
-              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route index element={<PaginaDashboardSuperAdmin />} />
               <Route path="dashboard" element={<PaginaDashboardSuperAdmin />} />
               <Route path="tenants" element={<PaginaTenants />} />
               <Route path="planos" element={<PaginaPlanos />} />
