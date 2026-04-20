@@ -160,12 +160,11 @@ Deno.serve(async (req) => {
     }
 
     // 8. Carregar configuração do tenant
-    const { data: cfgTenantRow } = await supaAdmin
+    const { data: cfgTenantRow } = (await supaAdmin
       .from('configuracoes_ligacao_ia' as never)
       .select('ativo, horas_antecedencia, telefone_estabelecimento')
       .eq('tenant_id', body.tenant_id)
-      .maybeSingle()
-      as unknown as { data: ConfigTenant | null }
+      .maybeSingle()) as unknown as { data: ConfigTenant | null }
 
     if (!cfgTenantRow?.ativo) {
       return json({ erro: 'ligacao_ia_desativada_para_este_tenant' }, 422)
