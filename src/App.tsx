@@ -33,6 +33,7 @@ import PaginaCaixa from "@/app/(painel)/financeiro/caixa/page"
 import PaginaEstoque from "@/app/(painel)/estoque/page"
 import PaginaRelatorios from "@/app/(painel)/relatorios/page"
 import PaginaConfiguracoes from "@/app/(painel)/configuracoes/page"
+import PaginaConfiguracoesNotificacoes from "@/app/(painel)/configuracoes/notificacoes/page"
 import PaginaAssinatura from "@/app/(painel)/assinatura/page"
 import PaginaOnboarding from "@/app/(painel)/onboarding/page"
 
@@ -87,6 +88,7 @@ const App = () => (
               <Route path="estoque" element={<PaginaEstoque />} />
               <Route path="relatorios" element={<PaginaRelatorios />} />
               <Route path="configuracoes" element={<PaginaConfiguracoes />} />
+              <Route path="configuracoes/notificacoes" element={<PaginaConfiguracoesNotificacoes />} />
               <Route path="assinatura" element={<PaginaAssinatura />} />
             </Route>
           </Route>
