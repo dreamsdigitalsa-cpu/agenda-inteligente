@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
       return json({ erro: 'token_invalido' }, 401)
     }
     const authUserId = userData.user.id
-    const email = (claimsData.claims.email as string) ?? ''
+    const email = userData.user.email ?? ''
 
     // 2) Valida payload
     const body = (await req.json()) as Payload
