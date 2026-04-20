@@ -1,50 +1,27 @@
-// Super admin: configuração global de integrações externas.
-// Gerencia credenciais ElevenLabs (geração de voz IA) e Twilio (ligações),
-// toggle global de ligações IA e horário permitido para chamadas.
-// Todos os dados são gravados em configuracoes_sistema (RLS super_admin-only para credenciais).
+// Super admin: configuração global de todas as integrações externas.
+// Credenciais são criptografadas via Edge Function salvar-credenciais-sistema (AES-256-GCM).
+// A UI nunca exibe credenciais salvas — apenas mostra badge "Configurado".
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/cliente'
-import { usePermissao } from '@/hooks/usePermissao'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
-import { toast } from 'sonner'
-import { Mic, Phone, Globe, Save, Eye, EyeOff, AlertTriangle } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Eye, EyeOff, Save, CheckCircle2, Globe, Mic, Phone, MessageSquare, Mail, CreditCard, AlertTriangle } from 'lucide-react'
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
-interface ConfigGlobal {
+interface ConfigLigacaoIA {
   ativo:          boolean
   horario_inicio: string
   horario_fim:    string
 }
 
-interface Credenciais {
-  elevenlabs_api_key:   string
-  elevenlabs_voice_id:  string
-  twilio_account_sid:   string
-  twilio_auth_token:    string
-  twilio_numero:        string
-}
-
-const CONFIG_PADRAO: ConfigGlobal = {
-  ativo:          false,
-  horario_inicio: '09:00',
-  horario_fim:    '19:00',
-}
-
-const CREDS_VAZIAS: Credenciais = {
-  elevenlabs_api_key:   '',
-  elevenlabs_voice_id:  '',
-  twilio_account_sid:   '',
-  twilio_auth_token:    '',
-  twilio_numero:        '',
-}
-
-// ── Componente de input com máscara de senha ─────────────────────────────────
+// ── Helpers de UI ─────────────────────────────────────────────────────────────
 
 function InputSenha({
   id, label, value, onChange, placeholder, disabled,
@@ -54,8 +31,8 @@ function InputSenha({
 }) {
   const [visivel, setVisivel] = useState(false)
   return (
-    <div className="space-y-1">
-      <Label htmlFor={id}>{label}</Label>
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-zinc-400 text-xs">{label}</Label>
       <div className="relative">
         <Input
           id={id}
@@ -64,11 +41,12 @@ function InputSenha({
           onChange={(e) => onChange(e.target.value.trim())}
           placeholder={placeholder}
           disabled={disabled}
-          className="pr-10"
+          className="bg-zinc-800 border-zinc-700 pr-10"
         />
         <button
           type="button"
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          tabIndex={-1}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200"
           onClick={() => setVisivel((v) => !v)}
         >
           {visivel ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -78,269 +56,519 @@ function InputSenha({
   )
 }
 
-// ── Página principal ──────────────────────────────────────────────────────────
+function Campo({
+  id, label, value, onChange, placeholder, mono,
+}: {
+  id: string; label: string; value: string
+  onChange: (v: string) => void; placeholder?: string; mono?: boolean
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-zinc-400 text-xs">{label}</Label>
+      <Input
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value.trim())}
+        placeholder={placeholder}
+        className={`bg-zinc-800 border-zinc-700${mono ? ' font-mono text-sm' : ''}`}
+      />
+    </div>
+  )
+}
+
+function BadgeConfigurado({ configurado }: { configurado: boolean }) {
+  return configurado
+    ? (
+      <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 gap-1">
+        <CheckCircle2 className="h-3 w-3" /> Configurado
+      </Badge>
+    )
+    : (
+      <Badge variant="outline" className="text-zinc-500 border-zinc-700">
+        Não configurado
+      </Badge>
+    )
+}
+
+// ── Salvar credenciais via Edge Function (com criptografia) ───────────────────
+
+async function salvarCredenciais(
+  chave: string,
+  credenciais: Record<string, unknown>,
+  setSalvando: (v: boolean) => void,
+  onSucesso?: () => void,
+): Promise<string | null> {
+  setSalvando(true)
+  try {
+    const { data, error } = await supabase.functions.invoke('salvar-credenciais-sistema', {
+      body: { chave, credenciais },
+    })
+    if (error || (data as { erro?: string })?.erro) {
+      return (data as { erro?: string })?.erro ?? error?.message ?? 'Erro desconhecido'
+    }
+    onSucesso?.()
+    return null
+  } finally {
+    setSalvando(false)
+  }
+}
+
+// ── Componente principal ──────────────────────────────────────────────────────
 
 const PaginaIntegracoes = () => {
-  const { ehSuperAdmin } = usePermissao()
-
-  const [config, setConfig]       = useState<ConfigGlobal>(CONFIG_PADRAO)
-  const [creds, setCreds]         = useState<Credenciais>(CREDS_VAZIAS)
   const [carregando, setCarregando] = useState(true)
-  const [salvandoConfig, setSalvandoConfig]   = useState(false)
-  const [salvandoCreds, setSalvandoCreds]     = useState(false)
 
-  // ── Carregamento inicial ────────────────────────────────────────────────────
+  // Mapa de quais chaves já estão configuradas no banco
+  const [configuradas, setConfiguradas] = useState<Record<string, boolean>>({})
+
+  // Config global de ligação IA (não é credencial, salva direto)
+  const [configIA, setConfigIA]           = useState<ConfigLigacaoIA>({ ativo: false, horario_inicio: '09:00', horario_fim: '19:00' })
+  const [salvandoConfigIA, setSalvandoConfigIA] = useState(false)
+
+  // WhatsApp (Z-API)
+  const [zapiInstanceId,  setZapiInstanceId]  = useState('')
+  const [zapiToken,       setZapiToken]       = useState('')
+  const [zapiClientToken, setZapiClientToken] = useState('')
+  const [zapiNumero,      setZapiNumero]      = useState('')
+  const [salvandoZapi,    setSalvandoZapi]    = useState(false)
+  const [erroZapi,        setErroZapi]        = useState<string | null>(null)
+
+  // SMS
+  const [smsProvider,   setSmsProvider]   = useState<'twilio' | 'zenvia'>('twilio')
+  const [smsAccountSid, setSmsAccountSid] = useState('')
+  const [smsAuthToken,  setSmsAuthToken]  = useState('')
+  const [smsNumero,     setSmsNumero]     = useState('')
+  const [zenviaToken,   setZenviaToken]   = useState('')
+  const [salvandoSms,   setSalvandoSms]   = useState(false)
+  const [erroSms,       setErroSms]       = useState<string | null>(null)
+
+  // Email
+  const [emailProvider,  setEmailProvider]  = useState<'resend' | 'sendgrid'>('resend')
+  const [emailApiKey,    setEmailApiKey]    = useState('')
+  const [emailFromEmail, setEmailFromEmail] = useState('')
+  const [emailFromName,  setEmailFromName]  = useState('')
+  const [salvandoEmail,  setSalvandoEmail]  = useState(false)
+  const [erroEmail,      setErroEmail]      = useState<string | null>(null)
+
+  // ElevenLabs + Twilio Voice (ligacao_ia_credenciais)
+  const [elApiKey,      setElApiKey]      = useState('')
+  const [elVoiceId,     setElVoiceId]     = useState('')
+  const [twilioSid,     setTwilioSid]     = useState('')
+  const [twilioToken,   setTwilioToken]   = useState('')
+  const [twilioNumero,  setTwilioNumero]  = useState('')
+  const [salvandoLig,   setSalvandoLig]   = useState(false)
+  const [erroLig,       setErroLig]       = useState<string | null>(null)
+
+  // Pagamento
+  const [pagProvider,   setPagProvider]   = useState<'stripe' | 'asaas' | 'mercadopago'>('stripe')
+  const [pagApiKey,     setPagApiKey]     = useState('')
+  const [pagWebhook,    setPagWebhook]    = useState('')
+  const [salvandoPag,   setSalvandoPag]   = useState(false)
+  const [erroPag,       setErroPag]       = useState<string | null>(null)
+
+  // ── Carregar estado das chaves ──────────────────────────────────────────────
 
   const carregar = useCallback(async () => {
     setCarregando(true)
+    const chaves = [
+      'ligacao_ia_config',
+      'whatsapp_credenciais',
+      'sms_credenciais',
+      'email_credenciais',
+      'ligacao_ia_credenciais',
+      'pagamento_credenciais',
+    ]
+    const { data } = (await supabase
+      .from('configuracoes_sistema' as never)
+      .select('chave, valor')
+      .in('chave', chaves)
+    ) as unknown as { data: { chave: string; valor: unknown }[] | null }
 
-    const [{ data: cfgRow }, { data: credsRow }] = await Promise.all([
-      (supabase as ReturnType<typeof supabase.from> & Record<string, unknown>)
-        .from('configuracoes_sistema' as never)
-        .select('valor')
-        .eq('chave', 'ligacao_ia_config')
-        .maybeSingle() as unknown as Promise<{ data: { valor: ConfigGlobal } | null }>,
-      (supabase as ReturnType<typeof supabase.from> & Record<string, unknown>)
-        .from('configuracoes_sistema' as never)
-        .select('valor')
-        .eq('chave', 'ligacao_ia_credenciais')
-        .maybeSingle() as unknown as Promise<{ data: { valor: Credenciais } | null }>,
-    ])
-
-    if (cfgRow?.valor)   setConfig(cfgRow.valor)
-    if (credsRow?.valor) setCreds({ ...CREDS_VAZIAS, ...credsRow.valor })
+    const mapa: Record<string, boolean> = {}
+    for (const row of data ?? []) {
+      mapa[row.chave] = !!(row.valor)
+      // Carregar config não-sensível de ligacao_ia
+      if (row.chave === 'ligacao_ia_config' && typeof row.valor === 'object') {
+        setConfigIA(row.valor as ConfigLigacaoIA)
+      }
+    }
+    setConfiguradas(mapa)
     setCarregando(false)
   }, [])
 
   useEffect(() => { carregar() }, [carregar])
 
-  // ── Salvar config global (ativo + horários) ─────────────────────────────────
+  // ── Salvar config IA (não-sensível) ────────────────────────────────────────
 
-  async function salvarConfig() {
-    setSalvandoConfig(true)
-    const { error } = await (supabase as unknown as { from: (t: string) => unknown })
+  async function salvarConfigIA() {
+    setSalvandoConfigIA(true)
+    await (supabase
       .from('configuracoes_sistema' as never)
-      // @ts-expect-error tabela nova não está nos tipos gerados
-      .upsert({ chave: 'ligacao_ia_config', valor: config }, { onConflict: 'chave' })
-    setSalvandoConfig(false)
-    error ? toast.error('Erro ao salvar configurações') : toast.success('Configurações salvas')
-  }
-
-  // ── Salvar credenciais ──────────────────────────────────────────────────────
-
-  async function salvarCredenciais() {
-    const campos = Object.entries(creds).filter(([, v]) => !v).map(([k]) => k)
-    if (campos.length > 0) {
-      toast.error(`Preencha: ${campos.join(', ')}`)
-      return
-    }
-    setSalvandoCreds(true)
-    const { error } = await (supabase as unknown as { from: (t: string) => unknown })
-      .from('configuracoes_sistema' as never)
-      // @ts-expect-error tabela nova não está nos tipos gerados
-      .upsert({ chave: 'ligacao_ia_credenciais', valor: creds }, { onConflict: 'chave' })
-    setSalvandoCreds(false)
-    error ? toast.error('Erro ao salvar credenciais') : toast.success('Credenciais salvas')
+      .upsert({ chave: 'ligacao_ia_config', valor: configIA } as never, { onConflict: 'chave' })
+    ) as unknown as Promise<unknown>
+    setSalvandoConfigIA(false)
+    await carregar()
   }
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
-  if (!ehSuperAdmin) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card>
-          <CardContent className="p-6 flex items-center gap-2 text-muted-foreground">
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
-            Acesso restrito a super administradores.
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   if (carregando) {
     return (
-      <div className="container mx-auto p-6 space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-40 bg-muted animate-pulse rounded-lg" />
-        ))}
+      <div className="p-8 space-y-4">
+        {[1,2,3].map((i) => <div key={i} className="h-40 bg-zinc-800 animate-pulse rounded-lg" />)}
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6 max-w-2xl">
+    <div className="p-8 space-y-6 max-w-3xl">
       {/* Cabeçalho */}
-      <header>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Globe className="h-6 w-6" />
+      <div>
+        <h1 className="text-2xl font-bold text-zinc-100 flex items-center gap-2">
+          <Globe className="h-6 w-6 text-violet-400" />
           Integrações externas
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Configure as credenciais globais de ElevenLabs e Twilio para ligações IA.
+        <p className="text-zinc-400 text-sm mt-1">
+          Credenciais são criptografadas (AES-256-GCM) antes de serem salvas. A UI nunca exibe valores salvos.
         </p>
-      </header>
+      </div>
 
-      {/* ── Ligação IA — Toggle global e horários ─────────────────────────── */}
-      <Card>
+      {/* ── WhatsApp ─────────────────────────────────────────────────────── */}
+      <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Phone className="h-4 w-4" />
-            Ligações IA — Configuração global
-          </CardTitle>
-          <CardDescription>
-            Controla se a feature está disponível para todos os tenants da plataforma.
-            Cada tenant ainda pode desativar individualmente.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-zinc-100 flex items-center gap-2 text-base">
+              <MessageSquare className="h-4 w-4 text-emerald-400" />
+              WhatsApp via Z-API
+            </CardTitle>
+            <BadgeConfigurado configurado={!!configuradas['whatsapp_credenciais']} />
+          </div>
+          <CardDescription>Envio de mensagens e lembretes via WhatsApp Business.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Toggle global */}
-          <div className="flex items-center justify-between py-2 border-b">
-            <div>
-              <Label htmlFor="toggle_global" className="font-medium cursor-pointer">
-                Ativar ligações IA globalmente
-              </Label>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Quando desativado, nenhum tenant pode iniciar ligações IA.
-              </p>
+          {erroZapi && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-950/30 p-3 rounded text-sm">
+              <AlertTriangle className="h-4 w-4 shrink-0" /> {erroZapi}
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant={config.ativo ? 'default' : 'secondary'}>
-                {config.ativo ? 'Ativo' : 'Inativo'}
-              </Badge>
-              <Switch
-                id="toggle_global"
-                checked={config.ativo}
-                onCheckedChange={(v) => setConfig((c) => ({ ...c, ativo: v }))}
-              />
-            </div>
+          )}
+          <div className="grid grid-cols-2 gap-3">
+            <Campo id="zapi_instance" label="Instance ID" value={zapiInstanceId} onChange={setZapiInstanceId} placeholder="sua-instancia" />
+            <InputSenha id="zapi_token" label="Token" value={zapiToken} onChange={setZapiToken} placeholder="Token da instância" />
+            <InputSenha id="zapi_client_token" label="Client-Token (Business)" value={zapiClientToken} onChange={setZapiClientToken} placeholder="Opcional — plano Business" />
+            <Campo id="zapi_numero" label="Número (com DDI)" value={zapiNumero} onChange={setZapiNumero} placeholder="+5511999998888" />
           </div>
-
-          {/* Horários */}
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1">
-              <Label htmlFor="horario_inicio">Início do horário permitido</Label>
-              <Input
-                id="horario_inicio"
-                type="time"
-                value={config.horario_inicio}
-                onChange={(e) => setConfig((c) => ({ ...c, horario_inicio: e.target.value }))}
-              />
-              <p className="text-xs text-muted-foreground">Horário de Brasília (UTC-3)</p>
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="horario_fim">Fim do horário permitido</Label>
-              <Input
-                id="horario_fim"
-                type="time"
-                value={config.horario_fim}
-                onChange={(e) => setConfig((c) => ({ ...c, horario_fim: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          <Button onClick={salvarConfig} disabled={salvandoConfig}>
-            <Save className="mr-1 h-4 w-4" />
-            {salvandoConfig ? 'Salvando...' : 'Salvar configurações'}
+          <Button
+            disabled={salvandoZapi}
+            onClick={async () => {
+              setErroZapi(null)
+              const err = await salvarCredenciais(
+                'whatsapp_credenciais',
+                { instance_id: zapiInstanceId, token: zapiToken, client_token: zapiClientToken || undefined, numero: zapiNumero },
+                setSalvandoZapi,
+                carregar,
+              )
+              if (err) setErroZapi(err)
+              else { setZapiInstanceId(''); setZapiToken(''); setZapiClientToken(''); setZapiNumero('') }
+            }}
+            className="bg-violet-600 hover:bg-violet-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {salvandoZapi ? 'Criptografando...' : 'Salvar credenciais'}
           </Button>
         </CardContent>
       </Card>
 
-      {/* ── ElevenLabs ─────────────────────────────────────────────────────── */}
-      <Card>
+      {/* ── SMS ──────────────────────────────────────────────────────────── */}
+      <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Mic className="h-4 w-4" />
-            ElevenLabs — Síntese de voz
-          </CardTitle>
-          <CardDescription>
-            API de geração de áudio em português brasileiro.
-            Obtenha as credenciais em{' '}
-            <span className="font-mono text-xs">elevenlabs.io/app/settings/api-keys</span>.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-zinc-100 flex items-center gap-2 text-base">
+              <MessageSquare className="h-4 w-4 text-sky-400" />
+              SMS
+            </CardTitle>
+            <BadgeConfigurado configurado={!!configuradas['sms_credenciais']} />
+          </div>
+          <CardDescription>Envio de SMS via Twilio ou Zenvia.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <InputSenha
-            id="el_api_key"
-            label="API Key"
-            value={creds.elevenlabs_api_key}
-            onChange={(v) => setCreds((c) => ({ ...c, elevenlabs_api_key: v }))}
-            placeholder="sk_..."
-          />
-          <div className="space-y-1">
-            <Label htmlFor="el_voice_id">Voice ID</Label>
-            <Input
-              id="el_voice_id"
-              value={creds.elevenlabs_voice_id}
-              onChange={(e) => setCreds((c) => ({ ...c, elevenlabs_voice_id: e.target.value.trim() }))}
-              placeholder="Ex: pNInz6obpgDQGcFmaJgB"
-            />
-            <p className="text-xs text-muted-foreground">
-              Use uma voz em português. Encontre IDs em elevenlabs.io/app/voice-lab.
-            </p>
+          {erroSms && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-950/30 p-3 rounded text-sm">
+              <AlertTriangle className="h-4 w-4 shrink-0" /> {erroSms}
+            </div>
+          )}
+          <div className="space-y-1.5">
+            <Label className="text-zinc-400 text-xs">Provedor</Label>
+            <Select value={smsProvider} onValueChange={(v) => setSmsProvider(v as 'twilio' | 'zenvia')}>
+              <SelectTrigger className="bg-zinc-800 border-zinc-700 w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="twilio">Twilio</SelectItem>
+                <SelectItem value="zenvia">Zenvia</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {smsProvider === 'twilio' ? (
+            <div className="grid grid-cols-2 gap-3">
+              <Campo id="sms_sid" label="Account SID" value={smsAccountSid} onChange={setSmsAccountSid} placeholder="ACxxxxxx" mono />
+              <InputSenha id="sms_token" label="Auth Token" value={smsAuthToken} onChange={setSmsAuthToken} />
+              <div className="col-span-2">
+                <Campo id="sms_numero" label="Número de origem" value={smsNumero} onChange={setSmsNumero} placeholder="+5511999998888" />
+              </div>
+            </div>
+          ) : (
+            <InputSenha id="zenvia_token" label="API Token Zenvia" value={zenviaToken} onChange={setZenviaToken} placeholder="Token da conta Zenvia" />
+          )}
+
+          <Button
+            disabled={salvandoSms}
+            onClick={async () => {
+              setErroSms(null)
+              const creds = smsProvider === 'twilio'
+                ? { provider: 'twilio', account_sid: smsAccountSid, auth_token: smsAuthToken, numero: smsNumero }
+                : { provider: 'zenvia', token: zenviaToken }
+              const err = await salvarCredenciais('sms_credenciais', creds, setSalvandoSms, carregar)
+              if (err) setErroSms(err)
+              else { setSmsAccountSid(''); setSmsAuthToken(''); setSmsNumero(''); setZenviaToken('') }
+            }}
+            className="bg-violet-600 hover:bg-violet-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {salvandoSms ? 'Criptografando...' : 'Salvar credenciais'}
+          </Button>
         </CardContent>
       </Card>
 
-      {/* ── Twilio ─────────────────────────────────────────────────────────── */}
-      <Card>
+      {/* ── Email ─────────────────────────────────────────────────────────── */}
+      <Card className="bg-zinc-900 border-zinc-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Phone className="h-4 w-4" />
-            Twilio — Ligações telefônicas
-          </CardTitle>
-          <CardDescription>
-            Plataforma de comunicação para chamadas de voz.
-            Configure em{' '}
-            <span className="font-mono text-xs">console.twilio.com</span>.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-zinc-100 flex items-center gap-2 text-base">
+              <Mail className="h-4 w-4 text-amber-400" />
+              E-mail transacional
+            </CardTitle>
+            <BadgeConfigurado configurado={!!configuradas['email_credenciais']} />
+          </div>
+          <CardDescription>Envio de e-mails via Resend ou SendGrid.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <Label htmlFor="twilio_sid">Account SID</Label>
-            <Input
-              id="twilio_sid"
-              value={creds.twilio_account_sid}
-              onChange={(e) => setCreds((c) => ({ ...c, twilio_account_sid: e.target.value.trim() }))}
-              placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          {erroEmail && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-950/30 p-3 rounded text-sm">
+              <AlertTriangle className="h-4 w-4 shrink-0" /> {erroEmail}
+            </div>
+          )}
+          <div className="space-y-1.5">
+            <Label className="text-zinc-400 text-xs">Provedor</Label>
+            <Select value={emailProvider} onValueChange={(v) => setEmailProvider(v as 'resend' | 'sendgrid')}>
+              <SelectTrigger className="bg-zinc-800 border-zinc-700 w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="resend">Resend</SelectItem>
+                <SelectItem value="sendgrid">SendGrid</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-3">
+            <InputSenha
+              id="email_api_key"
+              label={emailProvider === 'resend' ? 'Resend API Key' : 'SendGrid API Key'}
+              value={emailApiKey}
+              onChange={setEmailApiKey}
+              placeholder={emailProvider === 'resend' ? 're_...' : 'SG...'}
             />
+            <div className="grid grid-cols-2 gap-3">
+              <Campo id="email_from" label="E-mail remetente" value={emailFromEmail} onChange={setEmailFromEmail} placeholder="noreply@suaempresa.com" />
+              <Campo id="email_from_name" label="Nome remetente" value={emailFromName} onChange={setEmailFromName} placeholder="HubBeleza" />
+            </div>
+          </div>
+          <Button
+            disabled={salvandoEmail}
+            onClick={async () => {
+              setErroEmail(null)
+              const err = await salvarCredenciais(
+                'email_credenciais',
+                { provider: emailProvider, api_key: emailApiKey, from_email: emailFromEmail, from_name: emailFromName },
+                setSalvandoEmail,
+                carregar,
+              )
+              if (err) setErroEmail(err)
+              else { setEmailApiKey(''); setEmailFromEmail(''); setEmailFromName('') }
+            }}
+            className="bg-violet-600 hover:bg-violet-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {salvandoEmail ? 'Criptografando...' : 'Salvar credenciais'}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ── Ligação IA (ElevenLabs + Twilio Voice) ───────────────────────── */}
+      <Card className="bg-zinc-900 border-zinc-800">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-zinc-100 flex items-center gap-2 text-base">
+              <Phone className="h-4 w-4 text-violet-400" />
+              Ligação IA (ElevenLabs + Twilio)
+            </CardTitle>
+            <BadgeConfigurado configurado={!!configuradas['ligacao_ia_credenciais']} />
+          </div>
+          <CardDescription>Síntese de voz e ligações automáticas para confirmação de agendamentos.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Config global (não-sensível) */}
+          <div className="bg-zinc-800/50 rounded-lg p-4 space-y-3">
+            <p className="text-xs uppercase tracking-wide text-zinc-500 font-medium">Configuração global</p>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="ia_ativo" className="text-sm cursor-pointer">Ativar ligações IA globalmente</Label>
+              <div className="flex items-center gap-2">
+                <Badge variant={configIA.ativo ? 'default' : 'secondary'}>
+                  {configIA.ativo ? 'Ativo' : 'Inativo'}
+                </Badge>
+                <Switch
+                  id="ia_ativo"
+                  checked={configIA.ativo}
+                  onCheckedChange={(v) => setConfigIA((c) => ({ ...c, ativo: v }))}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-zinc-400 text-xs">Início do horário (Brasília)</Label>
+                <Input type="time" value={configIA.horario_inicio}
+                  onChange={(e) => setConfigIA((c) => ({ ...c, horario_inicio: e.target.value }))}
+                  className="bg-zinc-700 border-zinc-600" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-zinc-400 text-xs">Fim do horário (Brasília)</Label>
+                <Input type="time" value={configIA.horario_fim}
+                  onChange={(e) => setConfigIA((c) => ({ ...c, horario_fim: e.target.value }))}
+                  className="bg-zinc-700 border-zinc-600" />
+              </div>
+            </div>
+            <Button size="sm" variant="outline" disabled={salvandoConfigIA} onClick={salvarConfigIA}
+              className="border-zinc-600 text-zinc-300 hover:bg-zinc-700">
+              {salvandoConfigIA ? 'Salvando...' : 'Salvar configuração'}
+            </Button>
           </div>
 
+          {/* Credenciais */}
+          {erroLig && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-950/30 p-3 rounded text-sm">
+              <AlertTriangle className="h-4 w-4 shrink-0" /> {erroLig}
+            </div>
+          )}
+          <Tabs defaultValue="elevenlabs">
+            <TabsList className="bg-zinc-800">
+              <TabsTrigger value="elevenlabs" className="data-[state=active]:bg-zinc-700">
+                <Mic className="h-3.5 w-3.5 mr-1.5" /> ElevenLabs
+              </TabsTrigger>
+              <TabsTrigger value="twilio" className="data-[state=active]:bg-zinc-700">
+                <Phone className="h-3.5 w-3.5 mr-1.5" /> Twilio Voice
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="elevenlabs" className="space-y-3 mt-3">
+              <InputSenha id="el_key" label="ElevenLabs API Key" value={elApiKey} onChange={setElApiKey} placeholder="sk_..." />
+              <Campo id="el_voice" label="Voice ID" value={elVoiceId} onChange={setElVoiceId} placeholder="pNInz6obpgDQGcFmaJgB" mono />
+            </TabsContent>
+            <TabsContent value="twilio" className="space-y-3 mt-3">
+              <Campo id="tw_sid" label="Account SID" value={twilioSid} onChange={setTwilioSid} placeholder="ACxxxxxx" mono />
+              <InputSenha id="tw_token" label="Auth Token" value={twilioToken} onChange={setTwilioToken} />
+              <Campo id="tw_numero" label="Número de origem" value={twilioNumero} onChange={setTwilioNumero} placeholder="+5511999998888" />
+            </TabsContent>
+          </Tabs>
+
+          <Button
+            disabled={salvandoLig}
+            onClick={async () => {
+              setErroLig(null)
+              const err = await salvarCredenciais(
+                'ligacao_ia_credenciais',
+                {
+                  elevenlabs_api_key:   elApiKey   || undefined,
+                  elevenlabs_voice_id:  elVoiceId  || undefined,
+                  twilio_account_sid:   twilioSid   || undefined,
+                  twilio_auth_token:    twilioToken || undefined,
+                  twilio_numero:        twilioNumero || undefined,
+                },
+                setSalvandoLig,
+                carregar,
+              )
+              if (err) setErroLig(err)
+              else { setElApiKey(''); setElVoiceId(''); setTwilioSid(''); setTwilioToken(''); setTwilioNumero('') }
+            }}
+            className="bg-violet-600 hover:bg-violet-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {salvandoLig ? 'Criptografando...' : 'Salvar credenciais ElevenLabs + Twilio'}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ── Gateway de pagamento ──────────────────────────────────────────── */}
+      <Card className="bg-zinc-900 border-zinc-800">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-zinc-100 flex items-center gap-2 text-base">
+              <CreditCard className="h-4 w-4 text-rose-400" />
+              Gateway de pagamento
+            </CardTitle>
+            <BadgeConfigurado configurado={!!configuradas['pagamento_credenciais']} />
+          </div>
+          <CardDescription>Cobranças de assinaturas e agendamentos pagos.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {erroPag && (
+            <div className="flex items-center gap-2 text-red-400 bg-red-950/30 p-3 rounded text-sm">
+              <AlertTriangle className="h-4 w-4 shrink-0" /> {erroPag}
+            </div>
+          )}
+          <div className="space-y-1.5">
+            <Label className="text-zinc-400 text-xs">Provedor</Label>
+            <Select value={pagProvider} onValueChange={(v) => setPagProvider(v as 'stripe' | 'asaas' | 'mercadopago')}>
+              <SelectTrigger className="bg-zinc-800 border-zinc-700 w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="stripe">Stripe</SelectItem>
+                <SelectItem value="asaas">Asaas</SelectItem>
+                <SelectItem value="mercadopago">Mercado Pago</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <InputSenha
-            id="twilio_token"
-            label="Auth Token"
-            value={creds.twilio_auth_token}
-            onChange={(v) => setCreds((c) => ({ ...c, twilio_auth_token: v }))}
-            placeholder="Token secreto do console Twilio"
+            id="pag_key"
+            label={pagProvider === 'stripe' ? 'Secret Key (sk_...)' : pagProvider === 'asaas' ? 'API Key Asaas' : 'Access Token'}
+            value={pagApiKey}
+            onChange={setPagApiKey}
+            placeholder={pagProvider === 'stripe' ? 'sk_live_...' : 'Token da API'}
           />
-
-          <div className="space-y-1">
-            <Label htmlFor="twilio_numero">Número de origem (From)</Label>
-            <Input
-              id="twilio_numero"
-              value={creds.twilio_numero}
-              onChange={(e) => setCreds((c) => ({ ...c, twilio_numero: e.target.value.trim() }))}
-              placeholder="+5511999998888"
-            />
-            <p className="text-xs text-muted-foreground">
-              Número Twilio verificado. Inclua o código do país (+55 para Brasil).
-            </p>
-          </div>
-
-          {/* Instrução do webhook */}
-          <div className="rounded-md bg-muted p-3 space-y-1">
-            <p className="text-xs font-medium">URL do webhook Twilio</p>
-            <p className="text-xs text-muted-foreground font-mono break-all">
-              {window.location.origin.replace('3000', '').replace('localhost', '[projeto].supabase.co')}/functions/v1/twilio-webhook
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Não é necessário configurar no console Twilio — a URL é gerada automaticamente ao iniciar cada ligação.
-            </p>
-          </div>
-
-          <Button onClick={salvarCredenciais} disabled={salvandoCreds}>
-            <Save className="mr-1 h-4 w-4" />
-            {salvandoCreds ? 'Salvando...' : 'Salvar credenciais'}
+          <Campo
+            id="pag_webhook"
+            label="Webhook Secret"
+            value={pagWebhook}
+            onChange={setPagWebhook}
+            placeholder={pagProvider === 'stripe' ? 'whsec_...' : 'Segredo do webhook'}
+            mono
+          />
+          <Button
+            disabled={salvandoPag}
+            onClick={async () => {
+              setErroPag(null)
+              const err = await salvarCredenciais(
+                'pagamento_credenciais',
+                { provider: pagProvider, api_key: pagApiKey, webhook_secret: pagWebhook || undefined },
+                setSalvandoPag,
+                carregar,
+              )
+              if (err) setErroPag(err)
+              else { setPagApiKey(''); setPagWebhook('') }
+            }}
+            className="bg-violet-600 hover:bg-violet-700"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            {salvandoPag ? 'Criptografando...' : 'Salvar credenciais'}
           </Button>
         </CardContent>
       </Card>

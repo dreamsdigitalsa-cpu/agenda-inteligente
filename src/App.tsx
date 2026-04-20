@@ -39,6 +39,7 @@ import PaginaAssinatura from "@/app/(painel)/assinatura/page"
 import PaginaOnboarding from "@/app/(painel)/onboarding/page"
 
 // Super admin
+import PaginaDashboardSuperAdmin from "@/app/(super-admin)/dashboard/page"
 import PaginaTenants from "@/app/(super-admin)/tenants/page"
 import PaginaPlanos from "@/app/(super-admin)/planos/page"
 import PaginaIntegracoes from "@/app/(super-admin)/integracoes/page"
@@ -98,7 +99,8 @@ const App = () => (
           {/* Super admin (protegido) */}
           <Route element={<RotaSuperAdmin />}>
             <Route path="/super-admin" element={<LayoutSuperAdmin />}>
-              <Route index element={<Navigate to="tenants" replace />} />
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<PaginaDashboardSuperAdmin />} />
               <Route path="tenants" element={<PaginaTenants />} />
               <Route path="planos" element={<PaginaPlanos />} />
               <Route path="integracoes" element={<PaginaIntegracoes />} />
