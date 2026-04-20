@@ -190,13 +190,12 @@ Deno.serve(async (req) => {
     }
 
     // 10. Idempotência: já existe ligação para este agendamento?
-    const { data: ligacaoExistente } = await supaAdmin
+    const { data: ligacaoExistente } = (await supaAdmin
       .from('ligacoes_ia' as never)
       .select('id, status')
       .eq('agendamento_id', body.agendamento_id)
       .neq('status', 'falhou')  // permite nova tentativa se a anterior falhou
-      .maybeSingle()
-      as unknown as { data: { id: string; status: string } | null }
+      .maybeSingle()) as unknown as { data: { id: string; status: string } | null }
 
     if (ligacaoExistente) {
       return json({
@@ -292,7 +291,7 @@ Deno.serve(async (req) => {
 
     // ── 14. Criar registro em ligacoes_ia (necessário antes do Twilio para ter o ID) ─
 
-    const { data: novaLigacao, error: insertErr } = await supaAdmin
+    const { data: novaLigacao, error: insertErr } = (await supaAdmin
       .from('ligacoes_ia' as never)
       .insert({
         tenant_id:      body.tenant_id,
@@ -302,8 +301,7 @@ Deno.serve(async (req) => {
         audio_url:      audioUrl,
       })
       .select('id')
-      .single()
-      as unknown as { data: { id: string } | null; error: { message: string } | null }
+      .single()) as unknown as { data: { id: string } | null; error: { message: string } | null }
 
     if (insertErr || !novaLigacao) {
       throw new Error(`ligacoes_ia insert: ${insertErr?.message}`)

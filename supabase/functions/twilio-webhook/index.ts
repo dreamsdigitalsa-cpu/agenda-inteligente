@@ -151,12 +151,11 @@ Deno.serve(async (req) => {
 
     // ── Carregar credenciais Twilio para validar assinatura ───────────────────
 
-    const { data: credsRow } = await supaAdmin
+    const { data: credsRow } = (await supaAdmin
       .from('configuracoes_sistema' as never)
       .select('valor')
       .eq('chave', 'ligacao_ia_credenciais')
-      .maybeSingle()
-      as unknown as { data: { valor: CredenciaisGlobais } | null }
+      .maybeSingle()) as unknown as { data: { valor: CredenciaisGlobais } | null }
 
     const credenciais = credsRow?.valor
 
@@ -187,12 +186,11 @@ Deno.serve(async (req) => {
 
     // ── Buscar registro da ligação ────────────────────────────────────────────
 
-    const { data: ligacao } = await supaAdmin
+    const { data: ligacao } = (await supaAdmin
       .from('ligacoes_ia' as never)
       .select('id, tenant_id, agendamento_id, audio_url, status, resultado')
       .eq('id', ligacaoId)
-      .maybeSingle()
-      as unknown as { data: LigacaoIA | null }
+      .maybeSingle()) as unknown as { data: LigacaoIA | null }
 
     if (!ligacao) {
       console.error(`[twilio-webhook] ligacao_id não encontrado: ${ligacaoId}`)
@@ -285,12 +283,11 @@ Deno.serve(async (req) => {
       // ── DTMF 3: Transferir ────────────────────────────────────────────────
       if (digito === '3') {
         // Buscar telefone do estabelecimento nas configs do tenant
-        const { data: cfgTenant } = await supaAdmin
+        const { data: cfgTenant } = (await supaAdmin
           .from('configuracoes_ligacao_ia' as never)
           .select('telefone_estabelecimento')
           .eq('tenant_id', ligacao.tenant_id)
-          .maybeSingle()
-          as unknown as { data: { telefone_estabelecimento: string | null } | null }
+          .maybeSingle()) as unknown as { data: { telefone_estabelecimento: string | null } | null }
 
         const telefoneEstab = cfgTenant?.telefone_estabelecimento?.replace(/\D/g, '')
 
