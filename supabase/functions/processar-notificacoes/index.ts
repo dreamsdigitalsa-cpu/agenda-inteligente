@@ -77,13 +77,12 @@ Deno.serve(async (req) => {
     const supaAdmin   = createClient(supabaseUrl, serviceKey)
 
     // 1. Buscar configurações de todos os tenants com ao menos um canal ativo
-    const { data: configs } = await supaAdmin
+    const { data: configs } = (await supaAdmin
       .from('configuracoes_notificacoes' as never)
       .select(
         'tenant_id, lembrete_24h_ativo, lembrete_1h_ativo, canal_whatsapp_ativo, canal_email_ativo, canal_sms_ativo',
       )
-      .or('canal_whatsapp_ativo.eq.true,canal_email_ativo.eq.true,canal_sms_ativo.eq.true')
-      as unknown as { data: ConfigNotificacao[] | null }
+      .or('canal_whatsapp_ativo.eq.true,canal_email_ativo.eq.true,canal_sms_ativo.eq.true')) as unknown as { data: ConfigNotificacao[] | null }
 
     const agora    = new Date()
     let criadas    = 0
@@ -105,15 +104,14 @@ Deno.serve(async (req) => {
     }
 
     // 3. Processar itens vencidos com tentativas restantes
-    const { data: pendentes } = await supaAdmin
+    const { data: pendentes } = (await supaAdmin
       .from('notificacoes_fila' as never)
       .select('id, tipo, canal, tentativas, agendamento_id, cliente_id, tenant_id')
       .eq('status', 'pendente')
       .lt('tentativas', 3)
       .lte('agendado_para', agora.toISOString())
       .order('agendado_para', { ascending: true })
-      .limit(100)
-      as unknown as { data: FilaItem[] | null }
+      .limit(100)) as unknown as { data: FilaItem[] | null }
 
     for (const item of pendentes ?? []) {
       await processarItem(supaAdmin, item)
