@@ -35,9 +35,9 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     })
     const token = authHeader.replace('Bearer ', '')
-    const { data: claimsData, error: claimsErr } = await supaUser.auth.getClaims(token)
-    if (claimsErr || !claimsData?.claims) return json({ erro: 'token_invalido' }, 401)
-    const authUserId = claimsData.claims.sub as string
+    const { data: userData, error: userErr } = await supaUser.auth.getUser(token)
+    if (userErr || !userData?.user) return json({ erro: 'token_invalido' }, 401)
+    const authUserId = userData.user.id
 
     // 2) Validar payload
     const body = (await req.json()) as Payload

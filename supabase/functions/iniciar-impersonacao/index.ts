@@ -37,9 +37,9 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     })
     const token = authHeader.replace('Bearer ', '')
-    const { data: claimsData, error: claimsErr } = await supaUser.auth.getClaims(token)
-    if (claimsErr || !claimsData?.claims) return json({ erro: 'token_invalido' }, 401)
-    const superAdminAuthId = claimsData.claims.sub as string
+    const { data: userData, error: userErr } = await supaUser.auth.getUser(token)
+    if (userErr || !userData?.user) return json({ erro: 'token_invalido' }, 401)
+    const superAdminAuthId = userData.user.id
 
     // 2. Verificar role super_admin
     const supaAdmin = createClient(supabaseUrl, serviceKey)
