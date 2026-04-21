@@ -1,7 +1,6 @@
 // Guard de rota autenticada (painel do tenant).
 //  - Sem sessão → /login
-//  - Sessão + role super_admin → /super-admin
-//  - Caso contrário → renderiza <Outlet />
+//  - Sessão → renderiza <Outlet /> (super_admins também podem acessar o painel normal)
 import { useEffect, useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/cliente'
@@ -40,9 +39,7 @@ export const RotaProtegida = () => {
   if (estado === 'anonimo') {
     return <Navigate to="/login" replace state={{ de: localizacao.pathname }} />
   }
-  if (estado === 'super_admin' && !localizacao.pathname.startsWith('/super-admin')) {
-    return <Navigate to="/super-admin" replace />
-  }
+  // Removido o redirecionamento forçado para /super-admin para permitir que super_admins acessem o painel normal.
   return <Outlet />
 }
 

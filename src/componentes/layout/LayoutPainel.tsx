@@ -1,9 +1,10 @@
 // Layout visual do painel autenticado (tenant).
 // Renderizado dentro de <RotaProtegida> e envolve as páginas filhas via <Outlet />.
 // Exibe banner de impersonação quando um super admin está visualizando o tenant.
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/cliente'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, ShieldCheck } from 'lucide-react'
+import { usePermissao } from '@/hooks/usePermissao'
 
 function BannerImpersonacao() {
   const navigate = useNavigate()
@@ -43,8 +44,24 @@ function BannerImpersonacao() {
 }
 
 export const LayoutPainel = () => {
+  const { ehSuperAdmin } = usePermissao()
+
   return (
     <div className="min-h-screen">
+      {ehSuperAdmin && (
+        <div className="bg-zinc-900 border-b border-zinc-800 px-4 py-2 flex items-center justify-between">
+          <span className="text-xs text-zinc-400 font-medium flex items-center gap-2">
+            <ShieldCheck className="h-3.5 w-3.5 text-violet-400" />
+            Você é um Super Admin
+          </span>
+          <Link 
+            to="/super-admin/dashboard" 
+            className="text-xs text-violet-400 hover:text-violet-300 underline"
+          >
+            Voltar para Gestão Global
+          </Link>
+        </div>
+      )}
       <BannerImpersonacao />
       {/* TODO: sidebar + header do painel */}
       <Outlet />
