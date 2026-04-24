@@ -45,7 +45,10 @@ async function chamar(params: Record<string, string>, init?: RequestInit) {
 const PaginaAgendamentoOnline = () => {
   const { slug = '' } = useParams<{ slug: string }>()
   const [passo, setPasso] = useState<1 | 2 | 3 | 4 | 5>(1)
-  const [tenant, setTenant] = useState<Tenant | null>(null)
+  const [tenant, setTenant] = useState<(Tenant & { segmento: string }) | null>(null)
+  const [modo, setModo] = useState<'agendamento' | 'fila'>('agendamento')
+  const [posicaoFila, setPosicaoFila] = useState<number | null>(null)
+
   const [config, setConfig] = useState<Configuracao | null>(null)
   const [servicos, setServicos] = useState<Servico[]>([])
   const [profissionais, setProfissionais] = useState<Profissional[]>([])
