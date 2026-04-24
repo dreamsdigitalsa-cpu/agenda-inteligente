@@ -18,7 +18,16 @@ import {
   Check,
   Star,
   ArrowRight,
+  Menu,
+  BadgeCheck,
 } from 'lucide-react'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const SEGMENTOS = [
   {
@@ -96,17 +105,41 @@ const LandingPage = () => {
             <a href="#precos" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Preços
             </a>
-            <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Entrar
-            </Link>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" className="hidden sm:flex" asChild>
               <Link to="/login">Entrar</Link>
             </Button>
-            <Button asChild>
+            <Button asChild className="hidden sm:flex">
               <Link to="/cadastro">Começar grátis</Link>
             </Button>
+            
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="mt-8 flex flex-col gap-4">
+                  <a href="#funcionalidades" className="text-lg font-medium hover:text-primary transition-colors">
+                    Funcionalidades
+                  </a>
+                  <a href="#precos" className="text-lg font-medium hover:text-primary transition-colors">
+                    Preços
+                  </a>
+                  <Link to="/login" className="text-lg font-medium hover:text-primary transition-colors">
+                    Entrar
+                  </Link>
+                  <Button asChild className="mt-4">
+                    <Link to="/cadastro">Começar grátis</Link>
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </nav>
       </header>
@@ -118,7 +151,7 @@ const LandingPage = () => {
             <div className="mx-auto max-w-4xl text-center">
               <div>
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                  <Star className="h-4 w-4 fill-current" />
+                  <BadgeCheck className="h-4 w-4" />
                   <span>Sistema #1 para Gestão de Beleza no Brasil</span>
                 </div>
                 <h1 className="text-5xl font-extrabold leading-tight tracking-tight sm:text-6xl md:text-7xl">
