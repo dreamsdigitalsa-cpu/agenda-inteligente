@@ -3,8 +3,11 @@
 // Exibe banner de impersonação quando um super admin está visualizando o tenant.
 import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/cliente'
-import { AlertTriangle, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, ShieldCheck, Menu } from 'lucide-react'
 import { usePermissao } from '@/hooks/usePermissao'
+import { SidebarPainel } from './SidebarPainel'
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
 
 function BannerImpersonacao() {
   const navigate = useNavigate()
