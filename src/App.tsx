@@ -40,6 +40,11 @@ import PaginaOnboarding from "@/app/(painel)/onboarding/page"
 import PaginaFila from "@/app/(painel)/fila/page"
 import PaginaFilaTV from "@/app/(painel)/fila/tv/page"
 
+// Tatuagem
+import PaginaTattooOrcamentos from "@/app/(painel)/tatuagem/orcamentos/page"
+import PaginaTattooPortfolio from "@/app/(painel)/tatuagem/portfolio/page"
+import PaginaPublicPortfolio from "@/app/portfolio/[slug]/page"
+
 
 // Super admin
 import PaginaDashboardSuperAdmin from "@/app/(super-admin)/dashboard/page"
