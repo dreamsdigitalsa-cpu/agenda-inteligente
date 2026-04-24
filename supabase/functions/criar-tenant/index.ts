@@ -16,36 +16,53 @@ interface Payload {
   nomeEstabelecimento: string
   segmento: 'salao' | 'barbearia' | 'estetica' | 'tatuagem' | 'manicure'
   nomeAdmin: string
+  authUserId?: string // Opcional: passado quando o usuário ainda não tem sessão (e-mail confirmation ligado)
 }
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    // 1) Valida autenticação
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      return json({ erro: 'nao_autenticado' }, 401)
-    }
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supaAdmin = createClient(supabaseUrl, serviceKey)
 
-    // Cliente com JWT do usuário — usado só para validar a sessão
-    const supaUser = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    })
-    const token = authHeader.replace('Bearer ', '')
-    const { data: userData, error: userErr } = await supaUser.auth.getUser(token)
-    if (userErr || !userData?.user) {
-      return json({ erro: 'token_invalido' }, 401)
-    }
-    const authUserId = userData.user.id
-    const email = userData.user.email ?? ''
-
-    // 2) Valida payload
+    const authHeader = req.headers.get('Authorization')
     const body = (await req.json()) as Payload
+    
+    let authUserId: string
+    let email = ''
+
+    // 1) Determina o authUserId
+    if (authHeader?.startsWith('Bearer ')) {
+      // Caminho padrão: via JWT do usuário (sessão ativa)
+      const supaUser = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      })
+      const token = authHeader.replace('Bearer ', '')
+      const { data: userData, error: userErr } = await supaUser.auth.getUser(token)
+      
+      if (userErr || !userData?.user) {
+        return json({ erro: 'token_invalido' }, 401)
+      }
+      authUserId = userData.user.id
+      email = userData.user.email ?? ''
+    } else if (body.authUserId) {
+      // Novo caminho: via authUserId no body (usuário sem sessão/e-mail não confirmado)
+      // Validamos se o usuário realmente existe no Auth para segurança
+      const { data: userCheck, error: checkErr } = await supaAdmin.auth.admin.getUserById(body.authUserId)
+      
+      if (checkErr || !userCheck?.user) {
+        return json({ erro: 'usuario_nao_encontrado' }, 400)
+      }
+      authUserId = userCheck.user.id
+      email = userCheck.user.email ?? ''
+    } else {
+      return json({ erro: 'nao_autenticado' }, 401)
+    }
+
+    // 2) Valida restante do payload
     const segmentos = ['salao', 'barbearia', 'estetica', 'tatuagem', 'manicure']
     if (
       !body.nomeEstabelecimento?.trim() ||
@@ -56,7 +73,6 @@ Deno.serve(async (req) => {
     }
 
     // 3) Verifica se o usuário JÁ tem tenant (idempotência)
-    const supaAdmin = createClient(supabaseUrl, serviceKey)
     const { data: jaExiste } = await supaAdmin
       .from('usuarios')
       .select('tenant_id')
