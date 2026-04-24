@@ -98,9 +98,15 @@ const App = () => (
               <Route path="assinatura" element={<PaginaAssinatura />} />
               <Route path="fila" element={<PaginaFila />} />
               <Route path="fila/tv" element={<PaginaFilaTV />} />
-
+              
+              {/* Tatuagem */}
+              <Route path="tatuagem/orcamentos" element={<PaginaTattooOrcamentos />} />
+              <Route path="tatuagem/portfolio" element={<PaginaTattooPortfolio />} />
             </Route>
           </Route>
+
+          {/* Portfólio Público */}
+          <Route path="/portfolio/:slug" element={<PaginaPublicPortfolio />} />
 
           {/* Super admin (protegido) */}
           <Route element={<RotaSuperAdmin />}>
