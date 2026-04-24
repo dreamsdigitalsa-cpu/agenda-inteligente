@@ -196,8 +196,29 @@ const PaginaAgendamentoOnline = () => {
           ))}
         </div>
 
+        {/* Opções Iniciais (Barbearia) */}
+        {passo === 1 && tenant?.segmento === 'barbearia' && (
+          <div className="flex gap-2 mb-4">
+            <Button 
+              variant={modo === 'agendamento' ? 'default' : 'outline'} 
+              className="flex-1"
+              onClick={() => setModo('agendamento')}
+            >
+              Agendar Horário
+            </Button>
+            <Button 
+              variant={modo === 'fila' ? 'default' : 'outline'} 
+              className="flex-1"
+              onClick={() => setModo('fila')}
+            >
+              Entrar na Fila (Hoje)
+            </Button>
+          </div>
+        )}
+
         {/* PASSO 1 — Serviço */}
         {passo === 1 && (
+
           <div className="grid gap-3 sm:grid-cols-2">
             {servicos.map((s) => (
               <Card
