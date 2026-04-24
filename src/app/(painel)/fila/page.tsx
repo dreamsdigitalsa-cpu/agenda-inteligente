@@ -57,7 +57,7 @@ export default function GestaoFilaPage() {
   const { fila, carregando, adicionarNaFila, chamarProximo, finalizarAtendimento, reordenarFila } = useFila(tenant?.id, usuario?.unidadeId || undefined)
   const { servicos } = useServicos()
   const { profissionais } = useProfissionais()
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [novoCliente, setNovoCliente] = useState({
