@@ -632,6 +632,181 @@ export type Database = {
           },
         ]
       }
+      tattoo_budget_sessions: {
+        Row: {
+          agendamento_id: string | null
+          atualizado_em: string
+          budget_id: string
+          criado_em: string
+          data: string
+          id: string
+          notas: string | null
+          valor: number | null
+        }
+        Insert: {
+          agendamento_id?: string | null
+          atualizado_em?: string
+          budget_id: string
+          criado_em?: string
+          data?: string
+          id?: string
+          notas?: string | null
+          valor?: number | null
+        }
+        Update: {
+          agendamento_id?: string | null
+          atualizado_em?: string
+          budget_id?: string
+          criado_em?: string
+          data?: string
+          id?: string
+          notas?: string | null
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_budget_sessions_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "agendamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_budget_sessions_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_budgets: {
+        Row: {
+          atualizado_em: string
+          cliente_id: string
+          criado_em: string
+          deposito_pago: boolean | null
+          descricao: string | null
+          estilo: string
+          id: string
+          profissional_id: string
+          referencias: string[] | null
+          regiao_corpo: string
+          status: Database["public"]["Enums"]["tattoo_budget_status"]
+          tamanho: string
+          tenant_id: string
+          valor_deposito: number | null
+          valor_estimado: number | null
+        }
+        Insert: {
+          atualizado_em?: string
+          cliente_id: string
+          criado_em?: string
+          deposito_pago?: boolean | null
+          descricao?: string | null
+          estilo: string
+          id?: string
+          profissional_id: string
+          referencias?: string[] | null
+          regiao_corpo: string
+          status?: Database["public"]["Enums"]["tattoo_budget_status"]
+          tamanho: string
+          tenant_id: string
+          valor_deposito?: number | null
+          valor_estimado?: number | null
+        }
+        Update: {
+          atualizado_em?: string
+          cliente_id?: string
+          criado_em?: string
+          deposito_pago?: boolean | null
+          descricao?: string | null
+          estilo?: string
+          id?: string
+          profissional_id?: string
+          referencias?: string[] | null
+          regiao_corpo?: string
+          status?: Database["public"]["Enums"]["tattoo_budget_status"]
+          tamanho?: string
+          tenant_id?: string
+          valor_deposito?: number | null
+          valor_estimado?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_budgets_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_budgets_profissional_id_fkey"
+            columns: ["profissional_id"]
+            isOneToOne: false
+            referencedRelation: "profissionais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_budgets_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_portfolio_items: {
+        Row: {
+          atualizado_em: string
+          categoria: string | null
+          criado_em: string
+          descricao: string | null
+          estilo: string
+          id: string
+          imagem_url: string
+          profissional_id: string
+          tenant_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          categoria?: string | null
+          criado_em?: string
+          descricao?: string | null
+          estilo: string
+          id?: string
+          imagem_url: string
+          profissional_id: string
+          tenant_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          categoria?: string | null
+          criado_em?: string
+          descricao?: string | null
+          estilo?: string
+          id?: string
+          imagem_url?: string
+          profissional_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_items_profissional_id_fkey"
+            columns: ["profissional_id"]
+            isOneToOne: false
+            referencedRelation: "profissionais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_items_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenants: {
         Row: {
           atualizado_em: string
@@ -824,6 +999,11 @@ export type Database = {
         | "faltou"
       status_fila: "aguardando" | "chamado" | "atendido" | "cancelado"
       status_tenant: "ativo" | "suspenso" | "cancelado"
+      tattoo_budget_status:
+        | "em_analise"
+        | "aprovado"
+        | "em_andamento"
+        | "concluido"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -977,6 +1157,12 @@ export const Constants = {
       ],
       status_fila: ["aguardando", "chamado", "atendido", "cancelado"],
       status_tenant: ["ativo", "suspenso", "cancelado"],
+      tattoo_budget_status: [
+        "em_analise",
+        "aprovado",
+        "em_andamento",
+        "concluido",
+      ],
     },
   },
 } as const
