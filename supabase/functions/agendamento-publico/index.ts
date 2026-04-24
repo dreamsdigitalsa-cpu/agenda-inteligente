@@ -237,7 +237,66 @@ Deno.serve(async (req) => {
       return json({ ok: true, agendamento: ag, confirmacaoManual })
     }
 
+    if (req.method === 'POST' && acao === 'entrar-na-fila') {
+      const body = await req.json()
+      const {
+        nome,
+        telefone,
+        servico_id,
+        profissional_id,
+      } = body as Record<string, string | null>
+
+      if (!nome || !telefone) {
+        return json({ erro: 'campos_obrigatorios_faltando' }, 400)
+      }
+
+      // Busca uma unidade ativa para o tenant
+      const { data: unidade } = await sb
+        .from('unidades')
+        .select('id')
+        .eq('tenant_id', tenant.id)
+        .eq('ativo', true)
+        .limit(1)
+        .maybeSingle()
+      
+      if (!unidade) return json({ erro: 'unidade_nao_encontrada' }, 400)
+
+      // Calcula a próxima posição
+      const { data: ultimaPosicao } = await sb
+        .from('fila_espera')
+        .select('posicao')
+        .eq('tenant_id', tenant.id)
+        .eq('unidade_id', unidade.id)
+        .in('status', ['aguardando', 'chamado'])
+        .order('posicao', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      const novaPosicao = (ultimaPosicao?.posicao ?? 0) + 1
+
+      // Cria entrada na fila
+      const { data: fila, error: errFila } = await sb
+        .from('fila_espera')
+        .insert({
+          tenant_id: tenant.id,
+          unidade_id: unidade.id,
+          profissional_id: profissional_id || null,
+          cliente_nome: nome,
+          cliente_telefone: telefone,
+          servico_id: servico_id || null,
+          posicao: novaPosicao,
+          status: 'aguardando'
+        })
+        .select()
+        .single()
+
+      if (errFila) throw errFila
+
+      return json({ ok: true, itemFila: fila, posicao: novaPosicao })
+    }
+
     return json({ erro: 'acao_invalida' }, 400)
+
   } catch (e) {
     console.error('agendamento-publico erro', e)
     return json({ erro: 'erro_interno', detalhe: e instanceof Error ? e.message : String(e) }, 500)
