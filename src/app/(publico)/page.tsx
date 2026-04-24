@@ -18,7 +18,15 @@ import {
   Check,
   Star,
   ArrowRight,
+  Menu,
 } from 'lucide-react'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const SEGMENTOS = [
   {
