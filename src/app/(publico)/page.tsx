@@ -1,7 +1,6 @@
 // Página pública: landing principal do HubBeleza SaaS.
 // Apresenta hero, segmentos, funcionalidades, planos e footer.
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
@@ -117,11 +116,7 @@ const LandingPage = () => {
         <section className="relative overflow-hidden pt-20 pb-16 md:pt-32 md:pb-24">
           <div className="container relative z-10">
             <div className="mx-auto max-w-4xl text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
+              <div>
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
                   <Star className="h-4 w-4 fill-current" />
                   <span>Sistema #1 para Gestão de Beleza no Brasil</span>
@@ -152,15 +147,10 @@ const LandingPage = () => {
                     <span className="text-xl font-bold italic">Keune</span>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="mt-20 flex justify-center"
-            >
+            <div className="mt-20 flex justify-center">
               <div className="relative w-full max-w-5xl rounded-2xl border border-border bg-background p-4 shadow-[0_0_50px_-12px_rgba(0,0,0,0.1)] md:p-6">
                 <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-muted/30 border border-border">
                   {/* Mockup do App */}
@@ -206,7 +196,7 @@ const LandingPage = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
