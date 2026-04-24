@@ -324,19 +324,31 @@ const PaginaAgendamentoOnline = () => {
               <Label htmlFor="tel">Telefone (WhatsApp) *</Label>
               <Input id="tel" maxLength={30} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
             </div>
-            <div>
-              <Label htmlFor="email">E-mail (opcional)</Label>
-              <Input id="email" type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <label className="flex items-center gap-2 text-sm">
-              <Checkbox checked={aceitaLembretes} onCheckedChange={(v) => setAceitaLembretes(!!v)} />
-              Aceito receber lembretes via WhatsApp
-            </label>
-            <Button className="w-full" onClick={submeter} disabled={enviando}>
-              {enviando ? 'Confirmando…' : 'Confirmar agendamento'}
-            </Button>
+            {modo === 'agendamento' && (
+              <>
+                <div>
+                  <Label htmlFor="email">E-mail (opcional)</Label>
+                  <Input id="email" type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <Checkbox checked={aceitaLembretes} onCheckedChange={(v) => setAceitaLembretes(!!v)} />
+                  Aceito receber lembretes via WhatsApp
+                </label>
+              </>
+            )}
+            
+            {modo === 'agendamento' ? (
+              <Button className="w-full" onClick={submeter} disabled={enviando}>
+                {enviando ? 'Confirmando…' : 'Confirmar agendamento'}
+              </Button>
+            ) : (
+              <Button className="w-full" onClick={entrarNaFila} disabled={enviando}>
+                {enviando ? 'Enviando…' : 'Entrar na Fila Agora'}
+              </Button>
+            )}
           </div>
         )}
+
 
         {/* PASSO 5 — Confirmação */}
         {passo === 5 && resultado && servico && (
