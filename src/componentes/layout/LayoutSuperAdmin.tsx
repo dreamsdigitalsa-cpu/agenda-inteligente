@@ -26,7 +26,7 @@ export const LayoutSuperAdmin = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="flex h-screen bg-zinc-950 text-zinc-100 overflow-hidden">
       {/* ── Sidebar ─────────────────────────────────────────────────────── */}
       <aside className="w-56 shrink-0 flex flex-col border-r border-zinc-800 bg-zinc-900">
         {/* Marca */}

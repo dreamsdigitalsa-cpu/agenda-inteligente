@@ -64,8 +64,8 @@ export function usePermissao() {
     [usuario, permissoes],
   )
 
-  const ehSuperAdmin = !!usuario?.roles.includes('super_admin')
-  const ehAdmin = !!usuario?.roles.includes('admin') || ehSuperAdmin
+  const ehSuperAdmin = !!usuario?.roles?.includes('super_admin')
+  const ehAdmin = !!usuario?.roles?.includes('admin') || ehSuperAdmin
 
   return { temRole, temPermissao, ehSuperAdmin, ehAdmin, permissoesUsuario: permissoes }
 }
