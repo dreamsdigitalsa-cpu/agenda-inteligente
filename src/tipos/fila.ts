@@ -15,4 +15,8 @@ export interface ItemFila {
   chamadoEm: string | null
   createdAt: string
   updatedAt: string
+  // Extensões para facilidade na UI
+  profissionalNome?: string
+  servicoNome?: string
 }
+
