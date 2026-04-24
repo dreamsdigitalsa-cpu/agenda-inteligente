@@ -96,9 +96,6 @@ const LandingPage = () => {
             <a href="#precos" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Preços
             </a>
-            <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              Entrar
-            </Link>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" className="hidden sm:flex" asChild>
