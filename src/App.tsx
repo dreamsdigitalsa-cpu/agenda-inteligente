@@ -44,6 +44,7 @@ import PaginaFilaTV from "@/app/(painel)/fila/tv/page"
 import PaginaTattooOrcamentos from "@/app/(painel)/tatuagem/orcamentos/page"
 import PaginaTattooPortfolio from "@/app/(painel)/tatuagem/portfolio/page"
 import PaginaPublicPortfolio from "@/app/portfolio/[slug]/page"
+import PaginaFichaEstetica from "@/modulos/estetica/FichaEstetica"
 
 
 // Super admin
