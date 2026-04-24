@@ -104,6 +104,7 @@ const App = () => (
               <Route path="assinatura" element={<PaginaAssinatura />} />
               <Route path="fila" element={<PaginaFila />} />
               <Route path="fila/tv" element={<PaginaFilaTV />} />
+              <Route path="estetica/ficha/:clienteId" element={<PaginaFichaEstetica />} />
               
               {/* Tatuagem */}
               <Route path="tatuagem/orcamentos" element={<PaginaTattooOrcamentos />} />
