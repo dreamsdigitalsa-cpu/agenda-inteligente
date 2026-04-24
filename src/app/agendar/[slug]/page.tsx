@@ -351,7 +351,7 @@ const PaginaAgendamentoOnline = () => {
 
 
         {/* PASSO 5 — Confirmação */}
-        {passo === 5 && resultado && servico && (
+        {passo === 5 && modo === 'agendamento' && resultado && servico && (
           <div className="space-y-4 text-center">
             <div className="text-4xl">{resultado.confirmacaoManual ? '⏳' : '✅'}</div>
             <h2 className="text-xl font-semibold">
@@ -382,6 +382,27 @@ const PaginaAgendamentoOnline = () => {
             </a>
           </div>
         )}
+
+        {passo === 5 && modo === 'fila' && posicaoFila !== null && (
+          <div className="space-y-4 text-center">
+            <div className="text-6xl">🙌</div>
+            <h2 className="text-2xl font-bold">Você está na fila!</h2>
+            <div className="bg-primary/10 border-2 border-primary rounded-2xl p-8 max-w-xs mx-auto">
+              <p className="text-sm text-primary font-bold uppercase tracking-widest mb-2">Sua Posição</p>
+              <div className="text-7xl font-black text-primary">{posicaoFila}º</div>
+            </div>
+            <Card className="mx-auto max-w-sm p-4 text-left text-sm">
+              <Linha r="Cliente" v={nome} />
+              {servico && <Linha r="Serviço" v={servico.nome} />}
+              <Linha r="Status" v="Aguardando" />
+            </Card>
+            <div className="p-4 bg-zinc-100 rounded-lg text-sm text-zinc-600">
+              <p>Fique atento ao seu WhatsApp.</p>
+              <p>Enviaremos um alerta quando faltarem 2 pessoas à sua frente.</p>
+            </div>
+          </div>
+        )}
+
 
         {/* Voltar */}
         {passo > 1 && passo < 5 && (
