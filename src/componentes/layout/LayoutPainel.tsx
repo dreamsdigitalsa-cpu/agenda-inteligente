@@ -61,24 +61,47 @@ export const LayoutPainel = () => {
   const { ehSuperAdmin } = usePermissao()
 
   return (
-    <div className="min-h-screen">
-      {ehSuperAdmin && (
-        <div className="bg-zinc-900 border-b border-zinc-800 px-4 py-2 flex items-center justify-between">
-          <span className="text-xs text-zinc-400 font-medium flex items-center gap-2">
-            <ShieldCheck className="h-3.5 w-3.5 text-violet-400" />
-            Você é um Super Admin
-          </span>
-          <Link 
-            to="/super-admin/dashboard" 
-            className="text-xs text-violet-400 hover:text-violet-300 underline"
-          >
-            Voltar para Gestão Global
-          </Link>
-        </div>
-      )}
-      <BannerImpersonacao />
-      {/* TODO: sidebar + header do painel */}
-      <Outlet />
+    <div className="min-h-screen bg-zinc-50 flex flex-col md:flex-row">
+      <SidebarPainel />
+
+      {/* Mobile Nav */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b bg-white">
+        <h2 className="font-bold text-lg tracking-tight text-zinc-900">
+          Beleza<span className="text-violet-600">F3</span>
+        </h2>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64">
+            <SidebarPainel />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="flex-1 flex flex-col min-h-screen">
+        {ehSuperAdmin && (
+          <div className="bg-zinc-900 border-b border-zinc-800 px-4 py-2 flex items-center justify-between">
+            <span className="text-xs text-zinc-400 font-medium flex items-center gap-2">
+              <ShieldCheck className="h-3.5 w-3.5 text-violet-400" />
+              Você é um Super Admin
+            </span>
+            <Link 
+              to="/super-admin/dashboard" 
+              className="text-xs text-violet-400 hover:text-violet-300 underline"
+            >
+              Voltar para Gestão Global
+            </Link>
+          </div>
+        )}
+        <BannerImpersonacao />
+        
+        <main className="flex-1 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
