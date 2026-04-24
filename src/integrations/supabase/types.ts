@@ -169,6 +169,93 @@ export type Database = {
           },
         ]
       }
+      fila_espera: {
+        Row: {
+          chamado_em: string | null
+          cliente_id: string | null
+          cliente_nome: string
+          cliente_telefone: string | null
+          created_at: string
+          entrada_em: string
+          id: string
+          posicao: number
+          profissional_id: string | null
+          servico_id: string | null
+          status: Database["public"]["Enums"]["status_fila"]
+          tenant_id: string
+          unidade_id: string
+          updated_at: string
+        }
+        Insert: {
+          chamado_em?: string | null
+          cliente_id?: string | null
+          cliente_nome: string
+          cliente_telefone?: string | null
+          created_at?: string
+          entrada_em?: string
+          id?: string
+          posicao: number
+          profissional_id?: string | null
+          servico_id?: string | null
+          status?: Database["public"]["Enums"]["status_fila"]
+          tenant_id: string
+          unidade_id: string
+          updated_at?: string
+        }
+        Update: {
+          chamado_em?: string | null
+          cliente_id?: string | null
+          cliente_nome?: string
+          cliente_telefone?: string | null
+          created_at?: string
+          entrada_em?: string
+          id?: string
+          posicao?: number
+          profissional_id?: string | null
+          servico_id?: string | null
+          status?: Database["public"]["Enums"]["status_fila"]
+          tenant_id?: string
+          unidade_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fila_espera_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fila_espera_profissional_id_fkey"
+            columns: ["profissional_id"]
+            isOneToOne: false
+            referencedRelation: "profissionais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fila_espera_servico_id_fkey"
+            columns: ["servico_id"]
+            isOneToOne: false
+            referencedRelation: "servicos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fila_espera_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fila_espera_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       perfis_permissao: {
         Row: {
           atualizado_em: string
@@ -505,6 +592,7 @@ export type Database = {
         | "concluido"
         | "cancelado"
         | "faltou"
+      status_fila: "aguardando" | "chamado" | "atendido" | "cancelado"
       status_tenant: "ativo" | "suspenso" | "cancelado"
     }
     CompositeTypes: {
@@ -657,6 +745,7 @@ export const Constants = {
         "cancelado",
         "faltou",
       ],
+      status_fila: ["aguardando", "chamado", "atendido", "cancelado"],
       status_tenant: ["ativo", "suspenso", "cancelado"],
     },
   },
