@@ -99,20 +99,32 @@ const Cadastro = () => {
       return
     }
 
-    // 2) Garante sessão para chamar a edge function autenticada
-    const { data: sessao } = await supabase.auth.getSession()
-    if (!sessao.session) {
-      toast.success('Cadastro criado! Verifique seu e-mail para ativar a conta.')
-      navegar('/login')
+    // 2) Tenta obter o ID do usuário (mesmo sem sessão ativa se o e-mail confirmation estiver ligado)
+    const { data: { user }, } = await supabase.auth.getUser()
+    const userId = user?.id
+
+    // 3) Cria tenant + unidade + role
+    // Passamos authUserId no body para a Edge Function poder configurar o tenant 
+    // mesmo se o usuário ainda não confirmou o e-mail (sem sessão ativa).
+    const { error: errFn } = await supabase.functions.invoke('criar-tenant', {
+      body: { 
+        nomeEstabelecimento, 
+        segmento, 
+        nomeAdmin: nome,
+        authUserId: userId,
+      },
+    })
+    
+    if (errFn) {
+      toast.error('Conta criada, mas falhou ao configurar o estabelecimento. Entre em contato com o suporte.')
       return
     }
 
-    // 3) Cria tenant + unidade + role
-    const { error: errFn } = await supabase.functions.invoke('criar-tenant', {
-      body: { nomeEstabelecimento, segmento, nomeAdmin: nome },
-    })
-    if (errFn) {
-      toast.error('Conta criada, mas falhou ao configurar o estabelecimento. Entre em contato com o suporte.')
+    // 4) Verifica se há sessão (se e-mail confirmation estiver desligado, já loga)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      toast.success('Cadastro criado! Verifique seu e-mail para ativar a conta.')
+      navegar('/login')
       return
     }
 
