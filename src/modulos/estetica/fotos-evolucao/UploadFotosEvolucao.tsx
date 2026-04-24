@@ -44,7 +44,7 @@ export const UploadFotosEvolucao: React.FC<UploadFotosEvolucaoProps> = ({
 
       if (uploadError) throw uploadError;
 
-      // 2. Obter URL assinada para visualização imediata
+      // 2. Obter URL assinada para visualização imediata (válida por 1h)
       const { data: signedData, error: signedError } = await supabase.storage
         .from('estetica')
         .createSignedUrl(filePath, 3600);
@@ -52,7 +52,7 @@ export const UploadFotosEvolucao: React.FC<UploadFotosEvolucaoProps> = ({
       if (signedError) throw signedError;
       const displayUrl = signedData.signedUrl;
 
-      // 3. Registrar no banco de dados (salvamos o path ou a URL pública base)
+      // 3. Registrar no banco de dados
       const { error: dbError } = await supabase
         .from('estetica_fotos_evolucao')
         .insert({
@@ -63,17 +63,12 @@ export const UploadFotosEvolucao: React.FC<UploadFotosEvolucaoProps> = ({
           foto_url: filePath, // Salvamos o path para facilitar a geração de novas URLs assinadas
           tipo: tipo,
           data_foto: new Date().toISOString()
-        });
+        } as any);
 
       if (dbError) throw dbError;
 
       toast.success(`Foto de "${tipo}" carregada com sucesso!`);
       onUploadComplete(displayUrl, tipo);
-
-      if (dbError) throw dbError;
-
-      toast.success(`Foto de "${tipo}" carregada com sucesso!`);
-      onUploadComplete(publicUrl, tipo);
     } catch (error: any) {
       console.error('Erro no upload:', error);
       toast.error('Erro ao fazer upload da foto: ' + error.message);
