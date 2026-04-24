@@ -50,7 +50,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 
 export default function GestaoFilaPage() {
   const { tenant, usuario, carregando: carregandoTenant } = useTenant()
