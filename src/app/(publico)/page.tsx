@@ -110,7 +110,7 @@ const LandingPage = () => {
             <Button variant="ghost" className="hidden sm:flex" asChild>
               <Link to="/login">Entrar</Link>
             </Button>
-            <Button asChild className="hidden xs:flex">
+            <Button asChild className="hidden sm:flex">
               <Link to="/cadastro">Começar grátis</Link>
             </Button>
             
