@@ -126,7 +126,7 @@ export default function GestaoFilaPage() {
           <p className="text-muted-foreground">Gerencie os clientes que aguardam atendimento hoje.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push('/fila/tv')}>
+          <Button variant="outline" onClick={() => navigate('/painel/fila/tv')}>
             <Tv className="mr-2 h-4 w-4" />
             Abrir Painel TV
           </Button>
