@@ -96,6 +96,9 @@ const App = () => (
               <Route path="configuracoes/notificacoes" element={<PaginaConfiguracoesNotificacoes />} />
               <Route path="configuracoes/ligacao-ia" element={<PaginaConfiguracaoLigacaoIA />} />
               <Route path="assinatura" element={<PaginaAssinatura />} />
+              <Route path="fila" element={<PaginaFila />} />
+              <Route path="fila/tv" element={<PaginaFilaTV />} />
+
             </Route>
           </Route>
 
