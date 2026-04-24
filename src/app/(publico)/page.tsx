@@ -151,7 +151,7 @@ const LandingPage = () => {
             <div className="mx-auto max-w-4xl text-center">
               <div>
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                  <Star className="h-4 w-4 fill-current" />
+                  <BadgeCheck className="h-4 w-4" />
                   <span>Sistema #1 para Gestão de Beleza no Brasil</span>
                 </div>
                 <h1 className="text-5xl font-extrabold leading-tight tracking-tight sm:text-6xl md:text-7xl">
