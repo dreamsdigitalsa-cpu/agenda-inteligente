@@ -23,9 +23,11 @@ export type Database = {
           data_hora_fim: string
           data_hora_inicio: string
           id: string
+          numero_sessao: number | null
           observacoes: string | null
           origem: Database["public"]["Enums"]["origem_agendamento"]
           profissional_id: string
+          protocolo_id: string | null
           servico_id: string
           status: Database["public"]["Enums"]["status_agendamento"]
           tenant_id: string
@@ -39,9 +41,11 @@ export type Database = {
           data_hora_fim: string
           data_hora_inicio: string
           id?: string
+          numero_sessao?: number | null
           observacoes?: string | null
           origem?: Database["public"]["Enums"]["origem_agendamento"]
           profissional_id: string
+          protocolo_id?: string | null
           servico_id: string
           status?: Database["public"]["Enums"]["status_agendamento"]
           tenant_id: string
@@ -55,15 +59,25 @@ export type Database = {
           data_hora_fim?: string
           data_hora_inicio?: string
           id?: string
+          numero_sessao?: number | null
           observacoes?: string | null
           origem?: Database["public"]["Enums"]["origem_agendamento"]
           profissional_id?: string
+          protocolo_id?: string | null
           servico_id?: string
           status?: Database["public"]["Enums"]["status_agendamento"]
           tenant_id?: string
           unidade_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "agendamentos_protocolo_id_fkey"
+            columns: ["protocolo_id"]
+            isOneToOne: false
+            referencedRelation: "estetica_protocolos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       clientes: {
         Row: {
@@ -164,6 +178,222 @@ export type Database = {
             foreignKeyName: "configuracoes_tenant_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estetica_anamneses_modelos: {
+        Row: {
+          atualizado_em: string
+          campos: Json
+          criado_em: string
+          id: string
+          nome: string
+          protocolo_id: string | null
+          tenant_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          campos?: Json
+          criado_em?: string
+          id?: string
+          nome: string
+          protocolo_id?: string | null
+          tenant_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          campos?: Json
+          criado_em?: string
+          id?: string
+          nome?: string
+          protocolo_id?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estetica_anamneses_modelos_protocolo_id_fkey"
+            columns: ["protocolo_id"]
+            isOneToOne: false
+            referencedRelation: "estetica_protocolos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_anamneses_modelos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estetica_anamneses_preenchidas: {
+        Row: {
+          agendamento_id: string | null
+          assinatura_url: string | null
+          atualizado_em: string
+          cliente_id: string
+          criado_em: string
+          id: string
+          modelo_id: string
+          pdf_url: string | null
+          respostas: Json
+          tenant_id: string
+        }
+        Insert: {
+          agendamento_id?: string | null
+          assinatura_url?: string | null
+          atualizado_em?: string
+          cliente_id: string
+          criado_em?: string
+          id?: string
+          modelo_id: string
+          pdf_url?: string | null
+          respostas?: Json
+          tenant_id: string
+        }
+        Update: {
+          agendamento_id?: string | null
+          assinatura_url?: string | null
+          atualizado_em?: string
+          cliente_id?: string
+          criado_em?: string
+          id?: string
+          modelo_id?: string
+          pdf_url?: string | null
+          respostas?: Json
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estetica_anamneses_preenchidas_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "agendamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_anamneses_preenchidas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_anamneses_preenchidas_modelo_id_fkey"
+            columns: ["modelo_id"]
+            isOneToOne: false
+            referencedRelation: "estetica_anamneses_modelos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_anamneses_preenchidas_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estetica_fotos_evolucao: {
+        Row: {
+          agendamento_id: string | null
+          cliente_id: string
+          criado_em: string
+          data_foto: string
+          foto_url: string
+          id: string
+          protocolo_id: string | null
+          tenant_id: string
+          tipo: string
+        }
+        Insert: {
+          agendamento_id?: string | null
+          cliente_id: string
+          criado_em?: string
+          data_foto?: string
+          foto_url: string
+          id?: string
+          protocolo_id?: string | null
+          tenant_id: string
+          tipo: string
+        }
+        Update: {
+          agendamento_id?: string | null
+          cliente_id?: string
+          criado_em?: string
+          data_foto?: string
+          foto_url?: string
+          id?: string
+          protocolo_id?: string | null
+          tenant_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estetica_fotos_evolucao_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "agendamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_fotos_evolucao_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_fotos_evolucao_protocolo_id_fkey"
+            columns: ["protocolo_id"]
+            isOneToOne: false
+            referencedRelation: "estetica_protocolos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estetica_fotos_evolucao_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estetica_protocolos: {
+        Row: {
+          atualizado_em: string
+          criado_em: string
+          id: string
+          intervalo_minimo_dias: number
+          nome: string
+          numero_sessoes: number
+          tenant_id: string
+        }
+        Insert: {
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          intervalo_minimo_dias?: number
+          nome: string
+          numero_sessoes?: number
+          tenant_id: string
+        }
+        Update: {
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          intervalo_minimo_dias?: number
+          nome?: string
+          numero_sessoes?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estetica_protocolos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
             referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
