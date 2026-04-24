@@ -44,6 +44,7 @@ import PaginaFilaTV from "@/app/(painel)/fila/tv/page"
 import PaginaTattooOrcamentos from "@/app/(painel)/tatuagem/orcamentos/page"
 import PaginaTattooPortfolio from "@/app/(painel)/tatuagem/portfolio/page"
 import PaginaPublicPortfolio from "@/app/portfolio/[slug]/page"
+import PaginaFichaEstetica from "@/modulos/estetica/FichaEstetica"
 
 
 // Super admin
@@ -103,6 +104,7 @@ const App = () => (
               <Route path="assinatura" element={<PaginaAssinatura />} />
               <Route path="fila" element={<PaginaFila />} />
               <Route path="fila/tv" element={<PaginaFilaTV />} />
+              <Route path="estetica/ficha/:clienteId" element={<PaginaFichaEstetica />} />
               
               {/* Tatuagem */}
               <Route path="tatuagem/orcamentos" element={<PaginaTattooOrcamentos />} />
