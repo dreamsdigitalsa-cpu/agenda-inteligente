@@ -14,8 +14,8 @@ import { toast } from 'sonner';
 import { ClipboardList, Camera, Settings2, UserCircle } from 'lucide-react';
 
 interface FichaEsteticaProps {
-  clienteId: string;
-  nomeCliente: string;
+  clienteId?: string;
+  nomeCliente?: string;
 }
 
 // Exemplo de campos para anamnese
