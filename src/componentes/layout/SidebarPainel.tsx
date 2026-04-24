@@ -30,7 +30,7 @@ export function SidebarPainel() {
   const isTattoo = tenant?.segmento === 'tatuagem';
 
   return (
-    <aside className="w-64 border-r border-zinc-200 bg-white h-screen flex flex-col sticky top-0 hidden md:flex">
+    <aside className="w-64 border-r border-zinc-200 bg-white h-screen flex-col sticky top-0 hidden md:flex">
       <div className="p-6 border-b border-zinc-100">
         <h2 className="font-bold text-xl tracking-tight text-zinc-900">
           Beleza<span className="text-violet-600">F3</span>
