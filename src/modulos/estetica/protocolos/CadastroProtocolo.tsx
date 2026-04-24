@@ -48,8 +48,10 @@ export const CadastroProtocolo: React.FC<CadastroProtocoloProps> = ({ tenantId, 
         .from('estetica_protocolos')
         .insert({
           tenant_id: tenantId,
-          ...values,
-        });
+          nome: values.nome,
+          numero_sessoes: values.numero_sessoes,
+          intervalo_minimo_dias: values.intervalo_minimo_dias,
+        } as any);
 
       if (error) throw error;
 
