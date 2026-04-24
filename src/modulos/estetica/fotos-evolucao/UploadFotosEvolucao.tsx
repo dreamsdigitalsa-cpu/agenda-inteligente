@@ -44,14 +44,15 @@ export const UploadFotosEvolucao: React.FC<UploadFotosEvolucaoProps> = ({
 
       if (uploadError) throw uploadError;
 
-      // 2. Obter URL pública (ou assinada se for privado)
-      // Como o bucket é privado, idealmente usamos URL assinada ou Proxy.
-      // Por simplicidade aqui, vamos assumir que recuperamos via getPublicUrl se o tenant tiver acesso.
-      const { data: { publicUrl } } = supabase.storage
+      // 2. Obter URL assinada para visualização imediata
+      const { data: signedData, error: signedError } = await supabase.storage
         .from('estetica')
-        .getPublicUrl(filePath);
+        .createSignedUrl(filePath, 3600);
 
-      // 3. Registrar no banco de dados
+      if (signedError) throw signedError;
+      const displayUrl = signedData.signedUrl;
+
+      // 3. Registrar no banco de dados (salvamos o path ou a URL pública base)
       const { error: dbError } = await supabase
         .from('estetica_fotos_evolucao')
         .insert({
@@ -59,10 +60,15 @@ export const UploadFotosEvolucao: React.FC<UploadFotosEvolucaoProps> = ({
           cliente_id: clienteId,
           agendamento_id: agendamentoId,
           protocolo_id: protocoloId,
-          foto_url: publicUrl,
+          foto_url: filePath, // Salvamos o path para facilitar a geração de novas URLs assinadas
           tipo: tipo,
           data_foto: new Date().toISOString()
         });
+
+      if (dbError) throw dbError;
+
+      toast.success(`Foto de "${tipo}" carregada com sucesso!`);
+      onUploadComplete(displayUrl, tipo);
 
       if (dbError) throw dbError;
 
