@@ -63,9 +63,21 @@ export function BudgetForm({ budget, onClose }: Props) {
 
     try {
       setLoading(true);
+      
+      // Sanitizar dados para o Supabase (remover campos de join)
       const dataToSave = {
-        ...formData,
         tenant_id: tenant.id,
+        cliente_id: formData.cliente_id,
+        profissional_id: formData.profissional_id,
+        regiao_corpo: formData.regiao_corpo,
+        tamanho: formData.tamanho,
+        estilo: formData.estilo,
+        descricao: formData.descricao,
+        valor_estimado: formData.valor_estimado,
+        valor_deposito: formData.valor_deposito,
+        deposito_pago: formData.deposito_pago,
+        status: formData.status,
+        referencias: formData.referencias,
       };
 
       if (budget?.id) {
