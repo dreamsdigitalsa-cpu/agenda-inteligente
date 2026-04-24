@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase/cliente';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Instagram, MapPin, Calendar, Loader2 } from 'lucide-react';
 import type { TattooPortfolioItem } from '../tipos';
 
