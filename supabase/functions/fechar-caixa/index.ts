@@ -9,6 +9,7 @@
 //
 // Segurança:
 // - Requer JWT válido; tenant validado contra o usuário autenticado
+// - Requer role admin ou super_admin (fechar caixa é operação administrativa)
 // - UPDATE feito exclusivamente via service_role (bypassa RLS)
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 import { corsHeaders } from '../_shared/cors.ts'
@@ -62,7 +63,20 @@ Deno.serve(async (req) => {
       return json({ erro: 'acesso_negado', detalhe: 'usuário não pertence ao tenant informado' }, 403)
     }
 
-    // 4) Buscar sessão de caixa — deve existir e estar aberta
+    // 4) Verificar role — fechar caixa é operação administrativa restrita a admin/super_admin.
+    //    Recepcionista pode abrir mas não fechar (evita fechamentos não autorizados).
+    const { data: roleRow } = await supaAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authUserId)
+      .in('role', ['admin', 'super_admin'])
+      .maybeSingle()
+
+    if (!roleRow) {
+      return json({ erro: 'permissao_insuficiente', detalhe: 'apenas admin pode fechar o caixa' }, 403)
+    }
+
+    // 5) Buscar sessão de caixa — deve existir e estar aberta
     const { data: sessao, error: errSessao } = await supaAdmin
       .from('caixa_sessoes')
       .select('id, tenant_id, saldo_inicial, status, abertura_em')
@@ -77,7 +91,7 @@ Deno.serve(async (req) => {
       return json({ erro: 'sessao_ja_fechada', status_atual: sessao.status }, 422)
     }
 
-    // 5) Buscar todos os lançamentos da sessão para o relatório e cálculo
+    // 6) Buscar todos os lançamentos da sessão para o relatório e cálculo
     const { data: lancamentos, error: errLancamentos } = await supaAdmin
       .from('lancamentos')
       .select('id, tipo, categoria, descricao, valor, forma_pagamento, agendamento_id, criado_em')
@@ -86,7 +100,7 @@ Deno.serve(async (req) => {
 
     if (errLancamentos) throw new Error(`lancamentos select: ${errLancamentos.message}`)
 
-    // 6) Calcular totais
+    // 7) Calcular totais
     const { totalReceitas, totalDespesas } = (lancamentos ?? []).reduce(
       (acc, l) => {
         if (l.tipo === 'receita') acc.totalReceitas += Number(l.valor)
@@ -101,7 +115,7 @@ Deno.serve(async (req) => {
     const diferenca      = body.saldo_final_contado - saldoEsperado
     const fechamentoEm   = new Date().toISOString()
 
-    // 7) Atualizar sessão para 'fechado'
+    // 8) Atualizar sessão para 'fechado'
     const { error: errFecha } = await supaAdmin
       .from('caixa_sessoes')
       .update({
@@ -114,7 +128,7 @@ Deno.serve(async (req) => {
 
     if (errFecha) throw new Error(`caixa_sessoes update: ${errFecha.message}`)
 
-    // 8) Registrar no audit_log
+    // 9) Registrar no audit_log
     await supaAdmin.from('audit_log').insert({
       tenant_id:   body.tenant_id,
       usuario_id:  usuarioDB.id,
@@ -138,7 +152,7 @@ Deno.serve(async (req) => {
       ip: req.headers.get('x-forwarded-for') ?? null,
     })
 
-    // 9) Retornar relatório completo do dia
+    // 10) Retornar relatório completo do dia
     return json({
       caixa_sessao_id: body.caixa_sessao_id,
       abertura_em:     sessao.abertura_em,

@@ -8,6 +8,7 @@
 //
 // Segurança:
 // - Requer JWT válido; tenant derivado do usuário autenticado
+// - Requer role admin, recepcionista ou super_admin (profissional não pode abrir caixa)
 // - Escrita feita exclusivamente via service_role (bypassa RLS)
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 import { corsHeaders } from '../_shared/cors.ts'
@@ -65,7 +66,20 @@ Deno.serve(async (req) => {
       return json({ erro: 'acesso_negado', detalhe: 'usuário não pertence ao tenant informado' }, 403)
     }
 
-    // 4) Verificar se já existe caixa aberto hoje para a unidade
+    // 4) Verificar role — apenas admin, recepcionista e super_admin podem abrir caixa.
+    //    Profissional e cliente não têm acesso a operações de caixa.
+    const { data: roleRow } = await supaAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', authUserId)
+      .in('role', ['admin', 'recepcionista', 'super_admin'])
+      .maybeSingle()
+
+    if (!roleRow) {
+      return json({ erro: 'permissao_insuficiente', detalhe: 'apenas admin ou recepcionista podem abrir o caixa' }, 403)
+    }
+
+    // 5) Verificar se já existe caixa aberto hoje para a unidade
     //    Intervalo em UTC para cobrir o dia completo independente do fuso do servidor
     const agora = new Date()
     const inicioDia = new Date(Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), agora.getUTCDate()))
@@ -91,7 +105,7 @@ Deno.serve(async (req) => {
       }, 409)
     }
 
-    // 5) Inserir nova sessão de caixa
+    // 6) Inserir nova sessão de caixa
     const aberturaEm = new Date().toISOString()
     const { data: novaCaixa, error: errCaixa } = await supaAdmin
       .from('caixa_sessoes')
@@ -108,7 +122,7 @@ Deno.serve(async (req) => {
 
     if (errCaixa) throw new Error(`caixa_sessoes insert: ${errCaixa.message}`)
 
-    // 6) Registrar no audit_log
+    // 7) Registrar no audit_log
     await supaAdmin.from('audit_log').insert({
       tenant_id:   body.tenant_id,
       usuario_id:  body.usuario_id,

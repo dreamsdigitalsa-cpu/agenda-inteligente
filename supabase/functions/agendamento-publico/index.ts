@@ -8,12 +8,18 @@
 //  - profissionais → lista de profissionais ativos
 //  - slots       → slots livres para profissional+data+duracao
 //  - criar       → POST: cria cliente (tem_conta=false) + agendamento
+//
+// Rate limiting (ação 'criar'):
+//  - Máximo RATE_LIMIT_CRIAR tentativas por hora por IP por slug.
+//  - Persiste contagem na tabela rate_limit_requests (upsert por janela horária).
+//  - Registros mais antigos que 24h são elegíveis para limpeza (ver migration).
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 import { corsHeaders } from '../_shared/cors.ts'
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const LIMITE_FREEMIUM_MES = 50 // agendamentos/mês no plano grátis
+const RATE_LIMIT_CRIAR = 30    // máximo de tentativas de agendamento por hora por IP por slug
 
 const json = (b: unknown, status = 200) =>
   new Response(JSON.stringify(b), {
@@ -114,6 +120,45 @@ Deno.serve(async (req) => {
     }
 
     if (req.method === 'POST' && acao === 'criar') {
+      // ── Rate limiting por IP ────────────────────────────────────────────
+      // Extrai o IP real (pode ser IPv4 ou IPv6 via x-forwarded-for).
+      const ipRaw = req.headers.get('x-forwarded-for') ?? req.headers.get('cf-connecting-ip') ?? 'unknown'
+      const ip = ipRaw.split(',')[0].trim()
+
+      // Janela horária: trunca ao início da hora atual (ex: 14:00:00 UTC)
+      const agora = new Date()
+      const janelaHora = new Date(
+        Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), agora.getUTCDate(), agora.getUTCHours())
+      ).toISOString()
+
+      // Upsert: incrementa o contador para este IP+slug+hora
+      const { data: rateRow, error: rateErr } = await sb
+        .from('rate_limit_requests')
+        .upsert(
+          { ip, slug, janela_hora: janelaHora, contagem: 1 },
+          { onConflict: 'ip,slug,janela_hora', ignoreDuplicates: false }
+        )
+        .select('contagem')
+        .maybeSingle()
+
+      // Se o upsert não retornou (linha já existe), busca o valor atual e incrementa
+      let contagemAtual = rateRow?.contagem ?? 0
+      if (rateErr || !rateRow) {
+        // Fallback: incrementa diretamente via SQL
+        const { data: incrementRow } = await sb.rpc('incrementar_rate_limit' as never, {
+          p_ip: ip, p_slug: slug, p_janela: janelaHora,
+        } as never) as unknown as { data: { contagem: number } | null }
+        contagemAtual = incrementRow?.contagem ?? contagemAtual
+      }
+
+      if (contagemAtual > RATE_LIMIT_CRIAR) {
+        return json({
+          erro: 'rate_limit_excedido',
+          detalhe: `Máximo de ${RATE_LIMIT_CRIAR} agendamentos por hora neste dispositivo.`,
+          retry_after_seconds: 3600 - (agora.getUTCMinutes() * 60 + agora.getUTCSeconds()),
+        }, 429)
+      }
+
       const body = await req.json()
       const {
         nome,

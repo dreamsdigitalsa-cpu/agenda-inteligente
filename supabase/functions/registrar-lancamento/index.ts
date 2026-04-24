@@ -10,6 +10,7 @@
 //
 // Segurança:
 // - Requer JWT válido; tenant validado contra o usuário autenticado
+// - Requer role admin/recepcionista/super_admin OU permissão PERM-003 (acesso ao caixa)
 // - Escrita feita exclusivamente via service_role (bypassa RLS)
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 import { corsHeaders } from '../_shared/cors.ts'
@@ -72,7 +73,7 @@ Deno.serve(async (req) => {
     // 3) Verificar que o usuário pertence ao tenant
     const { data: usuarioDB } = await supaAdmin
       .from('usuarios')
-      .select('id, tenant_id')
+      .select('id, tenant_id, perfil_id')
       .eq('auth_user_id', authUserId)
       .eq('tenant_id', body.tenant_id)
       .maybeSingle()
@@ -81,7 +82,31 @@ Deno.serve(async (req) => {
       return json({ erro: 'acesso_negado', detalhe: 'usuário não pertence ao tenant informado' }, 403)
     }
 
-    // 4) Verificar que a sessão de caixa existe, pertence ao tenant e está aberta
+    // 4) Verificar permissão de acesso ao caixa.
+    //    Aceita: roles admin/recepcionista/super_admin OU permissão PERM-003 no perfil.
+    //    Profissional e cliente não registram lançamentos diretamente.
+    const [{ data: roleRow }, { data: permRow }] = await Promise.all([
+      supaAdmin
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', authUserId)
+        .in('role', ['admin', 'recepcionista', 'super_admin'])
+        .maybeSingle(),
+      usuarioDB.perfil_id
+        ? supaAdmin
+            .from('permissoes_do_perfil')
+            .select('codigo_permissao')
+            .eq('perfil_id', usuarioDB.perfil_id)
+            .eq('codigo_permissao', 'PERM-003')
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ])
+
+    if (!roleRow && !permRow) {
+      return json({ erro: 'permissao_insuficiente', detalhe: 'requer role admin/recepcionista ou permissão PERM-003' }, 403)
+    }
+
+    // 5) Verificar que a sessão de caixa existe, pertence ao tenant e está aberta
     const { data: sessao, error: errSessao } = await supaAdmin
       .from('caixa_sessoes')
       .select('id, tenant_id, unidade_id, status, saldo_inicial')
@@ -96,7 +121,7 @@ Deno.serve(async (req) => {
       return json({ erro: 'sessao_fechada', status_atual: sessao.status }, 422)
     }
 
-    // 5) Inserir o lançamento
+    // 6) Inserir o lançamento
     //    Lançamentos são imutáveis — APENAS INSERT, nunca UPDATE
     const criadoEm = new Date().toISOString()
     const { data: novoLancamento, error: errLancamento } = await supaAdmin
@@ -119,7 +144,7 @@ Deno.serve(async (req) => {
 
     if (errLancamento) throw new Error(`lancamentos insert: ${errLancamento.message}`)
 
-    // 6) Se informado agendamento_id, marcar agendamento como 'concluido'
+    // 7) Se informado agendamento_id, marcar agendamento como 'concluido'
     if (body.agendamento_id) {
       const { error: errAgendamento } = await supaAdmin
         .from('agendamentos')
@@ -133,7 +158,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 7) Calcular saldo_atual da sessão após o lançamento
+    // 8) Calcular saldo_atual da sessão após o lançamento
     //    saldo_atual = saldo_inicial + Σreceitas − Σdespesas
     const { data: totais } = await supaAdmin
       .from('lancamentos')
@@ -150,7 +175,7 @@ Deno.serve(async (req) => {
     )
     const saldoAtual = Number(sessao.saldo_inicial) + totalReceitas - totalDespesas
 
-    // 8) Registrar no audit_log
+    // 9) Registrar no audit_log
     await supaAdmin.from('audit_log').insert({
       tenant_id:   body.tenant_id,
       usuario_id:  usuarioDB.id,
