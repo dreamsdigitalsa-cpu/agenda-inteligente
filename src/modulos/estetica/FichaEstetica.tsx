@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { useTenant } from '@/hooks/useTenant';
@@ -30,10 +31,31 @@ const CAMPOS_PADRAO: CampoAnamnese[] = [
  * Componente principal que unifica todas as funcionalidades do módulo de Estética.
  * Deve ser exibido apenas se o tenant for do segmento 'estetica'.
  */
-export const FichaEstetica: React.FC<FichaEsteticaProps> = ({ clienteId, nomeCliente }) => {
+export const FichaEstetica: React.FC<FichaEsteticaProps> = ({ clienteId: propsClienteId, nomeCliente: propsNomeCliente }) => {
+  const { clienteId: paramsClienteId } = useParams<{ clienteId: string }>();
+  const clienteId = propsClienteId || paramsClienteId;
+  
   const { tenant, usuario } = useTenant();
   const [protocoloAtivo, setProtocoloAtivo] = useState<string | null>(null);
   const [fotosAtuais, setFotosAtuais] = useState<any[]>([]);
+  const [nomeCliente, setNomeCliente] = useState(propsNomeCliente || 'Carregando...');
+
+  useEffect(() => {
+    async function carregarDadosCliente() {
+      if (!clienteId || propsNomeCliente) return;
+      
+      const { data } = await supabase
+        .from('clientes')
+        .select('nome')
+        .eq('id', clienteId)
+        .single();
+        
+      if (data) setNomeCliente(data.nome);
+    }
+    carregarDadosCliente();
+  }, [clienteId, propsNomeCliente]);
+
+  if (!clienteId) return <div className="p-6">Cliente não encontrado.</div>;
 
   if (!tenant || tenant.segmento !== 'estetica') {
     return null;
@@ -157,3 +179,4 @@ export const FichaEstetica: React.FC<FichaEsteticaProps> = ({ clienteId, nomeCli
     </div>
   );
 };
+export default FichaEstetica;
