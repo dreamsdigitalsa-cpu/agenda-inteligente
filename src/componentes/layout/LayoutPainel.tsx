@@ -11,7 +11,14 @@ function BannerImpersonacao() {
   const raw = sessionStorage.getItem('impersonando')
   if (!raw) return null
 
-  const { tenantNome } = JSON.parse(raw) as { tenantNome: string }
+  let tenantNome = ''
+  try {
+    const data = JSON.parse(raw)
+    tenantNome = data.tenantNome
+  } catch (e) {
+    console.error('Erro ao ler dados de impersonação:', e)
+    return null
+  }
 
   async function sairImpersonacao() {
     const savedRaw = sessionStorage.getItem('super_admin_session')
@@ -19,8 +26,12 @@ function BannerImpersonacao() {
     sessionStorage.removeItem('super_admin_session')
 
     if (savedRaw) {
-      const { access_token, refresh_token } = JSON.parse(savedRaw)
-      await supabase.auth.setSession({ access_token, refresh_token })
+      try {
+        const { access_token, refresh_token } = JSON.parse(savedRaw)
+        await supabase.auth.setSession({ access_token, refresh_token })
+      } catch (e) {
+        await supabase.auth.signOut()
+      }
     } else {
       await supabase.auth.signOut()
     }
