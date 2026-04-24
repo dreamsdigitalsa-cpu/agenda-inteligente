@@ -37,6 +37,9 @@ import PaginaConfiguracoesNotificacoes from "@/app/(painel)/configuracoes/notifi
 import PaginaConfiguracaoLigacaoIA from "@/app/(painel)/configuracoes/ligacao-ia/page"
 import PaginaAssinatura from "@/app/(painel)/assinatura/page"
 import PaginaOnboarding from "@/app/(painel)/onboarding/page"
+import PaginaFila from "@/app/(painel)/fila/page"
+import PaginaFilaTV from "@/app/(painel)/fila/tv/page"
+
 
 // Super admin
 import PaginaDashboardSuperAdmin from "@/app/(super-admin)/dashboard/page"
@@ -93,6 +96,9 @@ const App = () => (
               <Route path="configuracoes/notificacoes" element={<PaginaConfiguracoesNotificacoes />} />
               <Route path="configuracoes/ligacao-ia" element={<PaginaConfiguracaoLigacaoIA />} />
               <Route path="assinatura" element={<PaginaAssinatura />} />
+              <Route path="fila" element={<PaginaFila />} />
+              <Route path="fila/tv" element={<PaginaFilaTV />} />
+
             </Route>
           </Route>
 

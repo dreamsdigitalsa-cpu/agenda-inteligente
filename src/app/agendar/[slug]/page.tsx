@@ -45,7 +45,10 @@ async function chamar(params: Record<string, string>, init?: RequestInit) {
 const PaginaAgendamentoOnline = () => {
   const { slug = '' } = useParams<{ slug: string }>()
   const [passo, setPasso] = useState<1 | 2 | 3 | 4 | 5>(1)
-  const [tenant, setTenant] = useState<Tenant | null>(null)
+  const [tenant, setTenant] = useState<(Tenant & { segmento: string }) | null>(null)
+  const [modo, setModo] = useState<'agendamento' | 'fila'>('agendamento')
+  const [posicaoFila, setPosicaoFila] = useState<number | null>(null)
+
   const [config, setConfig] = useState<Configuracao | null>(null)
   const [servicos, setServicos] = useState<Servico[]>([])
   const [profissionais, setProfissionais] = useState<Profissional[]>([])
@@ -106,7 +109,32 @@ const PaginaAgendamentoOnline = () => {
     return lista
   }, [])
 
+  const entrarNaFila = async () => {
+    const parsed = clienteSchema.safeParse({ nome, telefone })
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message)
+      return
+    }
+    setEnviando(true)
+    const r = await chamar({ acao: 'entrar-na-fila', slug }, {
+      method: 'POST',
+      body: JSON.stringify({
+        nome, telefone,
+        servico_id: servico?.id || null,
+        profissional_id: profissional && profissional !== 'qualquer' ? profissional.id : null,
+      }),
+    })
+    setEnviando(false)
+    if (r.erro) {
+      toast.error('Não foi possível entrar na fila')
+      return
+    }
+    setPosicaoFila(r.posicao)
+    setPasso(5)
+  }
+
   const submeter = async () => {
+
     const parsed = clienteSchema.safeParse({ nome, telefone, email })
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message)
@@ -168,8 +196,29 @@ const PaginaAgendamentoOnline = () => {
           ))}
         </div>
 
+        {/* Opções Iniciais (Barbearia) */}
+        {passo === 1 && tenant?.segmento === 'barbearia' && (
+          <div className="flex gap-2 mb-4">
+            <Button 
+              variant={modo === 'agendamento' ? 'default' : 'outline'} 
+              className="flex-1"
+              onClick={() => setModo('agendamento')}
+            >
+              Agendar Horário
+            </Button>
+            <Button 
+              variant={modo === 'fila' ? 'default' : 'outline'} 
+              className="flex-1"
+              onClick={() => setModo('fila')}
+            >
+              Entrar na Fila (Hoje)
+            </Button>
+          </div>
+        )}
+
         {/* PASSO 1 — Serviço */}
         {passo === 1 && (
+
           <div className="grid gap-3 sm:grid-cols-2">
             {servicos.map((s) => (
               <Card
@@ -275,22 +324,34 @@ const PaginaAgendamentoOnline = () => {
               <Label htmlFor="tel">Telefone (WhatsApp) *</Label>
               <Input id="tel" maxLength={30} value={telefone} onChange={(e) => setTelefone(e.target.value)} />
             </div>
-            <div>
-              <Label htmlFor="email">E-mail (opcional)</Label>
-              <Input id="email" type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <label className="flex items-center gap-2 text-sm">
-              <Checkbox checked={aceitaLembretes} onCheckedChange={(v) => setAceitaLembretes(!!v)} />
-              Aceito receber lembretes via WhatsApp
-            </label>
-            <Button className="w-full" onClick={submeter} disabled={enviando}>
-              {enviando ? 'Confirmando…' : 'Confirmar agendamento'}
-            </Button>
+            {modo === 'agendamento' && (
+              <>
+                <div>
+                  <Label htmlFor="email">E-mail (opcional)</Label>
+                  <Input id="email" type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <Checkbox checked={aceitaLembretes} onCheckedChange={(v) => setAceitaLembretes(!!v)} />
+                  Aceito receber lembretes via WhatsApp
+                </label>
+              </>
+            )}
+            
+            {modo === 'agendamento' ? (
+              <Button className="w-full" onClick={submeter} disabled={enviando}>
+                {enviando ? 'Confirmando…' : 'Confirmar agendamento'}
+              </Button>
+            ) : (
+              <Button className="w-full" onClick={entrarNaFila} disabled={enviando}>
+                {enviando ? 'Enviando…' : 'Entrar na Fila Agora'}
+              </Button>
+            )}
           </div>
         )}
 
+
         {/* PASSO 5 — Confirmação */}
-        {passo === 5 && resultado && servico && (
+        {passo === 5 && modo === 'agendamento' && resultado && servico && (
           <div className="space-y-4 text-center">
             <div className="text-4xl">{resultado.confirmacaoManual ? '⏳' : '✅'}</div>
             <h2 className="text-xl font-semibold">
@@ -321,6 +382,27 @@ const PaginaAgendamentoOnline = () => {
             </a>
           </div>
         )}
+
+        {passo === 5 && modo === 'fila' && posicaoFila !== null && (
+          <div className="space-y-4 text-center">
+            <div className="text-6xl">🙌</div>
+            <h2 className="text-2xl font-bold">Você está na fila!</h2>
+            <div className="bg-primary/10 border-2 border-primary rounded-2xl p-8 max-w-xs mx-auto">
+              <p className="text-sm text-primary font-bold uppercase tracking-widest mb-2">Sua Posição</p>
+              <div className="text-7xl font-black text-primary">{posicaoFila}º</div>
+            </div>
+            <Card className="mx-auto max-w-sm p-4 text-left text-sm">
+              <Linha r="Cliente" v={nome} />
+              {servico && <Linha r="Serviço" v={servico.nome} />}
+              <Linha r="Status" v="Aguardando" />
+            </Card>
+            <div className="p-4 bg-zinc-100 rounded-lg text-sm text-zinc-600">
+              <p>Fique atento ao seu WhatsApp.</p>
+              <p>Enviaremos um alerta quando faltarem 2 pessoas à sua frente.</p>
+            </div>
+          </div>
+        )}
+
 
         {/* Voltar */}
         {passo > 1 && passo < 5 && (
