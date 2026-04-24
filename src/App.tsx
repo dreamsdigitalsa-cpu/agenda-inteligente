@@ -40,6 +40,11 @@ import PaginaOnboarding from "@/app/(painel)/onboarding/page"
 import PaginaFila from "@/app/(painel)/fila/page"
 import PaginaFilaTV from "@/app/(painel)/fila/tv/page"
 
+// Tatuagem
+import PaginaTattooOrcamentos from "@/app/(painel)/tatuagem/orcamentos/page"
+import PaginaTattooPortfolio from "@/app/(painel)/tatuagem/portfolio/page"
+import PaginaPublicPortfolio from "@/app/portfolio/[slug]/page"
+
 
 // Super admin
 import PaginaDashboardSuperAdmin from "@/app/(super-admin)/dashboard/page"
@@ -98,9 +103,15 @@ const App = () => (
               <Route path="assinatura" element={<PaginaAssinatura />} />
               <Route path="fila" element={<PaginaFila />} />
               <Route path="fila/tv" element={<PaginaFilaTV />} />
-
+              
+              {/* Tatuagem */}
+              <Route path="tatuagem/orcamentos" element={<PaginaTattooOrcamentos />} />
+              <Route path="tatuagem/portfolio" element={<PaginaTattooPortfolio />} />
             </Route>
           </Route>
+
+          {/* Portfólio Público */}
+          <Route path="/portfolio/:slug" element={<PaginaPublicPortfolio />} />
 
           {/* Super admin (protegido) */}
           <Route element={<RotaSuperAdmin />}>

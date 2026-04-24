@@ -255,17 +255,32 @@ const PaginaAgendamentoOnline = () => {
               <Card
                 key={p.id}
                 onClick={() => { setProfissional(p); setPasso(3) }}
-                className="flex cursor-pointer items-center gap-3 p-4 hover:border-primary"
+                className="flex cursor-pointer items-center justify-between gap-3 p-4 hover:border-primary"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-sm font-semibold">
-                  {p.nome.charAt(0)}
+                <div className="flex items-center gap-3" onClick={() => { setProfissional(p); setPasso(3) }}>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-sm font-semibold">
+                    {p.nome.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="font-medium">{p.nome}</div>
+                    {p.especialidade && (
+                      <div className="text-xs text-muted-foreground">{p.especialidade}</div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <div className="font-medium">{p.nome}</div>
-                  {p.especialidade && (
-                    <div className="text-xs text-muted-foreground">{p.especialidade}</div>
-                  )}
-                </div>
+                {tenant?.segmento === 'tatuagem' && p.id && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`/portfolio/${(p as any).slug || p.id}`, '_blank');
+                    }}
+                  >
+                    Ver Portfólio
+                  </Button>
+                )}
               </Card>
             ))}
           </div>
