@@ -109,7 +109,32 @@ const PaginaAgendamentoOnline = () => {
     return lista
   }, [])
 
+  const entrarNaFila = async () => {
+    const parsed = clienteSchema.safeParse({ nome, telefone })
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message)
+      return
+    }
+    setEnviando(true)
+    const r = await chamar({ acao: 'entrar-na-fila', slug }, {
+      method: 'POST',
+      body: JSON.stringify({
+        nome, telefone,
+        servico_id: servico?.id || null,
+        profissional_id: profissional && profissional !== 'qualquer' ? profissional.id : null,
+      }),
+    })
+    setEnviando(false)
+    if (r.erro) {
+      toast.error('Não foi possível entrar na fila')
+      return
+    }
+    setPosicaoFila(r.posicao)
+    setPasso(5)
+  }
+
   const submeter = async () => {
+
     const parsed = clienteSchema.safeParse({ nome, telefone, email })
     if (!parsed.success) {
       toast.error(parsed.error.issues[0].message)
