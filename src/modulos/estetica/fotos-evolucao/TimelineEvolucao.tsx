@@ -21,7 +21,7 @@ interface TimelineEvolucaoProps {
 
 /**
  * Timeline visual de evolução do cliente.
- * Lista todas as fotos em ordem cronológica.
+ * Lista todas as fotos em ordem cronológica com URLs assinadas para privacidade.
  */
 export const TimelineEvolucao: React.FC<TimelineEvolucaoProps> = ({ clienteId, protocoloId }) => {
   const [fotos, setFotos] = useState<FotoEvolucao[]>([]);
@@ -43,7 +43,20 @@ export const TimelineEvolucao: React.FC<TimelineEvolucaoProps> = ({ clienteId, p
       const { data, error } = await query;
 
       if (!error && data) {
-        setFotos(data as FotoEvolucao[]);
+        // Gerar URLs assinadas para cada foto para garantir acesso privado
+        const fotosComUrl = await Promise.all(data.map(async (f: any) => {
+          // Tenta extrair o path do bucket da URL salva
+          const urlParts = f.foto_url.split('/');
+          const esteticaIndex = urlParts.indexOf('estetica');
+          const path = esteticaIndex !== -1 ? urlParts.slice(esteticaIndex + 1).join('/').split('?')[0] : f.foto_url;
+          
+          const { data: signedData } = await supabase.storage
+            .from('estetica')
+            .createSignedUrl(path, 3600);
+            
+          return { ...f, foto_url: signedData?.signedUrl || f.foto_url };
+        }));
+        setFotos(fotosComUrl as FotoEvolucao[]);
       }
       setLoading(false);
     };
@@ -79,7 +92,6 @@ export const TimelineEvolucao: React.FC<TimelineEvolucaoProps> = ({ clienteId, p
         <div className="relative border-l-2 border-muted ml-3 space-y-8 pb-8">
           {fotos.map((foto) => (
             <div key={foto.id} className="relative pl-8">
-              {/* Dot */}
               <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-primary border-4 border-background" />
               
               <div className="flex flex-col gap-2">
