@@ -19,6 +19,7 @@ import {
   Star,
   ArrowRight,
   Menu,
+  BadgeCheck,
 } from 'lucide-react'
 import {
   Sheet,
