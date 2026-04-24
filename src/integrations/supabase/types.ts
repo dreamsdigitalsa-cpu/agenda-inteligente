@@ -558,6 +558,7 @@ export type Database = {
           especialidade: string | null
           id: string
           nome: string
+          slug: string | null
           telefone: string | null
           tenant_id: string
         }
@@ -568,6 +569,7 @@ export type Database = {
           especialidade?: string | null
           id?: string
           nome: string
+          slug?: string | null
           telefone?: string | null
           tenant_id: string
         }
@@ -578,6 +580,7 @@ export type Database = {
           especialidade?: string | null
           id?: string
           nome?: string
+          slug?: string | null
           telefone?: string | null
           tenant_id?: string
         }
