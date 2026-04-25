@@ -132,7 +132,6 @@ const FUNCIONALIDADES = [
     texto: 'Controle de caixa, comissões de profissionais e pagamentos em um só lugar.',
     videoUrl: 'https://player.vimeo.com/external/370331493.sd.mp4?s=34017367f08b291d293818e3c457d97e8851493b&profile_id=164&oauth2_token_id=57447761'
   },
-
   { 
     Icone: BarChart3, 
     titulo: 'Relatórios de Performance', 
