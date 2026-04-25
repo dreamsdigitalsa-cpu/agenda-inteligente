@@ -97,19 +97,19 @@ const COMO_FUNCIONA = [
     passo: '01',
     titulo: 'Cadastre-se Grátis',
     desc: 'Crie sua conta em menos de 1 minuto. Não pedimos cartão de crédito para começar.',
-    imagem: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&q=80&w=400'
+    imagem: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&q=80&w=600'
   },
   {
     passo: '02',
     titulo: 'Personalize seu Link',
     desc: 'Configure seus serviços, horários e profissionais. Você ganha um link exclusivo para clientes.',
-    imagem: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400'
+    imagem: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600'
   },
   {
     passo: '03',
     titulo: 'Voe Alto',
     desc: 'Seus clientes agendam, o sistema avisa no WhatsApp e você foca em atender bem.',
-    imagem: 'https://images.unsplash.com/photo-1600880212340-0234407d1847?auto=format&fit=crop&q=80&w=400'
+    imagem: 'https://images.unsplash.com/photo-1621605815841-2dddbaaaf0b2?auto=format&fit=crop&q=80&w=600'
   }
 ]
 
