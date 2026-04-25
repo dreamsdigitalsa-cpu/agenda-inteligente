@@ -31,34 +31,32 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get('Authorization')
     const body = (await req.json()) as Payload
     
-    let authUserId: string
+    let authUserId: string | null = null
     let email = ''
 
-    // 1) Determina o authUserId
+    // 1) Tenta primeiro via JWT do usuário (sessão ativa).
+    //    Importante: supabase.functions.invoke envia a anon key como Bearer
+    //    quando não há sessão — então um header presente NÃO garante usuário válido.
     if (authHeader?.startsWith('Bearer ')) {
-      // Caminho padrão: via JWT do usuário (sessão ativa)
-      const supaUser = createClient(supabaseUrl, anonKey, {
-        global: { headers: { Authorization: authHeader } },
-      })
       const token = authHeader.replace('Bearer ', '')
-      const { data: userData, error: userErr } = await supaUser.auth.getUser(token)
-      
-      if (userErr || !userData?.user) {
-        return json({ erro: 'token_invalido' }, 401)
+      const { data: userData } = await supaAdmin.auth.getUser(token)
+      if (userData?.user) {
+        authUserId = userData.user.id
+        email = userData.user.email ?? ''
       }
-      authUserId = userData.user.id
-      email = userData.user.email ?? ''
-    } else if (body.authUserId) {
-      // Novo caminho: via authUserId no body (usuário sem sessão/e-mail não confirmado)
-      // Validamos se o usuário realmente existe no Auth para segurança
+    }
+
+    // 2) Fallback: authUserId no body (usuário recém-criado sem sessão por causa da confirmação de e-mail)
+    if (!authUserId && body.authUserId) {
       const { data: userCheck, error: checkErr } = await supaAdmin.auth.admin.getUserById(body.authUserId)
-      
       if (checkErr || !userCheck?.user) {
         return json({ erro: 'usuario_nao_encontrado' }, 400)
       }
       authUserId = userCheck.user.id
       email = userCheck.user.email ?? ''
-    } else {
+    }
+
+    if (!authUserId) {
       return json({ erro: 'nao_autenticado' }, 401)
     }
 
