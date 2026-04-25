@@ -118,37 +118,37 @@ const FUNCIONALIDADES = [
     Icone: Calendar, 
     titulo: 'Agenda Inteligente 24h', 
     texto: 'Seus clientes agendam sozinhos via link, 24 horas por dia, sem precisar te ligar.',
-    videoUrl: 'https://player.vimeo.com/external/494252666.sd.mp4?s=721c17244837330a10996f0187e1488c91d8481b&profile_id=164&oauth2_token_id=57447761'
+    imagem: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=600'
   },
   { 
     Icone: MessageCircle, 
     titulo: 'Lembretes via WhatsApp', 
     texto: 'Reduza faltas em até 40% com lembretes automáticos de confirmação de horário.',
-    videoUrl: 'https://player.vimeo.com/external/403757300.sd.mp4?s=2862e3d7790b542013f9661f43eb93d56a29778e&profile_id=164&oauth2_token_id=57447761'
+    imagem: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'
   },
   { 
     Icone: DollarSign, 
     titulo: 'Financeiro Sem Mistérios', 
     texto: 'Controle de caixa, comissões de profissionais e pagamentos em um só lugar.',
-    videoUrl: 'https://player.vimeo.com/external/370331493.sd.mp4?s=34017367f08b291d293818e3c457d97e8851493b&profile_id=164&oauth2_token_id=57447761'
+    imagem: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=600'
   },
   { 
     Icone: BarChart3, 
     titulo: 'Relatórios de Performance', 
     texto: 'Saiba exatamente quanto você ganha e quais serviços são os mais lucrativos.',
-    videoUrl: 'https://player.vimeo.com/external/371433846.sd.mp4?s=231da903c7343e06a3826079979965d1b700874e&profile_id=164&oauth2_token_id=57447761'
+    imagem: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=600'
   },
   { 
     Icone: Users, 
     titulo: 'Gestão de Equipe', 
     texto: 'Controle permissões e acessos de cada colaborador de forma individual e segura.',
-    videoUrl: 'https://player.vimeo.com/external/363842416.sd.mp4?s=d94602f3a4666d95368a5c363a9efb9a674d8253&profile_id=164&oauth2_token_id=57447761'
+    imagem: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=600'
   },
   { 
     Icone: Smartphone, 
     titulo: 'Tudo no Celular', 
     texto: 'Gerencie seu negócio de onde estiver com nossa interface 100% otimizada para mobile.',
-    videoUrl: 'https://player.vimeo.com/external/340356475.sd.mp4?s=b6a8276f570020d20d36c1c8751515286576b539&profile_id=164&oauth2_token_id=57447761'
+    imagem: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=600'
   },
 
 ] as const
