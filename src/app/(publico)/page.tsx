@@ -619,7 +619,7 @@ const LandingPage = () => {
                 </p>
                 
                 <div className="grid gap-6 sm:grid-cols-2">
-                  {FUNCIONALIDADES.map(({ Icone, titulo, texto, videoUrl }) => (
+                  {FUNCIONALIDADES.map(({ Icone, titulo, texto, imagem }) => (
                     <motion.div 
                       key={titulo} 
                       whileHover={{ scale: 1.02 }}
@@ -632,17 +632,13 @@ const LandingPage = () => {
                         <h3 className="font-bold text-lg leading-tight">{titulo}</h3>
                       </div>
                       
-                      <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-lg border border-white/5">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline 
-                          className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
-                        >
-                          <source src={videoUrl} type="video/mp4" />
-                        </video>
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent" />
+                      <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-100 shadow-lg border border-primary/5">
+                        <img 
+                          src={imagem} 
+                          alt={titulo}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent" />
                       </div>
                       
                       <p className="text-sm text-muted-foreground leading-relaxed">{texto}</p>
