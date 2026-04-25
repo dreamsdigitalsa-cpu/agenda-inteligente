@@ -618,34 +618,32 @@ const LandingPage = () => {
                   Desenvolvemos ferramentas robustas com foco na simplicidade. Você não precisa ser um expert em tecnologia para gerenciar seu negócio como um profissional.
                 </p>
                 
-                <div className="grid gap-8 sm:grid-cols-2">
+                <div className="grid gap-6 sm:grid-cols-2">
                   {FUNCIONALIDADES.map(({ Icone, titulo, texto, videoUrl }) => (
                     <motion.div 
                       key={titulo} 
                       whileHover={{ scale: 1.02 }}
-                      className="flex flex-col gap-4 group p-4 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-primary/5 transition-all"
+                      className="flex flex-col gap-4 group p-5 rounded-2xl border border-primary/10 bg-card/50 backdrop-blur-sm hover:border-primary/40 hover:bg-primary/5 transition-all shadow-sm"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background border shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all">
                           <Icone className="h-6 w-6" />
                         </div>
-                        <h3 className="font-bold text-lg">{titulo}</h3>
+                        <h3 className="font-bold text-lg leading-tight">{titulo}</h3>
                       </div>
                       
-                      {videoUrl && (
-                        <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-inner">
-                          <video 
-                            autoPlay 
-                            loop 
-                            muted 
-                            playsInline 
-                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"
-                          >
-                            <source src={videoUrl} type="video/mp4" />
-                          </video>
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
-                        </div>
-                      )}
+                      <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-lg border border-white/5">
+                        <video 
+                          autoPlay 
+                          loop 
+                          muted 
+                          playsInline 
+                          className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                        >
+                          <source src={videoUrl} type="video/mp4" />
+                        </video>
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent" />
+                      </div>
                       
                       <p className="text-sm text-muted-foreground leading-relaxed">{texto}</p>
                     </motion.div>
