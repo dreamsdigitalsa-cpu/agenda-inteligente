@@ -28,6 +28,7 @@ import {
   Instagram,
   Facebook,
   Twitter,
+  MousePointer2,
 } from 'lucide-react'
 import {
   Sheet,
@@ -42,6 +43,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { motion } from "framer-motion"
+
 
 import { BotaoTema } from '@/componentes/tema/BotaoTema'
 
@@ -92,53 +95,62 @@ const COMO_FUNCIONA = [
   {
     passo: '01',
     titulo: 'Cadastre-se Grátis',
-    desc: 'Crie sua conta em menos de 1 minuto. Não pedimos cartão de crédito para começar.'
+    desc: 'Crie sua conta em menos de 1 minuto. Não pedimos cartão de crédito para começar.',
+    imagem: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&q=80&w=400'
   },
   {
     passo: '02',
     titulo: 'Personalize seu Link',
-    desc: 'Configure seus serviços, horários e profissionais. Você ganha um link exclusivo para clientes.'
+    desc: 'Configure seus serviços, horários e profissionais. Você ganha um link exclusivo para clientes.',
+    imagem: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400'
   },
   {
     passo: '03',
     titulo: 'Voe Alto',
-    desc: 'Seus clientes agendam, o sistema avisa no WhatsApp e você foca em atender bem.'
+    desc: 'Seus clientes agendam, o sistema avisa no WhatsApp e você foca em atender bem.',
+    imagem: 'https://images.unsplash.com/photo-1600880212340-0234407d1847?auto=format&fit=crop&q=80&w=400'
   }
 ]
 
 const FUNCIONALIDADES = [
-
-
   { 
     Icone: Calendar, 
     titulo: 'Agenda Inteligente 24h', 
-    texto: 'Seus clientes agendam sozinhos via link, 24 horas por dia, sem precisar te ligar.' 
+    texto: 'Seus clientes agendam sozinhos via link, 24 horas por dia, sem precisar te ligar.',
+    videoUrl: 'https://player.vimeo.com/external/494252666.sd.mp4?s=721c17244837330a10996f0187e1488c91d8481b&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: MessageCircle, 
     titulo: 'Lembretes via WhatsApp', 
-    texto: 'Reduza faltas em até 40% com lembretes automáticos de confirmação de horário.' 
+    texto: 'Reduza faltas em até 40% com lembretes automáticos de confirmação de horário.',
+    videoUrl: 'https://player.vimeo.com/external/403757300.sd.mp4?s=2862e3d7790b542013f9661f43eb93d56a29778e&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: DollarSign, 
     titulo: 'Financeiro Sem Mistérios', 
-    texto: 'Controle de caixa, comissões de profissionais e pagamentos em um só lugar.' 
+    texto: 'Controle de caixa, comissões de profissionais e pagamentos em um só lugar.',
+    videoUrl: 'https://player.vimeo.com/external/370331493.sd.mp4?s=34017367f08b291d293818e3c457d97e8851493b&profile_id=164&oauth2_token_id=57447761'
   },
+
   { 
     Icone: BarChart3, 
     titulo: 'Relatórios de Performance', 
-    texto: 'Saiba exatamente quanto você ganha e quais serviços são os mais lucrativos.' 
+    texto: 'Saiba exatamente quanto você ganha e quais serviços são os mais lucrativos.',
+    videoUrl: 'https://player.vimeo.com/external/371433846.sd.mp4?s=231da903c7343e06a3826079979965d1b700874e&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: Users, 
     titulo: 'Gestão de Equipe', 
-    texto: 'Controle permissões e acessos de cada colaborador de forma individual e segura.' 
+    texto: 'Controle permissões e acessos de cada colaborador de forma individual e segura.',
+    videoUrl: 'https://player.vimeo.com/external/363842416.sd.mp4?s=d94602f3a4666d95368a5c363a9efb9a674d8253&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: Smartphone, 
     titulo: 'Tudo no Celular', 
-    texto: 'Gerencie seu negócio de onde estiver com nossa interface 100% otimizada para mobile.' 
+    texto: 'Gerencie seu negócio de onde estiver com nossa interface 100% otimizada para mobile.',
+    videoUrl: 'https://player.vimeo.com/external/340356475.sd.mp4?s=b6a8276f570020d20d36c1c8751515286576b539&profile_id=164&oauth2_token_id=57447761'
   },
+
 ] as const
 
 const TESTEMUNHOS = [
@@ -260,9 +272,14 @@ const LandingPage = () => {
         <section className="relative overflow-hidden pt-12 pb-16 md:pt-24 md:pb-32">
           <div className="container relative z-10">
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-              <div className="text-left">
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-left"
+              >
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                  <Zap className="h-4 w-4 fill-primary" />
+                  <Zap className="h-4 w-4 fill-primary animate-pulse" />
                   <span>Da correria da rotina ao controle da gestão</span>
                 </div>
                 <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -277,9 +294,9 @@ const LandingPage = () => {
                       Teste Grátis Agora <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg hover:bg-muted" asChild>
+                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg hover:bg-muted relative group overflow-hidden" asChild>
                     <a href="#segmentos" className="flex items-center gap-2">
-                      <Play className="h-4 w-4 fill-current" /> Ver Demos
+                      <Play className="h-4 w-4 fill-current group-hover:scale-125 transition-transform" /> Ver Demos
                     </a>
                   </Button>
                 </div>
@@ -288,13 +305,19 @@ const LandingPage = () => {
                   <ShieldCheck className="h-4 w-4 text-emerald-500" />
                   <span>7 dias grátis • Sem cartão de crédito</span>
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="relative lg:ml-10">
+
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="relative lg:ml-10"
+              >
                 <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-primary/20 to-accent/20 blur-2xl pointer-events-none" />
                 <div className="relative rounded-[2rem] border-8 border-slate-900/10 bg-slate-900/5 p-4 shadow-2xl overflow-hidden backdrop-blur-sm">
                   <div className="relative aspect-[12/16] md:aspect-video overflow-hidden rounded-2xl bg-background border border-border/50">
-                    {/* Mockup do App */}
+                    {/* Mockup do App com animações */}
                     <div className="absolute inset-0 flex flex-col">
                       <div className="flex h-10 items-center gap-2 border-b bg-muted/30 px-4">
                         <div className="flex gap-1.5">
@@ -307,41 +330,69 @@ const LandingPage = () => {
                         <div className="w-12 border-r bg-muted/10 md:w-40">
                           <div className="space-y-3 p-3">
                             {[1, 2, 3, 4, 5].map(i => (
-                              <div key={i} className="h-3 w-full rounded bg-muted/40" />
+                              <motion.div 
+                                key={i} 
+                                initial={{ width: 0 }}
+                                animate={{ width: "100%" }}
+                                transition={{ delay: 1 + (i * 0.1), duration: 0.5 }}
+                                className="h-3 rounded bg-muted/40" 
+                              />
                             ))}
                           </div>
                         </div>
                         <div className="flex-1 p-4 md:p-6">
                           <div className="flex justify-between items-center mb-6">
-                            <div className="h-4 w-32 rounded bg-muted/40" />
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 1.5 }}
+                              className="h-4 w-32 rounded bg-muted/40" 
+                            />
                             <div className="flex gap-2">
-                              <div className="h-8 w-8 rounded bg-primary/10" />
-                              <div className="h-8 w-8 rounded bg-primary/10" />
+                              <div className="h-8 w-8 rounded-full bg-primary/20 animate-pulse" />
+                              <div className="h-8 w-8 rounded-full bg-primary/20 animate-pulse" style={{ animationDelay: '0.2s' }} />
                             </div>
                           </div>
                           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className="h-24 rounded-xl border bg-card p-4 shadow-sm">
+                            <motion.div 
+                              whileHover={{ y: -5 }}
+                              className="h-24 rounded-xl border bg-card p-4 shadow-sm"
+                            >
                               <div className="h-3 w-1/2 rounded bg-muted/40" />
                               <div className="mt-3 h-6 w-3/4 rounded bg-primary/20" />
-                            </div>
-                            <div className="h-24 rounded-xl border bg-card p-4 shadow-sm">
+                            </motion.div>
+                            <motion.div 
+                              whileHover={{ y: -5 }}
+                              className="h-24 rounded-xl border bg-card p-4 shadow-sm"
+                            >
                               <div className="h-3 w-1/2 rounded bg-muted/40" />
                               <div className="mt-3 h-6 w-3/4 rounded bg-emerald-500/20" />
-                            </div>
+                            </motion.div>
                           </div>
-                          <div className="mt-6 h-40 rounded-xl border bg-card p-4 shadow-sm overflow-hidden">
+                          <div className="mt-6 h-40 rounded-xl border bg-card p-4 shadow-sm overflow-hidden relative">
                              <div className="grid grid-cols-7 gap-1.5 opacity-40">
                                {[...Array(28)].map((_, i) => (
                                  <div key={i} className="h-8 rounded bg-muted/20" />
                                ))}
                              </div>
+                             <motion.div 
+                               animate={{ 
+                                 x: [0, 100, 0, -100, 0],
+                                 y: [0, 50, 0, -50, 0]
+                               }}
+                               transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary opacity-40 pointer-events-none"
+                             >
+                               <MousePointer2 className="h-10 w-10 fill-current" />
+                             </motion.div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
+
             </div>
 
             {/* LOGOS TRUST */}
@@ -395,16 +446,32 @@ const LandingPage = () => {
               
               <div className="grid gap-12 md:grid-cols-3 relative z-10">
                 {COMO_FUNCIONA.map((step, i) => (
-                  <div key={i} className="flex flex-col items-center text-center group">
-                    <div className="h-16 w-16 rounded-2xl bg-primary text-white text-2xl font-black flex items-center justify-center mb-6 shadow-elegant group-hover:scale-110 transition-transform">
-                      {step.passo}
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.2 }}
+                    className="flex flex-col items-center text-center group"
+                  >
+                    <div className="relative h-48 w-full mb-8 rounded-2xl overflow-hidden shadow-elegant group-hover:shadow-glow transition-all duration-500">
+                      <img 
+                        src={step.imagem} 
+                        alt={step.titulo}
+                        className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors" />
+                      <div className="absolute top-4 left-4 h-12 w-12 rounded-xl bg-primary text-white text-xl font-black flex items-center justify-center shadow-lg">
+                        {step.passo}
+                      </div>
                     </div>
                     <h3 className="text-xl font-bold mb-3">{step.titulo}</h3>
                     <p className="text-muted-foreground leading-relaxed px-4">{step.desc}</p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
+
           </div>
         </section>
 
@@ -501,18 +568,39 @@ const LandingPage = () => {
                 </p>
                 
                 <div className="grid gap-8 sm:grid-cols-2">
-                  {FUNCIONALIDADES.map(({ Icone, titulo, texto }) => (
-                    <div key={titulo} className="flex gap-4 group">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background border shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                        <Icone className="h-6 w-6" />
-                      </div>
-                      <div>
+                  {FUNCIONALIDADES.map(({ Icone, titulo, texto, videoUrl }) => (
+                    <motion.div 
+                      key={titulo} 
+                      whileHover={{ scale: 1.02 }}
+                      className="flex flex-col gap-4 group p-4 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-primary/5 transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background border shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                          <Icone className="h-6 w-6" />
+                        </div>
                         <h3 className="font-bold text-lg">{titulo}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{texto}</p>
                       </div>
-                    </div>
+                      
+                      {videoUrl && (
+                        <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-inner">
+                          <video 
+                            autoPlay 
+                            loop 
+                            muted 
+                            playsInline 
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                          >
+                            <source src={videoUrl} type="video/mp4" />
+                          </video>
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
+                        </div>
+                      )}
+                      
+                      <p className="text-sm text-muted-foreground leading-relaxed">{texto}</p>
+                    </motion.div>
                   ))}
                 </div>
+
               </div>
             </div>
           </div>
@@ -529,23 +617,31 @@ const LandingPage = () => {
             </p>
             
             <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-              {SEGMENTOS.map(({ slug, nome, descricao, Icone, cor, iconeCor }) => (
-                <Link
+              {SEGMENTOS.map(({ slug, nome, descricao, Icone, cor, iconeCor }, i) => (
+                <motion.div
                   key={slug}
-                  to={`/demo/${slug}`}
-                  className={`group relative flex flex-col items-center text-center rounded-2xl border-2 p-8 transition-all hover:-translate-y-2 hover:shadow-2xl ${cor}`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
                 >
-                  <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:rotate-12 group-hover:scale-110 ${iconeCor}`}>
-                    <Icone className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-xl font-bold">{nome}</h3>
-                  <p className="mt-3 text-sm opacity-70 leading-relaxed">{descricao}</p>
-                  <div className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                    Testar Demo <ArrowRight className="ml-1 h-4 w-4" />
-                  </div>
-                </Link>
+                  <Link
+                    to={`/demo/${slug}`}
+                    className={`group relative flex flex-col h-full items-center text-center rounded-2xl border-2 p-8 transition-all hover:-translate-y-2 hover:shadow-2xl ${cor}`}
+                  >
+                    <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:rotate-12 group-hover:scale-110 ${iconeCor}`}>
+                      <Icone className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold">{nome}</h3>
+                    <p className="mt-3 text-sm opacity-70 leading-relaxed">{descricao}</p>
+                    <div className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                      Testar Demo <ArrowRight className="ml-1 h-4 w-4" />
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
+
           </div>
         </section>
 
