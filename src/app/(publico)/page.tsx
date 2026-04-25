@@ -870,11 +870,8 @@ const LandingPage = () => {
         <div className="container">
           <div className="grid gap-12 md:grid-cols-4 lg:grid-cols-5">
             <div className="md:col-span-2">
-              <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tighter">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Scissors className="h-5 w-5" />
-                </div>
-                <span>Hub<span className="text-primary">Beleza</span></span>
+              <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
+                <Logo className="h-9 w-auto" />
               </Link>
               <p className="mt-6 max-w-sm text-lg text-muted-foreground leading-relaxed">
                 O ecossistema definitivo para gestão de negócios de beleza e bem-estar no Brasil. Modernidade, agilidade e inteligência para você crescer.
