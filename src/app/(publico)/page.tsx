@@ -1,4 +1,4 @@
-// Página pública: landing principal do HubBeleza SaaS.
+// Página pública: landing principal do StudioFlow SaaS.
 // Apresenta hero, segmentos, funcionalidades, planos e footer.
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -48,6 +48,7 @@ import { motion } from "framer-motion"
 
 
 import { BotaoTema } from '@/componentes/tema/BotaoTema'
+import { Logo } from '@/componentes/Logo'
 
 const SEGMENTOS = [
   {
@@ -158,7 +159,7 @@ const TESTEMUNHOS = [
     nome: 'Juliana Silva',
     cargo: 'Dona do Studio J',
     foto: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150',
-    texto: 'Minha vida mudou depois do HubBeleza. Antes eu perdia horas no WhatsApp marcando horários, agora meus clientes fazem tudo sozinhos e eu foco no serviço.',
+    texto: 'Minha vida mudou depois do StudioFlow. Antes eu perdia horas no WhatsApp marcando horários, agora meus clientes fazem tudo sozinhos e eu foco no serviço.',
     estrelas: 5
   },
   {
@@ -180,7 +181,7 @@ const TESTEMUNHOS = [
 const FAQS = [
   {
     pergunta: 'Preciso instalar algum aplicativo?',
-    resposta: 'Não! O HubBeleza é um sistema em nuvem. Você acessa diretamente pelo navegador do seu celular, tablet ou computador, sem ocupar espaço na memória.'
+    resposta: 'Não! O StudioFlow é um sistema em nuvem. Você acessa diretamente pelo navegador do seu celular, tablet ou computador, sem ocupar espaço na memória.'
   },
   {
     pergunta: 'Como funciona o teste grátis?',
@@ -207,11 +208,8 @@ const LandingPage = () => {
 
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md transition-all">
         <nav className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Scissors className="h-5 w-5" />
-            </div>
-            <span>Hub<span className="text-primary">Beleza</span></span>
+          <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
+            <Logo className="h-9 w-auto" />
           </Link>
           <div className="hidden items-center gap-8 md:flex">
             <a href="#funcionalidades" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -286,7 +284,7 @@ const LandingPage = () => {
                   Seu negócio de beleza <span className="text-primary italic">organizado</span> e mais <span className="text-primary">lucrativo</span>
                 </h1>
                 <p className="mt-6 text-lg text-muted-foreground md:text-xl max-w-xl leading-relaxed">
-                  Dê adeus às complicações na agenda e finanças. Com o HubBeleza, sua gestão acontece num piscar de olhos. Experimente a liberdade de focar no que você ama.
+                  Dê adeus às complicações na agenda e finanças. Com o StudioFlow, sua gestão acontece num piscar de olhos. Experimente a liberdade de focar no que você ama.
                 </p>
                 <div className="mt-10 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                   <Button size="lg" className="h-14 px-10 text-lg font-bold shadow-elegant hover:scale-105 transition-all" asChild>
@@ -474,7 +472,7 @@ const LandingPage = () => {
         <section className="py-24 overflow-hidden">
           <div className="container">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Como funciona o <span className="text-primary italic">HubBeleza</span>?</h2>
+              <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Como funciona o <span className="text-primary italic">StudioFlow</span>?</h2>
               <p className="mt-4 text-lg text-muted-foreground">O caminho mais rápido para profissionalizar sua gestão.</p>
             </div>
             
@@ -580,7 +578,7 @@ const LandingPage = () => {
                       <div className="flex items-center justify-between mb-8">
                         <div>
                           <h4 className="text-xl font-bold text-white">Resumo em Tempo Real</h4>
-                          <p className="text-sm text-slate-400">Dados consolidados do seu HubBeleza</p>
+                          <p className="text-sm text-slate-400">Dados consolidados do seu StudioFlow</p>
                         </div>
                         <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-3 py-1 rounded-full">+18% vs mês ant.</span>
                       </div>
@@ -658,7 +656,7 @@ const LandingPage = () => {
               Feito para o seu <span className="text-primary italic">estilo de negócio</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground text-lg">
-              Escolha seu segmento e veja como o HubBeleza se adapta perfeitamente à sua realidade.
+              Escolha seu segmento e veja como o StudioFlow se adapta perfeitamente à sua realidade.
             </p>
             
             <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -845,7 +843,7 @@ const LandingPage = () => {
                 Pronto para levar seu negócio ao <span className="text-primary italic">próximo nível</span>?
               </h2>
               <p className="mx-auto mt-8 max-w-2xl text-xl text-slate-300 leading-relaxed">
-                Junte-se a mais de 10.000 profissionais que já transformaram seu dia a dia com o HubBeleza. Modernidade, controle e lucro garantidos.
+                Junte-se a mais de 10.000 profissionais que já transformaram seu dia a dia com o StudioFlow. Modernidade, controle e lucro garantidos.
               </p>
               <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
                 <Button size="lg" className="h-16 px-10 text-xl font-black bg-white text-slate-900 hover:bg-slate-200 transition-all shadow-xl" asChild>
@@ -872,11 +870,8 @@ const LandingPage = () => {
         <div className="container">
           <div className="grid gap-12 md:grid-cols-4 lg:grid-cols-5">
             <div className="md:col-span-2">
-              <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tighter">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Scissors className="h-5 w-5" />
-                </div>
-                <span>Hub<span className="text-primary">Beleza</span></span>
+              <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
+                <Logo className="h-9 w-auto" />
               </Link>
               <p className="mt-6 max-w-sm text-lg text-muted-foreground leading-relaxed">
                 O ecossistema definitivo para gestão de negócios de beleza e bem-estar no Brasil. Modernidade, agilidade e inteligência para você crescer.
@@ -927,7 +922,7 @@ const LandingPage = () => {
           </div>
           
           <div className="mt-20 pt-8 border-t flex flex-col items-center justify-between gap-6 md:flex-row text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} HubBeleza. Todos os direitos reservados. Feito com ❤️ no Brasil.</p>
+            <p>© {new Date().getFullYear()} StudioFlow. Todos os direitos reservados. Feito com ❤️ no Brasil.</p>
             <div className="flex items-center gap-8">
               <span>Tecnologia de ponta</span>
               <span>Segurança garantida</span>

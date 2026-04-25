@@ -380,7 +380,7 @@ const PaginaIntegracoes = () => {
             />
             <div className="grid grid-cols-2 gap-3">
               <Campo id="email_from" label="E-mail remetente" value={emailFromEmail} onChange={setEmailFromEmail} placeholder="noreply@suaempresa.com" />
-              <Campo id="email_from_name" label="Nome remetente" value={emailFromName} onChange={setEmailFromName} placeholder="HubBeleza" />
+              <Campo id="email_from_name" label="Nome remetente" value={emailFromName} onChange={setEmailFromName} placeholder="StudioFlow" />
             </div>
           </div>
           <Button
