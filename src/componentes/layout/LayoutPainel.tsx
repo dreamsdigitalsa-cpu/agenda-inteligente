@@ -69,12 +69,7 @@ export const LayoutPainel = () => {
         {/* Cabeçalho mobile com gatilho da sidebar */}
         <div className="flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
-              <Sparkles className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="text-base font-bold tracking-tight">
-              Beleza<span className="text-primary">F3</span>
-            </span>
+            <Logo className="h-7 w-auto" />
           </div>
           <Sheet>
             <SheetTrigger asChild>

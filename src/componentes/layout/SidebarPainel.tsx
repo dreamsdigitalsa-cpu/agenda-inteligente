@@ -170,17 +170,10 @@ export function SidebarPainel() {
     <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:flex">
       {/* Marca */}
       <div className="flex items-center gap-2.5 px-6 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-primary shadow-glow">
-          <Sparkles className="h-4.5 w-4.5 text-primary-foreground" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-base font-bold tracking-tight text-foreground">
-            Beleza<span className="text-primary">F3</span>
-          </span>
-          <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-            Painel
-          </span>
-        </div>
+        <Logo className="h-8 w-auto" />
+        <span className="ml-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+          Painel
+        </span>
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
