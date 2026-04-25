@@ -171,7 +171,7 @@ export function SidebarPainel() {
     <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:flex">
       {/* Marca */}
       <div className="flex items-center gap-2.5 px-6 py-5">
-        <Logo className="h-8 w-auto" />
+        <Logo className="h-10 w-auto" />
         <span className="ml-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
           Painel
         </span>
