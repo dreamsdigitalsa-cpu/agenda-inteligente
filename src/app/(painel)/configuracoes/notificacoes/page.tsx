@@ -76,7 +76,7 @@ const VARS_PREVIEW: Record<string, string> = {
   hora:            '14:00',
   data:            '25/04',
   profissional:    'Ana Oliveira',
-  estabelecimento: 'HubBeleza',
+  estabelecimento: 'StudioFlow',
 }
 
 const TEMPLATES_PREVIEW: Record<string, string> = {
@@ -239,7 +239,7 @@ const PaginaConfiguracoesNotificacoes = () => {
       body: {
         tenant_id: tenant.id,
         telefone:  '5500000000000',  // número fictício para validar apenas a conexão
-        mensagem:  '✅ Teste de conexão HubBeleza — tudo certo!',
+        mensagem:  '✅ Teste de conexão StudioFlow — tudo certo!',
         tipo:      'teste',
       },
     })
