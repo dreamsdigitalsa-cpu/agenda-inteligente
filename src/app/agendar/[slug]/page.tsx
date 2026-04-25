@@ -13,7 +13,9 @@ import { toast } from 'sonner'
 
 // URL pública da Edge Function
 const FN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/agendamento-publico`
-const ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+// Aceita ambos os nomes de variável (publishable é o padrão atual; anon é legado).
+const ANON = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+  import.meta.env.VITE_SUPABASE_ANON_KEY) as string
 
 // Schema de validação dos dados do cliente (passo 4)
 const clienteSchema = z.object({
