@@ -82,7 +82,7 @@ const Cadastro = () => {
 
   const submeter = async ({ nome, email, senha, nomeEstabelecimento, segmento }: CadastroForm) => {
     // 1) Cria usuário no Auth
-    const { error: errSignUp } = await supabase.auth.signUp({
+    const { data: signUpData, error: errSignUp } = await supabase.auth.signUp({
       email,
       password: senha,
       options: {
@@ -99,13 +99,15 @@ const Cadastro = () => {
       return
     }
 
-    // 2) Tenta obter o ID do usuário (mesmo sem sessão ativa se o e-mail confirmation estiver ligado)
-    const { data: { user }, } = await supabase.auth.getUser()
-    const userId = user?.id
+    // 2) ID do usuário direto da resposta do signUp (funciona mesmo sem sessão ativa)
+    const userId = signUpData.user?.id
+    if (!userId) {
+      toast.error('Falha ao obter dados do usuário recém-criado.')
+      return
+    }
 
-    // 3) Cria tenant + unidade + role
-    // Passamos authUserId no body para a Edge Function poder configurar o tenant 
-    // mesmo se o usuário ainda não confirmou o e-mail (sem sessão ativa).
+    // 3) Cria tenant + unidade + role via Edge Function.
+    // authUserId no body permite à function configurar o tenant mesmo sem sessão.
     const { error: errFn } = await supabase.functions.invoke('criar-tenant', {
       body: { 
         nomeEstabelecimento, 
