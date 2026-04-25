@@ -560,41 +560,54 @@ const LandingPage = () => {
         <section id="funcionalidades" className="py-24 relative overflow-hidden">
           <div className="container">
             <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
-              <div className="relative order-2 lg:order-1">
+              <div className="relative order-2 lg:order-1 h-[600px]">
                 <div className="absolute -inset-4 bg-primary/5 rounded-[2rem] blur-2xl -z-10" />
-                <div className="relative rounded-2xl border bg-card p-2 shadow-2xl">
-                   <div className="overflow-hidden rounded-xl border bg-background">
-                      <div className="p-8">
-                        <div className="flex items-center justify-between mb-8">
-                          <div>
-                            <h4 className="text-xl font-bold">Resumo Mensal</h4>
-                            <p className="text-sm text-muted-foreground">Studio Beleza F3</p>
-                          </div>
-                          <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full">+18% vs mês ant.</span>
+                <div className="relative h-full rounded-2xl border bg-slate-950 overflow-hidden shadow-2xl">
+                  {/* Vídeo de fundo para o "quadrado escuro" */}
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline 
+                    className="absolute inset-0 w-full h-full object-cover opacity-40"
+                  >
+                    <source src="https://player.vimeo.com/external/370331493.sd.mp4?s=34017367f08b291d293818e3c457d97e8851493b&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-950/80 to-transparent" />
+                  
+                  {/* Conteúdo sobreposto ao vídeo */}
+                  <div className="relative h-full p-8 flex flex-col justify-end">
+                    <div className="bg-background/10 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl mb-8">
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h4 className="text-xl font-bold text-white">Resumo em Tempo Real</h4>
+                          <p className="text-sm text-slate-400">Dados consolidados do seu HubBeleza</p>
                         </div>
-                        <div className="space-y-6">
-                           {[
-                             { nome: 'Corte & Escova', valor: 'R$ 4.850', icon: Scissors, color: 'bg-rose-500' },
-                             { nome: 'Coloração', valor: 'R$ 3.200', icon: Sparkles, color: 'bg-primary' },
-                             { nome: 'Manicure', valor: 'R$ 1.950', icon: Brush, color: 'bg-orange-500' },
-                           ].map((item, i) => (
-                             <div key={i} className="flex items-center gap-4">
-                                <div className={`h-12 w-12 rounded-xl flex items-center justify-center text-white ${item.color} shadow-lg`}>
-                                  <item.icon className="h-6 w-6" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="text-sm font-bold">{item.nome}</div>
-                                  <div className="h-2 w-full rounded-full bg-muted mt-2 overflow-hidden">
-                                    <div className="h-full bg-current opacity-20" style={{ width: `${80 - i*20}%` }} />
-                                  </div>
-                                </div>
-                                <div className="font-black">{item.valor}</div>
-                             </div>
-                           ))}
-                        </div>
-                        <Button className="w-full mt-8" variant="outline">Ver Relatórios Completos</Button>
+                        <span className="text-xs font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-3 py-1 rounded-full">+18% vs mês ant.</span>
                       </div>
-                   </div>
+                      <div className="space-y-6">
+                         {[
+                           { nome: 'Corte & Escova', valor: 'R$ 4.850', icon: Scissors, color: 'bg-rose-500' },
+                           { nome: 'Coloração', valor: 'R$ 3.200', icon: Sparkles, color: 'bg-primary' },
+                           { nome: 'Manicure', valor: 'R$ 1.950', icon: Brush, color: 'bg-orange-500' },
+                         ].map((item, i) => (
+                           <div key={i} className="flex items-center gap-4 text-white">
+                              <div className={`h-12 w-12 rounded-xl flex items-center justify-center text-white ${item.color} shadow-lg`}>
+                                <item.icon className="h-6 w-6" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-sm font-bold">{item.nome}</div>
+                                <div className="h-2 w-full rounded-full bg-white/10 mt-2 overflow-hidden">
+                                  <div className="h-full bg-white/40" style={{ width: `${80 - i*20}%` }} />
+                                </div>
+                              </div>
+                              <div className="font-black">{item.valor}</div>
+                           </div>
+                         ))}
+                      </div>
+                      <Button className="w-full mt-8 bg-white text-slate-950 hover:bg-slate-200 border-none">Acessar Painel de Controle</Button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
