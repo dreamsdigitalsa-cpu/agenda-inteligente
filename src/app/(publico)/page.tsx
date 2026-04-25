@@ -29,6 +29,7 @@ import {
   Facebook,
   Twitter,
   MousePointer2,
+  TrendingUp,
 } from 'lucide-react'
 import {
   Sheet,
