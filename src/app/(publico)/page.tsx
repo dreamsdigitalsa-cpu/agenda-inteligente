@@ -525,18 +525,39 @@ const LandingPage = () => {
                 </p>
                 
                 <div className="grid gap-8 sm:grid-cols-2">
-                  {FUNCIONALIDADES.map(({ Icone, titulo, texto }) => (
-                    <div key={titulo} className="flex gap-4 group">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background border shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                        <Icone className="h-6 w-6" />
-                      </div>
-                      <div>
+                  {FUNCIONALIDADES.map(({ Icone, titulo, texto, videoUrl }) => (
+                    <motion.div 
+                      key={titulo} 
+                      whileHover={{ scale: 1.02 }}
+                      className="flex flex-col gap-4 group p-4 rounded-2xl border border-transparent hover:border-primary/20 hover:bg-primary/5 transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background border shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                          <Icone className="h-6 w-6" />
+                        </div>
                         <h3 className="font-bold text-lg">{titulo}</h3>
-                        <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{texto}</p>
                       </div>
-                    </div>
+                      
+                      {videoUrl && (
+                        <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900 shadow-inner">
+                          <video 
+                            autoPlay 
+                            loop 
+                            muted 
+                            playsInline 
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                          >
+                            <source src={videoUrl} type="video/mp4" />
+                          </video>
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
+                        </div>
+                      )}
+                      
+                      <p className="text-sm text-muted-foreground leading-relaxed">{texto}</p>
+                    </motion.div>
                   ))}
                 </div>
+
               </div>
             </div>
           </div>
