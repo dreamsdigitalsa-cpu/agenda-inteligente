@@ -403,16 +403,32 @@ const LandingPage = () => {
               
               <div className="grid gap-12 md:grid-cols-3 relative z-10">
                 {COMO_FUNCIONA.map((step, i) => (
-                  <div key={i} className="flex flex-col items-center text-center group">
-                    <div className="h-16 w-16 rounded-2xl bg-primary text-white text-2xl font-black flex items-center justify-center mb-6 shadow-elegant group-hover:scale-110 transition-transform">
-                      {step.passo}
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.2 }}
+                    className="flex flex-col items-center text-center group"
+                  >
+                    <div className="relative h-48 w-full mb-8 rounded-2xl overflow-hidden shadow-elegant group-hover:shadow-glow transition-all duration-500">
+                      <img 
+                        src={step.imagem} 
+                        alt={step.titulo}
+                        className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-colors" />
+                      <div className="absolute top-4 left-4 h-12 w-12 rounded-xl bg-primary text-white text-xl font-black flex items-center justify-center shadow-lg">
+                        {step.passo}
+                      </div>
                     </div>
                     <h3 className="text-xl font-bold mb-3">{step.titulo}</h3>
                     <p className="text-muted-foreground leading-relaxed px-4">{step.desc}</p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
+
           </div>
         </section>
 
