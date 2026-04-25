@@ -46,7 +46,46 @@ import {
 import { BotaoTema } from '@/componentes/tema/BotaoTema'
 
 const SEGMENTOS = [
-...
+  {
+    slug: 'salao',
+    nome: 'Salão de Beleza',
+    descricao: 'Gestão completa de serviços, profissionais e estoque.',
+    Icone: Scissors,
+    cor: 'bg-rose-50 text-rose-700 border-rose-100 hover:bg-rose-100 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-900',
+    iconeCor: 'bg-rose-500 text-white',
+  },
+  {
+    slug: 'barbearia',
+    nome: 'Barbearia',
+    descricao: 'Agendamentos rápidos e controle de comissões por cadeira.',
+    Icone: Sparkles,
+    cor: 'bg-slate-50 text-slate-800 border-slate-100 hover:bg-slate-100 dark:bg-slate-900/40 dark:text-slate-200 dark:border-slate-800',
+    iconeCor: 'bg-slate-800 text-white',
+  },
+  {
+    slug: 'estetica',
+    nome: 'Estética',
+    descricao: 'Fichas de anamnese digitais e evolução de tratamentos.',
+    Icone: Leaf,
+    cor: 'bg-emerald-50 text-emerald-700 border-emerald-100 hover:bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900',
+    iconeCor: 'bg-emerald-600 text-white',
+  },
+  {
+    slug: 'tatuagem',
+    nome: 'Tatuagem',
+    descricao: 'Gestão de sessões, orçamentos e galeria de trabalhos.',
+    Icone: Palette,
+    cor: 'bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-900',
+    iconeCor: 'bg-purple-600 text-white',
+  },
+  {
+    slug: 'manicure',
+    nome: 'Manicure',
+    descricao: 'Controle de materiais e fidelização de clientes recorrentes.',
+    Icone: Brush,
+    cor: 'bg-orange-50 text-orange-700 border-orange-100 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900',
+    iconeCor: 'bg-orange-500 text-white',
+  },
 ] as const
 
 const COMO_FUNCIONA = [
@@ -68,6 +107,7 @@ const COMO_FUNCIONA = [
 ]
 
 const FUNCIONALIDADES = [
+
 
   { 
     Icone: Calendar, 
