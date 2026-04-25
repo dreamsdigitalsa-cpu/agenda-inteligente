@@ -315,77 +315,115 @@ const LandingPage = () => {
                 className="relative lg:ml-10"
               >
                 <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-primary/20 to-accent/20 blur-2xl pointer-events-none" />
-                <div className="relative rounded-[2rem] border-8 border-slate-900/10 bg-slate-900/5 p-4 shadow-2xl overflow-hidden backdrop-blur-sm">
-                  <div className="relative aspect-[12/16] md:aspect-video overflow-hidden rounded-2xl bg-background border border-border/50">
-                    {/* Mockup do App com animações */}
-                    <div className="absolute inset-0 flex flex-col">
-                      <div className="flex h-10 items-center gap-2 border-b bg-muted/30 px-4">
+                
+                {/* Elementos flutuantes para dar vida */}
+                <motion.div 
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -left-12 top-20 z-20 hidden md:block"
+                >
+                  <Card className="w-48 shadow-2xl border-primary/20 backdrop-blur-md bg-background/80">
+                    <CardContent className="p-3 flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                        <BadgeCheck className="h-6 w-6 text-emerald-500" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase">Novo Agendamento</p>
+                        <p className="text-sm font-bold">Corte + Barba</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                <motion.div 
+                  animate={{ y: [0, 10, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                  className="absolute -right-8 bottom-20 z-20 hidden md:block"
+                >
+                  <Card className="w-56 shadow-2xl border-accent/20 backdrop-blur-md bg-background/80">
+                    <CardContent className="p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-[10px] text-muted-foreground font-medium">FATURAMENTO HOJE</p>
+                        <TrendingUp className="h-3 w-3 text-emerald-500" />
+                      </div>
+                      <p className="text-2xl font-black text-primary">R$ 1.280,00</p>
+                      <div className="mt-2 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="h-full w-[85%] bg-primary" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                <div className="relative rounded-[2rem] border-8 border-slate-900/10 bg-slate-900/5 p-2 shadow-2xl overflow-hidden backdrop-blur-sm">
+                  <div className="relative aspect-[4/5] md:aspect-video overflow-hidden rounded-2xl bg-background border border-border/50">
+                    {/* Vídeo de fundo - Barbearia/Salão */}
+                    <video 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      className="absolute inset-0 h-full w-full object-cover opacity-60 dark:opacity-40"
+                    >
+                      <source src="https://player.vimeo.com/external/449174244.sd.mp4?s=3304a08bc7417e433f4a3a61f52d5045f2f47385&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+                    </video>
+
+                    {/* Overlay do App */}
+                    <div className="absolute inset-0 flex flex-col bg-gradient-to-t from-background via-background/20 to-transparent">
+                      <div className="flex h-10 items-center gap-2 border-b bg-background/40 backdrop-blur-sm px-4">
                         <div className="flex gap-1.5">
                           <div className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                           <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
                           <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                         </div>
+                        <div className="ml-4 h-4 w-32 rounded-full bg-muted/40" />
                       </div>
-                      <div className="flex flex-1 overflow-hidden">
-                        <div className="w-12 border-r bg-muted/10 md:w-40">
-                          <div className="space-y-3 p-3">
-                            {[1, 2, 3, 4, 5].map(i => (
-                              <motion.div 
-                                key={i} 
-                                initial={{ width: 0 }}
-                                animate={{ width: "100%" }}
-                                transition={{ delay: 1 + (i * 0.1), duration: 0.5 }}
-                                className="h-3 rounded bg-muted/40" 
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="flex-1 p-4 md:p-6">
-                          <div className="flex justify-between items-center mb-6">
-                            <motion.div 
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 1.5 }}
-                              className="h-4 w-32 rounded bg-muted/40" 
-                            />
-                            <div className="flex gap-2">
-                              <div className="h-8 w-8 rounded-full bg-primary/20 animate-pulse" />
-                              <div className="h-8 w-8 rounded-full bg-primary/20 animate-pulse" style={{ animationDelay: '0.2s' }} />
+                      
+                      <div className="flex-1 p-6 flex flex-col justify-end md:justify-center">
+                        <div className="max-w-xs space-y-4">
+                          <motion.div 
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="bg-white/90 dark:bg-slate-900/90 p-4 rounded-xl shadow-lg border border-white/20 backdrop-blur-md"
+                          >
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                JD
+                              </div>
+                              <div>
+                                <h4 className="text-sm font-bold">João das Dores</h4>
+                                <p className="text-[10px] text-muted-foreground">Barbeiro Senior</p>
+                              </div>
                             </div>
-                          </div>
-                          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <motion.div 
-                              whileHover={{ y: -5 }}
-                              className="h-24 rounded-xl border bg-card p-4 shadow-sm"
-                            >
-                              <div className="h-3 w-1/2 rounded bg-muted/40" />
-                              <div className="mt-3 h-6 w-3/4 rounded bg-primary/20" />
-                            </motion.div>
-                            <motion.div 
-                              whileHover={{ y: -5 }}
-                              className="h-24 rounded-xl border bg-card p-4 shadow-sm"
-                            >
-                              <div className="h-3 w-1/2 rounded bg-muted/40" />
-                              <div className="mt-3 h-6 w-3/4 rounded bg-emerald-500/20" />
-                            </motion.div>
-                          </div>
-                          <div className="mt-6 h-40 rounded-xl border bg-card p-4 shadow-sm overflow-hidden relative">
-                             <div className="grid grid-cols-7 gap-1.5 opacity-40">
-                               {[...Array(28)].map((_, i) => (
-                                 <div key={i} className="h-8 rounded bg-muted/20" />
-                               ))}
-                             </div>
-                             <motion.div 
-                               animate={{ 
-                                 x: [0, 100, 0, -100, 0],
-                                 y: [0, 50, 0, -50, 0]
-                               }}
-                               transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary opacity-40 pointer-events-none"
-                             >
-                               <MousePointer2 className="h-10 w-10 fill-current" />
-                             </motion.div>
-                          </div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-[10px] font-medium">
+                                <span>Ocupação Hoje</span>
+                                <span className="text-primary">92%</span>
+                              </div>
+                              <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                <motion.div 
+                                  initial={{ width: 0 }}
+                                  animate={{ width: "92%" }}
+                                  transition={{ duration: 1, delay: 1 }}
+                                  className="h-full bg-primary" 
+                                />
+                              </div>
+                            </div>
+                          </motion.div>
+
+                          <motion.div 
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.7 }}
+                            className="bg-primary p-4 rounded-xl shadow-lg text-primary-foreground"
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <Calendar className="h-4 w-4" />
+                              <span className="text-xs font-bold uppercase tracking-wider">Próximo Cliente</span>
+                            </div>
+                            <p className="text-lg font-black italic">14:30 - Lucas Silva</p>
+                            <p className="text-[10px] opacity-80">Corte Americano + Pigmentação</p>
+                          </motion.div>
                         </div>
                       </div>
                     </div>
