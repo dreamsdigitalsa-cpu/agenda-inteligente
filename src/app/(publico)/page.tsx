@@ -308,11 +308,16 @@ const LandingPage = () => {
               </motion.div>
 
 
-              <div className="relative lg:ml-10">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="relative lg:ml-10"
+              >
                 <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-primary/20 to-accent/20 blur-2xl pointer-events-none" />
                 <div className="relative rounded-[2rem] border-8 border-slate-900/10 bg-slate-900/5 p-4 shadow-2xl overflow-hidden backdrop-blur-sm">
                   <div className="relative aspect-[12/16] md:aspect-video overflow-hidden rounded-2xl bg-background border border-border/50">
-                    {/* Mockup do App */}
+                    {/* Mockup do App com animações */}
                     <div className="absolute inset-0 flex flex-col">
                       <div className="flex h-10 items-center gap-2 border-b bg-muted/30 px-4">
                         <div className="flex gap-1.5">
@@ -325,41 +330,69 @@ const LandingPage = () => {
                         <div className="w-12 border-r bg-muted/10 md:w-40">
                           <div className="space-y-3 p-3">
                             {[1, 2, 3, 4, 5].map(i => (
-                              <div key={i} className="h-3 w-full rounded bg-muted/40" />
+                              <motion.div 
+                                key={i} 
+                                initial={{ width: 0 }}
+                                animate={{ width: "100%" }}
+                                transition={{ delay: 1 + (i * 0.1), duration: 0.5 }}
+                                className="h-3 rounded bg-muted/40" 
+                              />
                             ))}
                           </div>
                         </div>
                         <div className="flex-1 p-4 md:p-6">
                           <div className="flex justify-between items-center mb-6">
-                            <div className="h-4 w-32 rounded bg-muted/40" />
+                            <motion.div 
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 1.5 }}
+                              className="h-4 w-32 rounded bg-muted/40" 
+                            />
                             <div className="flex gap-2">
-                              <div className="h-8 w-8 rounded bg-primary/10" />
-                              <div className="h-8 w-8 rounded bg-primary/10" />
+                              <div className="h-8 w-8 rounded-full bg-primary/20 animate-pulse" />
+                              <div className="h-8 w-8 rounded-full bg-primary/20 animate-pulse" style={{ animationDelay: '0.2s' }} />
                             </div>
                           </div>
                           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className="h-24 rounded-xl border bg-card p-4 shadow-sm">
+                            <motion.div 
+                              whileHover={{ y: -5 }}
+                              className="h-24 rounded-xl border bg-card p-4 shadow-sm"
+                            >
                               <div className="h-3 w-1/2 rounded bg-muted/40" />
                               <div className="mt-3 h-6 w-3/4 rounded bg-primary/20" />
-                            </div>
-                            <div className="h-24 rounded-xl border bg-card p-4 shadow-sm">
+                            </motion.div>
+                            <motion.div 
+                              whileHover={{ y: -5 }}
+                              className="h-24 rounded-xl border bg-card p-4 shadow-sm"
+                            >
                               <div className="h-3 w-1/2 rounded bg-muted/40" />
                               <div className="mt-3 h-6 w-3/4 rounded bg-emerald-500/20" />
-                            </div>
+                            </motion.div>
                           </div>
-                          <div className="mt-6 h-40 rounded-xl border bg-card p-4 shadow-sm overflow-hidden">
+                          <div className="mt-6 h-40 rounded-xl border bg-card p-4 shadow-sm overflow-hidden relative">
                              <div className="grid grid-cols-7 gap-1.5 opacity-40">
                                {[...Array(28)].map((_, i) => (
                                  <div key={i} className="h-8 rounded bg-muted/20" />
                                ))}
                              </div>
+                             <motion.div 
+                               animate={{ 
+                                 x: [0, 100, 0, -100, 0],
+                                 y: [0, 50, 0, -50, 0]
+                               }}
+                               transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary opacity-40 pointer-events-none"
+                             >
+                               <MousePointer2 className="h-10 w-10 fill-current" />
+                             </motion.div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
+
             </div>
 
             {/* LOGOS TRUST */}
