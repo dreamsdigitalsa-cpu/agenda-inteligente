@@ -95,38 +95,43 @@ const COMO_FUNCIONA = [
   {
     passo: '01',
     titulo: 'Cadastre-se Grátis',
-    desc: 'Crie sua conta em menos de 1 minuto. Não pedimos cartão de crédito para começar.'
+    desc: 'Crie sua conta em menos de 1 minuto. Não pedimos cartão de crédito para começar.',
+    imagem: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?auto=format&fit=crop&q=80&w=400'
   },
   {
     passo: '02',
     titulo: 'Personalize seu Link',
-    desc: 'Configure seus serviços, horários e profissionais. Você ganha um link exclusivo para clientes.'
+    desc: 'Configure seus serviços, horários e profissionais. Você ganha um link exclusivo para clientes.',
+    imagem: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=400'
   },
   {
     passo: '03',
     titulo: 'Voe Alto',
-    desc: 'Seus clientes agendam, o sistema avisa no WhatsApp e você foca em atender bem.'
+    desc: 'Seus clientes agendam, o sistema avisa no WhatsApp e você foca em atender bem.',
+    imagem: 'https://images.unsplash.com/photo-1600880212340-0234407d1847?auto=format&fit=crop&q=80&w=400'
   }
 ]
 
 const FUNCIONALIDADES = [
-
-
   { 
     Icone: Calendar, 
     titulo: 'Agenda Inteligente 24h', 
-    texto: 'Seus clientes agendam sozinhos via link, 24 horas por dia, sem precisar te ligar.' 
+    texto: 'Seus clientes agendam sozinhos via link, 24 horas por dia, sem precisar te ligar.',
+    videoUrl: 'https://player.vimeo.com/external/494252666.sd.mp4?s=721c17244837330a10996f0187e1488c91d8481b&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: MessageCircle, 
     titulo: 'Lembretes via WhatsApp', 
-    texto: 'Reduza faltas em até 40% com lembretes automáticos de confirmação de horário.' 
+    texto: 'Reduza faltas em até 40% com lembretes automáticos de confirmação de horário.',
+    videoUrl: 'https://player.vimeo.com/external/403757300.sd.mp4?s=2862e3d7790b542013f9661f43eb93d56a29778e&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: DollarSign, 
     titulo: 'Financeiro Sem Mistérios', 
-    texto: 'Controle de caixa, comissões de profissionais e pagamentos em um só lugar.' 
+    texto: 'Controle de caixa, comissões de profissionais e pagamentos em um só lugar.',
+    videoUrl: 'https://player.vimeo.com/external/370331493.sd.mp4?s=34017367f08b291d293818e3c457d97e8851493b&profile_id=164&oauth2_token_id=57447761'
   },
+
   { 
     Icone: BarChart3, 
     titulo: 'Relatórios de Performance', 
