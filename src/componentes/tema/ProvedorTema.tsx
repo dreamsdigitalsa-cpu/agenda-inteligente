@@ -11,7 +11,7 @@ interface ContextoTema {
 }
 
 const Contexto = createContext<ContextoTema | undefined>(undefined)
-const CHAVE = 'tema-belezaf3'
+const CHAVE = 'tema-studioflow'
 
 function lerTemaInicial(): Tema {
   if (typeof window === 'undefined') return 'sistema'
