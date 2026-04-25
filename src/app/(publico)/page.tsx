@@ -1,4 +1,4 @@
-// Página pública: landing principal do HubBeleza SaaS.
+// Página pública: landing principal do StudioFlow SaaS.
 // Apresenta hero, segmentos, funcionalidades, planos e footer.
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -207,11 +207,8 @@ const LandingPage = () => {
 
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md transition-all">
         <nav className="container flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Scissors className="h-5 w-5" />
-            </div>
-            <span>Hub<span className="text-primary">Beleza</span></span>
+          <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
+            <Logo className="h-9 w-auto" />
           </Link>
           <div className="hidden items-center gap-8 md:flex">
             <a href="#funcionalidades" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
