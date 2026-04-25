@@ -28,6 +28,7 @@ import {
   Instagram,
   Facebook,
   Twitter,
+  MousePointer2,
 } from 'lucide-react'
 import {
   Sheet,
@@ -42,6 +43,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { motion } from "framer-motion"
+
 
 import { BotaoTema } from '@/componentes/tema/BotaoTema'
 
