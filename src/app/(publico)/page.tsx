@@ -48,6 +48,7 @@ import { motion } from "framer-motion"
 
 
 import { BotaoTema } from '@/componentes/tema/BotaoTema'
+import { Logo } from '@/componentes/Logo'
 
 const SEGMENTOS = [
   {
