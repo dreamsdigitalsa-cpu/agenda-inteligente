@@ -213,12 +213,14 @@ const LandingPage = () => {
             </a>
           </div>
           <div className="flex items-center gap-4">
+            <BotaoTema />
             <Button variant="ghost" className="hidden sm:flex" asChild>
               <Link to="/login">Entrar</Link>
             </Button>
             <Button asChild className="hidden sm:flex shadow-elegant hover:shadow-glow transition-all">
               <Link to="/cadastro">Começar agora</Link>
             </Button>
+
             
             <Sheet>
               <SheetTrigger asChild>
