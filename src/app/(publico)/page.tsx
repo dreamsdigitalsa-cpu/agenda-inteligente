@@ -135,18 +135,22 @@ const FUNCIONALIDADES = [
   { 
     Icone: BarChart3, 
     titulo: 'Relatórios de Performance', 
-    texto: 'Saiba exatamente quanto você ganha e quais serviços são os mais lucrativos.' 
+    texto: 'Saiba exatamente quanto você ganha e quais serviços são os mais lucrativos.',
+    videoUrl: 'https://player.vimeo.com/external/371433846.sd.mp4?s=231da903c7343e06a3826079979965d1b700874e&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: Users, 
     titulo: 'Gestão de Equipe', 
-    texto: 'Controle permissões e acessos de cada colaborador de forma individual e segura.' 
+    texto: 'Controle permissões e acessos de cada colaborador de forma individual e segura.',
+    videoUrl: 'https://player.vimeo.com/external/363842416.sd.mp4?s=d94602f3a4666d95368a5c363a9efb9a674d8253&profile_id=164&oauth2_token_id=57447761'
   },
   { 
     Icone: Smartphone, 
     titulo: 'Tudo no Celular', 
-    texto: 'Gerencie seu negócio de onde estiver com nossa interface 100% otimizada para mobile.' 
+    texto: 'Gerencie seu negócio de onde estiver com nossa interface 100% otimizada para mobile.',
+    videoUrl: 'https://player.vimeo.com/external/340356475.sd.mp4?s=b6a8276f570020d20d36c1c8751515286576b539&profile_id=164&oauth2_token_id=57447761'
   },
+
 ] as const
 
 const TESTEMUNHOS = [
