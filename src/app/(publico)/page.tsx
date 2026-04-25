@@ -272,9 +272,14 @@ const LandingPage = () => {
         <section className="relative overflow-hidden pt-12 pb-16 md:pt-24 md:pb-32">
           <div className="container relative z-10">
             <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-              <div className="text-left">
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                className="text-left"
+              >
                 <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-                  <Zap className="h-4 w-4 fill-primary" />
+                  <Zap className="h-4 w-4 fill-primary animate-pulse" />
                   <span>Da correria da rotina ao controle da gestão</span>
                 </div>
                 <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
@@ -289,9 +294,9 @@ const LandingPage = () => {
                       Teste Grátis Agora <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg hover:bg-muted" asChild>
+                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg hover:bg-muted relative group overflow-hidden" asChild>
                     <a href="#segmentos" className="flex items-center gap-2">
-                      <Play className="h-4 w-4 fill-current" /> Ver Demos
+                      <Play className="h-4 w-4 fill-current group-hover:scale-125 transition-transform" /> Ver Demos
                     </a>
                   </Button>
                 </div>
@@ -300,7 +305,8 @@ const LandingPage = () => {
                   <ShieldCheck className="h-4 w-4 text-emerald-500" />
                   <span>7 dias grátis • Sem cartão de crédito</span>
                 </div>
-              </div>
+              </motion.div>
+
 
               <div className="relative lg:ml-10">
                 <div className="absolute -inset-1 rounded-[2.5rem] bg-gradient-to-tr from-primary/20 to-accent/20 blur-2xl pointer-events-none" />
