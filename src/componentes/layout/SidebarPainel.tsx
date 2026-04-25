@@ -27,6 +27,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { AnelProgresso } from '@/componentes/ui/AnelProgresso'
+import { Logo } from '@/componentes/Logo'
 
 interface ItemMenu {
   href: string

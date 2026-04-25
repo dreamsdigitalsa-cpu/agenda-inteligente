@@ -9,6 +9,7 @@ import { SidebarPainel } from './SidebarPainel'
 import { HeaderPainel } from './HeaderPainel'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
+import { Logo } from '@/componentes/Logo'
 
 function BannerImpersonacao() {
   const navigate = useNavigate()
