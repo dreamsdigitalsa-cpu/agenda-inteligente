@@ -81,15 +81,22 @@ const Cadastro = () => {
   })
 
   const submeter = async ({ nome, email, senha, nomeEstabelecimento, segmento }: CadastroForm) => {
-    // 1) Cria usuário no Auth
-    const { data: signUpData, error: errSignUp } = await supabase.auth.signUp({
+    const { error: errSignUp } = await supabase.auth.signUp({
       email,
       password: senha,
       options: {
-        emailRedirectTo: `${window.location.origin}/painel/agenda`,
-        data: { nome },
+        // Após confirmar e-mail, Supabase redireciona para esta URL
+        emailRedirectTo: `${window.location.origin}/confirmar-email`,
+        // Dados do estabelecimento ficam guardados no metadata do usuário
+        // até o e-mail ser confirmado, quando criar-tenant será chamado
+        data: { 
+          nome,
+          nomeEstabelecimento,
+          segmento,
+        },
       },
     })
+    
     if (errSignUp) {
       toast.error(
         errSignUp.message.toLowerCase().includes('already')
@@ -98,40 +105,9 @@ const Cadastro = () => {
       )
       return
     }
-
-    // 2) ID do usuário direto da resposta do signUp (funciona mesmo sem sessão ativa)
-    const userId = signUpData.user?.id
-    if (!userId) {
-      toast.error('Falha ao obter dados do usuário recém-criado.')
-      return
-    }
-
-    // 3) Cria tenant + unidade + role via Edge Function.
-    // authUserId no body permite à function configurar o tenant mesmo sem sessão.
-    const { error: errFn } = await supabase.functions.invoke('criar-tenant', {
-      body: { 
-        nomeEstabelecimento, 
-        segmento, 
-        nomeAdmin: nome,
-        authUserId: userId,
-      },
-    })
     
-    if (errFn) {
-      toast.error('Conta criada, mas falhou ao configurar o estabelecimento. Entre em contato com o suporte.')
-      return
-    }
-
-    // 4) Verifica se há sessão (se e-mail confirmation estiver desligado, já loga)
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      toast.success('Cadastro criado! Verifique seu e-mail para ativar a conta.')
-      navegar('/login')
-      return
-    }
-
-    toast.success('Bem-vindo ao HubBeleza!')
-    navegar('/onboarding')
+    toast.success('Conta criada! Verifique seu e-mail para ativar.')
+    navegar('/login')
   }
 
   return (

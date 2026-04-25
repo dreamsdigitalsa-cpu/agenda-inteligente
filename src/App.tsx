@@ -23,6 +23,7 @@ import Login from "@/app/(auth)/login/page"
 import Cadastro from "@/app/(auth)/cadastro/page"
 import RecuperarSenha from "@/app/(auth)/recuperar-senha/page"
 import RedefinirSenha from "@/app/(auth)/redefinir-senha/page"
+import ConfirmarEmail from "@/app/(auth)/confirmar-email/page"
 
 // Painel
 import PaginaAgenda from "@/app/(painel)/agenda/page"
@@ -83,6 +84,7 @@ const App = () => (
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
           <Route path="/redefinir-senha" element={<RedefinirSenha />} />
+          <Route path="/confirmar-email" element={<ConfirmarEmail />} />
 
           {/* Painel (protegido) */}
           <Route element={<RotaProtegida />}>
