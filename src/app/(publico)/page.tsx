@@ -617,23 +617,31 @@ const LandingPage = () => {
             </p>
             
             <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-              {SEGMENTOS.map(({ slug, nome, descricao, Icone, cor, iconeCor }) => (
-                <Link
+              {SEGMENTOS.map(({ slug, nome, descricao, Icone, cor, iconeCor }, i) => (
+                <motion.div
                   key={slug}
-                  to={`/demo/${slug}`}
-                  className={`group relative flex flex-col items-center text-center rounded-2xl border-2 p-8 transition-all hover:-translate-y-2 hover:shadow-2xl ${cor}`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
                 >
-                  <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:rotate-12 group-hover:scale-110 ${iconeCor}`}>
-                    <Icone className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-xl font-bold">{nome}</h3>
-                  <p className="mt-3 text-sm opacity-70 leading-relaxed">{descricao}</p>
-                  <div className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                    Testar Demo <ArrowRight className="ml-1 h-4 w-4" />
-                  </div>
-                </Link>
+                  <Link
+                    to={`/demo/${slug}`}
+                    className={`group relative flex flex-col h-full items-center text-center rounded-2xl border-2 p-8 transition-all hover:-translate-y-2 hover:shadow-2xl ${cor}`}
+                  >
+                    <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:rotate-12 group-hover:scale-110 ${iconeCor}`}>
+                      <Icone className="h-8 w-8" />
+                    </div>
+                    <h3 className="text-xl font-bold">{nome}</h3>
+                    <p className="mt-3 text-sm opacity-70 leading-relaxed">{descricao}</p>
+                    <div className="mt-6 flex items-center text-sm font-bold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                      Testar Demo <ArrowRight className="ml-1 h-4 w-4" />
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
+
           </div>
         </section>
 
