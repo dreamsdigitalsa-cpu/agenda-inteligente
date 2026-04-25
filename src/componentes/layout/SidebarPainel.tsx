@@ -1,121 +1,260 @@
-import { NavLink } from 'react-router-dom';
-import { 
-  Calendar, Users, DollarSign, Package, BarChart3, 
-  Settings, CreditCard, ListOrdered, FileText, Image as ImageIcon 
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTenant } from '@/hooks/useTenant';
+// Sidebar do painel — visual inspirado na referência "Cascal".
+// Suporta submenus colapsáveis, indicador lateral no item ativo,
+// card "Setup do perfil" no rodapé e tema claro/escuro automático.
+import { useMemo, useState, type ComponentType } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
+import {
+  BarChart3,
+  Calendar,
+  ChevronDown,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Home,
+  Image as ImageIcon,
+  ListOrdered,
+  Package,
+  Settings,
+  Sparkles,
+  Users,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useTenant } from '@/hooks/useTenant'
+import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import { AnelProgresso } from '@/componentes/ui/AnelProgresso'
 
-const itensBase = [
+interface ItemMenu {
+  href: string
+  rotulo: string
+  icone: ComponentType<{ className?: string }>
+  filhos?: { href: string; rotulo: string }[]
+}
+
+const grupoPrincipal: ItemMenu[] = [
   { href: '/painel/agenda', icone: Calendar, rotulo: 'Agenda' },
-  { href: '/painel/clientes', icone: Users, rotulo: 'Clientes' },
-  { href: '/painel/financeiro', icone: DollarSign, rotulo: 'Financeiro' },
+  {
+    href: '/painel/clientes',
+    icone: Users,
+    rotulo: 'Clientes',
+    filhos: [
+      { href: '/painel/clientes', rotulo: 'Lista de clientes' },
+    ],
+  },
+  {
+    href: '/painel/financeiro',
+    icone: DollarSign,
+    rotulo: 'Financeiro',
+    filhos: [
+      { href: '/painel/financeiro', rotulo: 'Resumo' },
+      { href: '/painel/financeiro/caixa', rotulo: 'Caixa' },
+    ],
+  },
   { href: '/painel/estoque', icone: Package, rotulo: 'Estoque' },
-  { href: '/painel/fila', icone: ListOrdered, rotulo: 'Fila de Espera' },
+  { href: '/painel/fila', icone: ListOrdered, rotulo: 'Fila de espera' },
   { href: '/painel/relatorios', icone: BarChart3, rotulo: 'Relatórios' },
-];
+]
 
-const itensTatuagem = [
+const grupoTatuagem: ItemMenu[] = [
   { href: '/painel/tatuagem/orcamentos', icone: FileText, rotulo: 'Orçamentos' },
   { href: '/painel/tatuagem/portfolio', icone: ImageIcon, rotulo: 'Portfólio' },
-];
+]
 
-const itensRodape = [
-  { href: '/painel/configuracoes', icone: Settings, rotulo: 'Configurações' },
-  { href: '/painel/assinatura', icone: CreditCard, rotulo: 'Minha Assinatura' },
-];
+const grupoPreferencias: ItemMenu[] = [
+  {
+    href: '/painel/configuracoes',
+    icone: Settings,
+    rotulo: 'Configurações',
+    filhos: [
+      { href: '/painel/configuracoes', rotulo: 'Geral' },
+      { href: '/painel/configuracoes/notificacoes', rotulo: 'Notificações' },
+      { href: '/painel/configuracoes/ligacao-ia', rotulo: 'Ligação IA' },
+    ],
+  },
+  { href: '/painel/assinatura', icone: CreditCard, rotulo: 'Minha assinatura' },
+]
 
-export function SidebarPainel() {
-  const { tenant } = useTenant();
-  const isTattoo = tenant?.segmento === 'tatuagem';
+interface ItemProps {
+  item: ItemMenu
+  pathname: string
+}
+
+function ItemSidebar({ item, pathname }: ItemProps) {
+  const ehAtivo = pathname === item.href || pathname.startsWith(item.href + '/')
+  const [aberto, setAberto] = useState(ehAtivo)
+  const Icone = item.icone
+
+  if (!item.filhos?.length) {
+    return (
+      <NavLink
+        to={item.href}
+        end={item.href === '/painel'}
+        className={({ isActive }) =>
+          cn(
+            'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+            isActive
+              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+              : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+          )
+        }
+      >
+        {({ isActive }) => (
+          <>
+            {isActive && (
+              <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary" />
+            )}
+            <Icone className="h-4 w-4" />
+            <span>{item.rotulo}</span>
+          </>
+        )}
+      </NavLink>
+    )
+  }
 
   return (
-    <aside className="w-64 border-r border-zinc-200 bg-white h-screen flex-col sticky top-0 hidden md:flex">
-      <div className="p-6 border-b border-zinc-100">
-        <h2 className="font-bold text-xl tracking-tight text-zinc-900">
-          Beleza<span className="text-violet-600">F3</span>
-        </h2>
-        <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-widest mt-1">Painel do Parceiro</p>
-      </div>
-
-      <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
-        <div className="space-y-1">
-          <p className="px-3 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Principal</p>
-          {itensBase.map((item) => (
+    <Collapsible open={aberto} onOpenChange={setAberto}>
+      <CollapsibleTrigger
+        className={cn(
+          'group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+          ehAtivo
+            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+        )}
+      >
+        {ehAtivo && (
+          <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary" />
+        )}
+        <Icone className="h-4 w-4" />
+        <span className="flex-1 text-left">{item.rotulo}</span>
+        <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-180')} />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+        <div className="ml-7 mt-1 space-y-0.5 border-l border-sidebar-border pl-3">
+          {item.filhos.map((f) => (
             <NavLink
-              key={item.href}
-              to={item.href}
+              key={f.href}
+              to={f.href}
+              end
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all',
+                  'flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs transition-colors',
                   isActive
-                    ? 'bg-violet-50 text-violet-700 font-semibold shadow-sm border border-violet-100'
-                    : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                    ? 'font-semibold text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground/70 hover:text-sidebar-accent-foreground',
                 )
               }
             >
-              <item.icone className="h-4 w-4" />
-              {item.rotulo}
+              <span className="h-1.5 w-1.5 rounded-full bg-current" />
+              {f.rotulo}
             </NavLink>
+          ))}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+export function SidebarPainel() {
+  const { tenant } = useTenant()
+  const location = useLocation()
+  const isTattoo = tenant?.segmento === 'tatuagem'
+
+  // % fictícia de setup — pode ser conectada a dados reais depois
+  const progressoSetup = useMemo(() => 60, [])
+
+  return (
+    <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:flex">
+      {/* Marca */}
+      <div className="flex items-center gap-2.5 px-6 py-5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-primary shadow-glow">
+          <Sparkles className="h-4.5 w-4.5 text-primary-foreground" />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-base font-bold tracking-tight text-foreground">
+            Beleza<span className="text-primary">F3</span>
+          </span>
+          <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+            Painel
+          </span>
+        </div>
+      </div>
+
+      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
+        <div className="space-y-0.5">
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Menu principal
+          </p>
+          <NavLink
+            to="/painel"
+            end
+            className={({ isActive }) =>
+              cn(
+                'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
+                isActive
+                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                  : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+              )
+            }
+          >
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary" />
+                )}
+                <Home className="h-4 w-4" />
+                Início
+              </>
+            )}
+          </NavLink>
+          {grupoPrincipal.map((it) => (
+            <ItemSidebar key={it.href} item={it} pathname={location.pathname} />
           ))}
         </div>
 
         {isTattoo && (
-          <div className="space-y-1">
-            <p className="px-3 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Tattoo Studio</p>
-            {itensTatuagem.map((item) => (
-              <NavLink
-                key={item.href}
-                to={item.href}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all',
-                    isActive
-                      ? 'bg-violet-50 text-violet-700 font-semibold shadow-sm border border-violet-100'
-                      : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-                  )
-                }
-              >
-                <item.icone className="h-4 w-4" />
-                {item.rotulo}
-              </NavLink>
+          <div className="space-y-0.5">
+            <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Tattoo studio
+            </p>
+            {grupoTatuagem.map((it) => (
+              <ItemSidebar key={it.href} item={it} pathname={location.pathname} />
             ))}
           </div>
         )}
 
-        <div className="space-y-1">
-          <p className="px-3 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Administração</p>
-          {itensRodape.map((item) => (
-            <NavLink
-              key={item.href}
-              to={item.href}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all',
-                  isActive
-                    ? 'bg-violet-50 text-violet-700 font-semibold shadow-sm border border-violet-100'
-                    : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
-                )
-              }
-            >
-              <item.icone className="h-4 w-4" />
-              {item.rotulo}
-            </NavLink>
+        <div className="space-y-0.5">
+          <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Preferências
+          </p>
+          {grupoPreferencias.map((it) => (
+            <ItemSidebar key={it.href} item={it} pathname={location.pathname} />
           ))}
         </div>
       </nav>
 
-      <div className="p-4 border-t border-zinc-100">
-        <div className="bg-zinc-50 rounded-xl p-3 flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-xs font-bold">
-            {tenant?.nome?.[0] || 'T'}
+      {/* Card de setup do perfil */}
+      <div className="px-4 pb-4 pt-2">
+        <div className="rounded-2xl border border-sidebar-border bg-gradient-soft p-4">
+          <div className="mb-3 flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold text-foreground">
+                {tenant?.nome ?? 'Setup do perfil'}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {progressoSetup}% concluído
+              </p>
+            </div>
+            <AnelProgresso valor={progressoSetup} tamanho={42} espessura={4} />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-zinc-900 truncate">{tenant?.nome}</p>
-            <p className="text-[10px] text-zinc-500 truncate">{tenant?.segmento}</p>
-          </div>
+          <Button asChild size="sm" className="w-full rounded-full bg-gradient-primary text-xs font-semibold shadow-elegant hover:opacity-90">
+            <NavLink to="/painel/configuracoes">Completar configuração</NavLink>
+          </Button>
         </div>
       </div>
     </aside>
-  );
+  )
 }
