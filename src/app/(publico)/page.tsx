@@ -381,7 +381,34 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* PROBLEMAS SECTION */}
+        {/* COMO FUNCIONA SECTION */}
+        <section className="py-24 overflow-hidden">
+          <div className="container">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Como funciona o <span className="text-primary italic">HubBeleza</span>?</h2>
+              <p className="mt-4 text-lg text-muted-foreground">O caminho mais rápido para profissionalizar sua gestão.</p>
+            </div>
+            
+            <div className="relative">
+              {/* Linha conectora (Desktop) */}
+              <div className="absolute top-1/2 left-0 w-full h-0.5 bg-primary/10 -translate-y-1/2 hidden md:block" />
+              
+              <div className="grid gap-12 md:grid-cols-3 relative z-10">
+                {COMO_FUNCIONA.map((step, i) => (
+                  <div key={i} className="flex flex-col items-center text-center group">
+                    <div className="h-16 w-16 rounded-2xl bg-primary text-white text-2xl font-black flex items-center justify-center mb-6 shadow-elegant group-hover:scale-110 transition-transform">
+                      {step.passo}
+                    </div>
+                    <h3 className="text-xl font-bold mb-3">{step.titulo}</h3>
+                    <p className="text-muted-foreground leading-relaxed px-4">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+
         <section className="py-24 bg-muted/20">
           <div className="container">
             <div className="mx-auto max-w-3xl text-center mb-16">
