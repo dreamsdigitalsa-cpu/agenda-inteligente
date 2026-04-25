@@ -1,5 +1,5 @@
 // Logo do StudioFlow — alterna automaticamente entre claro/escuro.
-import { useContext } from 'react'
+// (sem imports adicionais)
 import { useTema } from '@/componentes/tema/ProvedorTema'
 import logoLight from '@/assets/studioflow-logo-light.png'
 import logoDark from '@/assets/studioflow-logo-dark.png'
