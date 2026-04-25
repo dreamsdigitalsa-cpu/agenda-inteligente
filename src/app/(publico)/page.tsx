@@ -109,7 +109,7 @@ const COMO_FUNCIONA = [
     passo: '03',
     titulo: 'Voe Alto',
     desc: 'Seus clientes agendam, o sistema avisa no WhatsApp e você foca em atender bem.',
-    imagem: 'https://images.unsplash.com/photo-1621605815841-2dddbaaaf0b2?auto=format&fit=crop&q=80&w=600'
+    imagem: 'https://images.unsplash.com/photo-1599407951662-f1d2df0eb5f4?auto=format&fit=crop&q=80&w=600'
   }
 ]
 
