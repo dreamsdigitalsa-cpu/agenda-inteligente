@@ -72,12 +72,16 @@ export function useTenant(): EstadoTenant {
         }
       }
       
-      // Busca status da assinatura
-      const { data: assinatura } = await supabase
-        .from('assinaturas_tenant')
-        .select('*')
-        .eq('tenant_id', usuario?.tenant_id)
-        .maybeSingle()
+      // Busca status da assinatura — somente se houver tenant_id válido
+      let assinatura = null
+      if (usuario?.tenant_id) {
+        const { data } = await supabase
+          .from('assinaturas_tenant')
+          .select('*')
+          .eq('tenant_id', usuario.tenant_id)
+          .maybeSingle()
+        assinatura = data
+      }
 
       setEstado({
         tenant,
