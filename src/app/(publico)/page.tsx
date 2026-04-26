@@ -207,9 +207,9 @@ const LandingPage = () => {
       </div>
 
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md transition-all">
-        <nav className="container flex h-24 items-center justify-between">
+        <nav className="container flex h-20 items-center justify-between">
           <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
-            <Logo className="h-16 w-auto max-w-[260px] sm:h-20 sm:max-w-[340px]" />
+            <Logo className="h-10 w-auto max-w-[180px] sm:h-12 sm:max-w-[240px]" />
           </Link>
           <div className="hidden items-center gap-8 md:flex">
             <a href="#funcionalidades" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
