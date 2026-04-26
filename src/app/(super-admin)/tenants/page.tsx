@@ -180,14 +180,9 @@ const PaginaTenants = () => {
   async function mudarPlano(tenant: Tenant, novoPlanoNome: string) {
     setAcaoEmAndamento(tenant.id + '-plano')
     try {
-      // O banco espera 'freemium' ou 'profissional' de acordo com o enum plano_tenant
-      const planoParaBanco = novoPlanoNome.toLowerCase().includes('profissional') || novoPlanoNome.toLowerCase() === 'pro' 
-        ? 'profissional' 
-        : 'freemium'
-
       const { error } = await supabase
         .from('tenants')
-        .update({ plano: planoParaBanco } as any)
+        .update({ plano: novoPlanoNome } as any)
         .eq('id', tenant.id)
 
       if (error) {
