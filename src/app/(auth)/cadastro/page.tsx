@@ -81,19 +81,14 @@ const Cadastro = () => {
   })
 
   const submeter = async ({ nome, email, senha, nomeEstabelecimento, segmento }: CadastroForm) => {
-    const { error: errSignUp } = await supabase.auth.signUp({
+    // 1) Cria o usuário no Supabase Auth
+    const { data: signUpData, error: errSignUp } = await supabase.auth.signUp({
       email,
       password: senha,
       options: {
-        // Após confirmar e-mail, Supabase redireciona para esta URL
+        // Se Confirm Email estiver ativo no futuro, redireciona pra cá
         emailRedirectTo: `${window.location.origin}/confirmar-email`,
-        // Dados do estabelecimento ficam guardados no metadata do usuário
-        // até o e-mail ser confirmado, quando criar-tenant será chamado
-        data: { 
-          nome,
-          nomeEstabelecimento,
-          segmento,
-        },
+        data: { nome, nomeEstabelecimento, segmento },
       },
     })
     
@@ -106,8 +101,36 @@ const Cadastro = () => {
       return
     }
     
-    toast.success('Conta criada! Verifique seu e-mail para ativar.')
-    navegar('/login')
+    // 2) Verifica se já tem sessão (Confirm Email DESATIVADO)
+    // Se tiver: cria tenant agora. Se não: redireciona pra confirmar email.
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (!session) {
+      // Confirm Email está habilitado — usuário precisa confirmar
+      toast.success('Conta criada! Verifique seu e-mail para ativar.')
+      navegar('/login')
+      return
+    }
+    
+    // 3) Confirm Email está desabilitado — sessão já está ativa, criar tenant agora
+    toast.loading('Criando seu estabelecimento...', { id: 'criar-tenant' })
+    
+    const { data: resultado, error: errFn } = await supabase.functions.invoke('criar-tenant', {
+      body: { nomeEstabelecimento, segmento, nomeAdmin: nome },
+    })
+    
+    toast.dismiss('criar-tenant')
+    
+    if (errFn || resultado?.erro) {
+      console.error('[cadastro] erro criar-tenant:', errFn, resultado)
+      toast.error(`Erro ao configurar estabelecimento: ${errFn?.message || resultado?.detalhe || 'tente novamente'}`)
+      // Faz logout para evitar usuário órfão
+      await supabase.auth.signOut()
+      return
+    }
+    
+    toast.success('Bem-vindo ao HubBeleza!')
+    navegar('/onboarding')
   }
 
   return (
