@@ -26,8 +26,8 @@ serve(async (req) => {
     const { data: perfil, error: perfilError } = await supabase
       .from('usuarios')
       .select('id, tenant_id, unidade_id')
-      .eq('id', user.id)
-      .single()
+      .eq('auth_user_id', user.id)
+      .maybeSingle()
 
     if (perfilError || !perfil) throw new Error('Tenant não encontrado')
 
