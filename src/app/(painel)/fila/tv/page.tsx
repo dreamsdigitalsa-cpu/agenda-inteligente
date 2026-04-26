@@ -62,8 +62,12 @@ export default function FilaTVPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-3xl font-bold">
-            {tenant.nome.charAt(0)}
+          <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center overflow-hidden border border-zinc-800">
+            {tenant.logo_url ? (
+              <img src={tenant.logo_url} alt={tenant.nome} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-3xl font-bold text-primary">{tenant.nome.charAt(0)}</span>
+            )}
           </div>
           <div>
             <h1 className="text-4xl font-bold tracking-tight">{tenant.nome}</h1>
