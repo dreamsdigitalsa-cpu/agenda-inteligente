@@ -27,7 +27,7 @@ interface Plano {
   nome:                  string
   slug?:                 string // Slug não existe na tabela planos, vou usar o nome ou ID
   preco:                 number
-  limites:               Record<string, number | null>
+  limites:               any // Ajustado para evitar erros de tipo com Json do Supabase
   features:              string[]
   ativo:                 boolean
   tenants_count?:        number
