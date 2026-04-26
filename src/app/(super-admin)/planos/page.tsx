@@ -336,7 +336,6 @@ const PaginaPlanos = () => {
                   </Button>
                 </div>
                 <p className="text-2xl font-bold text-violet-300">{fmtPreco(plano.preco)}</p>
-                {/* <p className="text-xs text-zinc-500 font-mono">{plano.slug}</p> */}
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Limites */}
@@ -344,16 +343,16 @@ const PaginaPlanos = () => {
                   <div className="flex justify-between">
                     <span>Agend./mês</span>
                     <span className="text-zinc-300">
-                      {plano.limites?.max_agendamentos_mes ?? '∞'}
+                      {plano.limites && typeof plano.limites === 'object' ? (plano.limites as any).max_agendamentos_mes ?? '∞' : '∞'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Profissionais</span>
-                    <span className="text-zinc-300">{plano.limites?.max_profissionais ?? '∞'}</span>
+                    <span className="text-zinc-300">{plano.limites && typeof plano.limites === 'object' ? (plano.limites as any).max_profissionais ?? '∞' : '∞'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Unidades</span>
-                    <span className="text-zinc-300">{plano.limites?.max_unidades ?? '∞'}</span>
+                    <span className="text-zinc-300">{plano.limites && typeof plano.limites === 'object' ? (plano.limites as any).max_unidades ?? '∞' : '∞'}</span>
                   </div>
                 </div>
 
