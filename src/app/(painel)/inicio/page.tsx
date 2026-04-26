@@ -30,7 +30,7 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 export default function PaginaInicio() {
-  const { tenant, usuario } = useTenant()
+  const { tenant, usuario, carregando: tenantCarregando } = useTenant()
   const { temPermissao } = usePermissao()
   const navigate = useNavigate()
   
@@ -53,7 +53,7 @@ export default function PaginaInicio() {
       if (error) throw error
       return data
     },
-    enabled: !!tenant?.id && eAdmin,
+    enabled: !!tenant?.id && !tenantCarregando && eAdmin,
     staleTime: 0 // NUNCA cachear dados financeiros
   })
 
@@ -75,7 +75,7 @@ export default function PaginaInicio() {
       // retornaremos vazio para não quebrar a UI, mas com a estrutura pronta.
       return []
     },
-    enabled: !!tenant?.id && eAdmin
+    enabled: !!tenant?.id && !tenantCarregando && eAdmin
   })
 
   return (

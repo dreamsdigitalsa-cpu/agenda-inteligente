@@ -29,7 +29,7 @@ import { format, differenceInDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 const PaginaAssinatura = () => {
-  const { tenant } = useTenant()
+  const { tenant, carregando: tenantCarregando } = useTenant()
   const { temPermissao } = usePermissao()
   const { toast } = useToast()
   
@@ -51,7 +51,7 @@ const PaginaAssinatura = () => {
       if (error) throw error
       return data
     },
-    enabled: !!tenant?.id
+    enabled: !!tenant?.id && !tenantCarregando
   })
 
   // 2. Planos Disponíveis
@@ -82,7 +82,7 @@ const PaginaAssinatura = () => {
       if (error) throw error
       return data
     },
-    enabled: !!tenant?.id
+    enabled: !!tenant?.id && !tenantCarregando
   })
 
   // 4. Mutação para Criar Checkout

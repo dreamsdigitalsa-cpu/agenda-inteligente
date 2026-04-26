@@ -17,7 +17,7 @@ import { ModalMovimentacao } from '@/componentes/estoque/ModalMovimentacao'
 import { AlertaValidade } from '@/componentes/estoque/AlertaValidade'
 
 const PaginaEstoque = () => {
-  const { tenant } = useTenant()
+  const { tenant, carregando: tenantCarregando } = useTenant()
   const { temPermissao } = usePermissao()
   const navigate = useNavigate()
   const [busca, setBusca] = useState('')
@@ -47,7 +47,7 @@ const PaginaEstoque = () => {
       if (error) throw error
       return data
     },
-    enabled: !!tenant?.id && temAcesso
+    enabled: !!tenant?.id && !tenantCarregando && temAcesso
   })
 
   const formatarMoeda = (valor: number) => {
