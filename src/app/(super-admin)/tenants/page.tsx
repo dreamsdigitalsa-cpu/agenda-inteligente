@@ -443,7 +443,7 @@ const PaginaTenants = () => {
                     <CreditCard className="h-3 w-3" /> Plano
                   </h3>
                   <Select
-                    value={tenantSelecionado.plano_id ?? ''}
+                    value={tenantSelecionado.plano ?? ''}
                     onValueChange={(v) => mudarPlano(tenantSelecionado, v)}
                     disabled={acaoEmAndamento === tenantSelecionado.id + '-plano'}
                   >
@@ -452,7 +452,7 @@ const PaginaTenants = () => {
                     </SelectTrigger>
                     <SelectContent>
                       {planos.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+                        <SelectItem key={p.id} value={p.nome}>{p.nome}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
