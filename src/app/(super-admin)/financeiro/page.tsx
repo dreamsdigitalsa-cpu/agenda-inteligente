@@ -76,7 +76,7 @@ export default function PaginaFinanceiroGlobal() {
         .order('data_lancamento', { ascending: false })
 
       if (errorLancamentos) throw errorLancamentos
-      setLancamentos(dataLancamentos || [])
+      setLancamentos((dataLancamentos as any) || [])
 
       const { data: dataFaturas, error: errorFaturas } = await supabase
         .from('faturas')
@@ -132,7 +132,7 @@ export default function PaginaFinanceiroGlobal() {
 
       const { error } = await supabase
         .from('lancamentos_financeiros_admin')
-        .insert([novoLancamento])
+        .insert([novoLancamento as any])
 
       if (error) throw error
 
