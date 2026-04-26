@@ -110,13 +110,21 @@ export function useTenant(): EstadoTenant {
 
   useEffect(() => {
     // 1) listener primeiro
-    const { data: assinatura } = supabase.auth.onAuthStateChange((_evt, sessao) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_evt, sessao) => {
       // Adia chamadas Supabase para fora do callback (boa prática)
       setTimeout(() => carregar(sessao?.user.id ?? null), 0)
     })
+    
     // 2) então sessão atual
-    supabase.auth.getSession().then(({ data }) => carregar(data.session?.user.id ?? null))
-    return () => assinatura.subscription.unsubscribe()
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) {
+        carregar(data.session.user.id)
+      } else {
+        setEstado(prev => ({ ...prev, carregando: false }))
+      }
+    })
+    
+    return () => subscription.unsubscribe()
   }, [carregar])
 
   return estado
