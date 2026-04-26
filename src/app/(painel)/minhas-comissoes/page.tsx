@@ -265,6 +265,7 @@ export default function MinhasComissoes() {
         </CardContent>
       </Card>
 
+      <Card>
         <CardHeader>
           <CardTitle className="text-base">
             {carregando ? 'Carregando...' : `${comissoes.length} comissão(ões) registrada(s)`}
