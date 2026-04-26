@@ -136,7 +136,10 @@ const PaginaOnboarding = () => {
   const [corPrincipal, setCorPrincipal] = useState('#7c3aed')
   const [endereco, setEndereco] = useState('')
 
-  // Etapa 5 — slug derivado do nome do tenant
+  // Etapa 5 — configurações específicas do segmento (ref para chamar save())
+  const refSegmento = useRef<RefEtapaSegmento>(null)
+
+  // Etapa 6 — slug derivado do nome do tenant
   const slug = useMemo(() => (tenant ? gerarSlug(tenant.nome) : ''), [tenant])
   const linkCompleto = `${window.location.origin}/agendar/${slug}`
 
@@ -147,9 +150,9 @@ const PaginaOnboarding = () => {
     }
   }, [tenant]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Confetti ao chegar na etapa 5
+  // Confetti ao chegar na última etapa (link público)
   useEffect(() => {
-    if (etapa === 5) {
+    if (etapa === TOTAL_ETAPAS) {
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.3 } })
     }
   }, [etapa])
