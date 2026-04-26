@@ -194,7 +194,7 @@ const PaginaTenants = () => {
       await carregar()
       if (tenantSelecionado?.id === tenant.id) {
         setTenantSelecionado((prev) =>
-          prev ? { ...prev, plano: planoParaBanco } : prev
+          prev ? { ...prev, plano: novoPlanoNome } : prev
         )
       }
     } finally {
