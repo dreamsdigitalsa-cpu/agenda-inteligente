@@ -104,7 +104,7 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
 
   async function salvar() {
     if (!nome.trim()) {
-      setErro('Nome e slug são obrigatórios.')
+      setErro('O nome é obrigatório.')
       return
     }
     const precoFinal = parseFloat(preco || '0')
@@ -143,7 +143,7 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
       onSalvar()
       onFechar()
     } catch (e) {
-      setErro(String(e))
+      setErro(e instanceof Error ? e.message : String(e))
     } finally {
       setSalvando(false)
     }
@@ -274,7 +274,7 @@ const PaginaPlanos = () => {
 
       setPlanos((data ?? []).map((p) => ({ ...p, tenants_count: contagem[p.nome] ?? 0 })))
     } catch (e) {
-      setErro(String(e))
+      setErro(e instanceof Error ? e.message : String(e))
     } finally {
       setCarregando(false)
     }
