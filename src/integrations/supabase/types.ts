@@ -391,6 +391,73 @@ export type Database = {
           },
         ]
       }
+      convites_usuario: {
+        Row: {
+          criado_em: string
+          criado_por: string | null
+          email: string
+          expira_em: string
+          id: string
+          perfil_id: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          status: string
+          tenant_id: string
+          token: string
+          unidade_id: string | null
+          utilizado_em: string | null
+        }
+        Insert: {
+          criado_em?: string
+          criado_por?: string | null
+          email: string
+          expira_em?: string
+          id?: string
+          perfil_id?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          tenant_id: string
+          token?: string
+          unidade_id?: string | null
+          utilizado_em?: string | null
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string | null
+          email?: string
+          expira_em?: string
+          id?: string
+          perfil_id?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: string
+          tenant_id?: string
+          token?: string
+          unidade_id?: string | null
+          utilizado_em?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "convites_usuario_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfis_permissao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "convites_usuario_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "convites_usuario_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estetica_anamneses_modelos: {
         Row: {
           atualizado_em: string
