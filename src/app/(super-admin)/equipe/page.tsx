@@ -49,14 +49,21 @@ export default function PaginaEquipeSuperAdmin() {
       // Buscamos usuários que tenham a role super_admin na tabela user_roles
       const { data, error } = await supabase
         .from('usuarios')
-        .select('*, user_roles(role)')
-        .is('tenant_id', null) // Membros da equipe global StudioFlow geralmente não têm tenant_id
+        .select(`
+          *,
+          user_roles (
+            role
+          )
+        `)
+        .is('tenant_id', null)
       
       if (error) throw error
       
-      // Filtrar apenas quem tem role super_admin ou admin global
+      // Filtrar apenas quem tem role super_admin
       return data.filter(u => 
-        (u.user_roles as any)?.some((r: any) => r.role === 'super_admin')
+        Array.isArray(u.user_roles) 
+          ? u.user_roles.some((r: any) => r.role === 'super_admin')
+          : (u.user_roles as any)?.role === 'super_admin'
       )
     },
   })
