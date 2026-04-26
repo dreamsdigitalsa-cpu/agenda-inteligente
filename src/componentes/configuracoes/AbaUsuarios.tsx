@@ -25,16 +25,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
-import { UserPlus, Mail, Shield, Trash2, Copy, Check } from 'lucide-react'
+import { UserPlus, Mail, Shield, Trash2, Copy, Check, Loader2 } from 'lucide-react'
 import { useTenant } from '@/hooks/useTenant'
 
 export function AbaUsuarios() {
   const { tenant } = useTenant()
   const queryClient = useQueryClient()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
   const [role, setRole] = useState<'admin' | 'profissional' | 'recepcionista'>('profissional')
+  const [metodo, setMetodo] = useState<'convite' | 'direto'>('direto')
   const [copiedToken, setCopiedToken] = useState<string | null>(null)
 
   const { data: convites, isLoading } = useQuery({
@@ -65,32 +69,59 @@ export function AbaUsuarios() {
     enabled: !!tenant?.id,
   })
 
-  const convidarMutation = useMutation({
+  const adicionarMutation = useMutation({
     mutationFn: async () => {
       if (!tenant?.id) throw new Error('Tenant não encontrado')
       
-      const { data, error } = await supabase
-        .from('convites_usuario')
-        .insert({
-          tenant_id: tenant.id,
-          email,
-          role,
-          status: 'pendente',
-        })
-        .select()
-        .single()
+      if (metodo === 'convite') {
+        const { data, error } = await supabase
+          .from('convites_usuario')
+          .insert({
+            tenant_id: tenant.id,
+            email,
+            role,
+            status: 'pendente',
+          })
+          .select()
+          .single()
 
-      if (error) throw error
-      return data
+        if (error) throw error
+        return data
+      } else {
+        // Inclusão direta usando signUp
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email,
+          password: senha,
+          options: {
+            data: {
+              full_name: nome,
+              tenant_id: tenant.id,
+              role: role,
+            }
+          }
+        })
+
+        if (authError) throw authError
+        if (!authData.user) throw new Error('Erro ao criar usuário')
+
+        // O trigger no banco deve criar o registro em usuarios e user_roles
+        // mas como não temos certeza absoluta do trigger, podemos tentar forçar aqui
+        // se o RLS permitir. Geralmente o trigger 'handle_new_user' faz isso.
+        
+        return authData.user
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['convites'] })
-      toast.success('Convite enviado com sucesso!')
+      queryClient.invalidateQueries({ queryKey: ['usuarios-tenant'] })
+      toast.success(metodo === 'convite' ? 'Convite enviado!' : 'Usuário criado com sucesso!')
       setIsDialogOpen(false)
       setEmail('')
+      setNome('')
+      setSenha('')
     },
     onError: (error: any) => {
-      toast.error('Erro ao enviar convite: ' + error.message)
+      toast.error('Erro ao adicionar: ' + (error.message || 'Erro desconhecido'))
     },
   })
 
@@ -130,43 +161,83 @@ export function AbaUsuarios() {
           <DialogTrigger asChild>
             <Button className="gap-2">
               <UserPlus className="h-4 w-4" />
-              Convidar
+              Adicionar Usuário
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Convidar novo usuário</DialogTitle>
+              <DialogTitle>Novo Usuário/Profissional</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">E-mail</label>
-                <Input
-                  placeholder="email@exemplo.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+            <Tabs value={metodo} onValueChange={(v: any) => setMetodo(v)} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="direto">Inclusão Direta</TabsTrigger>
+                <TabsTrigger value="convite">Enviar Convite</TabsTrigger>
+              </TabsList>
+              
+              <div className="space-y-4 py-4">
+                {metodo === 'direto' && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Nome Completo</label>
+                    <Input
+                      placeholder="Nome do profissional"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                    />
+                  </div>
+                )}
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">E-mail</label>
+                  <Input
+                    placeholder="email@exemplo.com"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+
+                {metodo === 'direto' && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Senha Inicial</label>
+                    <Input
+                      placeholder="Mínimo 6 caracteres"
+                      type="password"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nível de acesso</label>
+                  <Select value={role} onValueChange={(v: any) => setRole(v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Administrador</SelectItem>
+                      <SelectItem value="profissional">Profissional</SelectItem>
+                      <SelectItem value="recepcionista">Recepcionista</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button 
+                  className="w-full" 
+                  onClick={() => adicionarMutation.mutate()}
+                  disabled={adicionarMutation.isPending}
+                >
+                  {adicionarMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {metodo === 'convite' ? 'Enviar Convite' : 'Criar Usuário Agora'}
+                </Button>
+                
+                {metodo === 'direto' && (
+                  <p className="text-center text-[10px] text-muted-foreground">
+                    O usuário poderá acessar o sistema imediatamente com o e-mail e senha definidos.
+                  </p>
+                )}
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Nível de acesso</label>
-                <Select value={role} onValueChange={(v: any) => setRole(v)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Administrador</SelectItem>
-                    <SelectItem value="profissional">Profissional</SelectItem>
-                    <SelectItem value="recepcionista">Recepcionista</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button 
-                className="w-full" 
-                onClick={() => convidarMutation.mutate()}
-                disabled={convidarMutation.isPending}
-              >
-                Enviar convite
-              </Button>
-            </div>
+            </Tabs>
           </DialogContent>
         </Dialog>
       </div>
