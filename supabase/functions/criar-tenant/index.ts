@@ -38,11 +38,15 @@ Deno.serve(async (req) => {
       const { data: userData, error: userErr } = await supaAdmin.auth.getUser(token)
       
       if (userErr || !userData?.user) {
+        console.error('[criar-tenant] token invalido:', JSON.stringify(userErr))
         return json({ erro: 'token_invalido' }, 401)
       }
       authUserId = userData.user.id
       email = userData.user.email ?? ''
+      console.log('[criar-tenant] iniciado, authUserId:', authUserId, 'email:', email)
+      console.log('[criar-tenant] payload:', JSON.stringify(body))
     } else {
+      console.error('[criar-tenant] nao autenticado')
       return json({ erro: 'nao_autenticado' }, 401)
     }
 
@@ -53,6 +57,7 @@ Deno.serve(async (req) => {
       !body.nomeAdmin?.trim() ||
       !segmentos.includes(body.segmento)
     ) {
+      console.error('[criar-tenant] payload invalido:', JSON.stringify(body))
       return json({ erro: 'payload_invalido' }, 400)
     }
 
@@ -63,28 +68,40 @@ Deno.serve(async (req) => {
       .eq('auth_user_id', authUserId)
       .maybeSingle()
     if (jaExiste?.tenant_id) {
+      console.log('[criar-tenant] usuario ja possui tenant:', jaExiste.tenant_id)
       return json({ tenantId: jaExiste.tenant_id, ja_existia: true })
     }
 
+    console.log('[criar-tenant] inserindo tenant...')
     // 4) Cria tenant
     const { data: tenant, error: errTenant } = await supaAdmin
       .from('tenants')
       .insert({ nome: body.nomeEstabelecimento, segmento: body.segmento, plano: 'freemium' })
       .select('id')
       .single()
-    if (errTenant) throw new Error(`tenant: ${errTenant.message}`)
+    
+    if (errTenant) {
+      console.error('[criar-tenant] erro tenant:', JSON.stringify(errTenant))
+      throw new Error(`tenant: ${errTenant.message} (code: ${errTenant.code})`)
+    }
+    console.log('[criar-tenant] tenant criado:', tenant.id)
 
+    console.log('[criar-tenant] inserindo unidade...')
     // 5) Cria unidade principal
     const { data: unidade, error: errUnidade } = await supaAdmin
       .from('unidades')
       .insert({ tenant_id: tenant.id, nome: 'Unidade principal' })
       .select('id')
       .single()
+    
     if (errUnidade) {
+      console.error('[criar-tenant] erro unidade:', JSON.stringify(errUnidade))
       await supaAdmin.from('tenants').delete().eq('id', tenant.id)
-      throw new Error(`unidade: ${errUnidade.message}`)
+      throw new Error(`unidade: ${errUnidade.message} (code: ${errUnidade.code})`)
     }
+    console.log('[criar-tenant] unidade criada:', unidade.id)
 
+    console.log('[criar-tenant] inserindo usuario...')
     // 6) Cria registro em usuarios
     const { error: errUsuario } = await supaAdmin.from('usuarios').insert({
       auth_user_id: authUserId,
@@ -93,23 +110,30 @@ Deno.serve(async (req) => {
       nome: body.nomeAdmin,
       email,
     })
+    
     if (errUsuario) {
+      console.error('[criar-tenant] erro usuario:', JSON.stringify(errUsuario))
       await supaAdmin.from('tenants').delete().eq('id', tenant.id) // cascade unidades
-      throw new Error(`usuario: ${errUsuario.message}`)
+      throw new Error(`usuario: ${errUsuario.message} (code: ${errUsuario.code})`)
     }
+    console.log('[criar-tenant] usuario criado')
 
+    console.log('[criar-tenant] inserindo role admin...')
     // 7) Atribui role 'admin'
     const { error: errRole } = await supaAdmin
       .from('user_roles')
       .insert({ user_id: authUserId, role: 'admin' })
+    
     if (errRole) {
+      console.error('[criar-tenant] erro role:', JSON.stringify(errRole))
       await supaAdmin.from('tenants').delete().eq('id', tenant.id)
-      throw new Error(`role: ${errRole.message}`)
+      throw new Error(`role: ${errRole.message} (code: ${errRole.code})`)
     }
+    console.log('[criar-tenant] role admin atribuida')
 
     return json({ tenantId: tenant.id })
   } catch (e) {
-    console.error('[criar-tenant] erro:', e)
+    console.error('[criar-tenant] erro fatal:', e)
     return json({ erro: 'falha_interna', detalhe: String(e) }, 500)
   }
 })
