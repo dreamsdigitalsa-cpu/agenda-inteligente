@@ -56,7 +56,7 @@ export function AbaEstabelecimento() {
             endereco: data.endereco || '',
             corPrincipal: data.cor_principal || '#7c3aed',
             slugPublico: data.slug_publico || tenant.slug || '',
-            horarios: data.horario_funcionamento || form.horarios
+            horarios: (data.horario_funcionamento as any) || form.horarios
           })
         } else {
           setForm(f => ({ ...f, nome: tenant.nome || '', slugPublico: tenant.slug || '' }))
