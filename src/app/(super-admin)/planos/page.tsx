@@ -163,18 +163,14 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-zinc-400 text-xs">Nome</Label>
-              <Input
-                value={nome}
-                onChange={(e) => {
-                  setNome(e.target.value)
-                }}
-                className="bg-zinc-800 border-zinc-700 col-span-2"
-                placeholder="Ex: Profissional"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <Label className="text-zinc-400 text-xs">Nome</Label>
+            <Input
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="bg-zinc-800 border-zinc-700"
+              placeholder="Ex: Profissional"
+            />
           </div>
 
           <div className="space-y-1.5">
