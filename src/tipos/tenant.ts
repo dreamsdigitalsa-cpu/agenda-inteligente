@@ -9,7 +9,6 @@ export interface Tenant {
   segmento: SegmentoTenant
   plano: PlanoTenant
   status: StatusTenant
-  slug?: string
   logo_url?: string
   criadoEm: string
 }
