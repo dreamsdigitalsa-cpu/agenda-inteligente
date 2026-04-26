@@ -145,32 +145,41 @@ export type Database = {
       configuracoes_tenant: {
         Row: {
           atualizado_em: string
+          cnpj: string | null
           cor_principal: string | null
           criado_em: string
           endereco: string | null
           horario_funcionamento: Json
           id: string
           logo_url: string | null
+          slug_publico: string | null
+          telefone: string | null
           tenant_id: string
         }
         Insert: {
           atualizado_em?: string
+          cnpj?: string | null
           cor_principal?: string | null
           criado_em?: string
           endereco?: string | null
           horario_funcionamento?: Json
           id?: string
           logo_url?: string | null
+          slug_publico?: string | null
+          telefone?: string | null
           tenant_id: string
         }
         Update: {
           atualizado_em?: string
+          cnpj?: string | null
           cor_principal?: string | null
           criado_em?: string
           endereco?: string | null
           horario_funcionamento?: Json
           id?: string
           logo_url?: string | null
+          slug_publico?: string | null
+          telefone?: string | null
           tenant_id?: string
         }
         Relationships: [

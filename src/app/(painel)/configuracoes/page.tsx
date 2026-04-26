@@ -7,14 +7,13 @@ import {
   CreditCard,
   Lock,
   Phone,
-  Settings,
   Shield,
-  Sparkles,
   User,
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { AbaEstabelecimento } from '@/componentes/configuracoes/AbaEstabelecimento'
+import { AbaMeuPerfil } from '@/componentes/configuracoes/AbaMeuPerfil'
+import { AbaSeguranca } from '@/componentes/configuracoes/AbaSeguranca'
 
 const ABAS = [
   { id: 'geral', icone: Building2, rotulo: 'Estabelecimento' },
@@ -22,7 +21,7 @@ const ABAS = [
   { id: 'notificacoes', icone: Bell, rotulo: 'Notificações', rota: '/painel/configuracoes/notificacoes' },
   { id: 'ligacao-ia', icone: Phone, rotulo: 'Ligação IA', rota: '/painel/configuracoes/ligacao-ia' },
   { id: 'seguranca', icone: Lock, rotulo: 'Segurança' },
-  { id: 'permissoes', icone: Shield, rotulo: 'Permissões' },
+  { id: 'permissoes', icone: Shield, rotulo: 'Permissões', rota: '/painel/configuracoes/permissoes' },
   { id: 'assinatura', icone: CreditCard, rotulo: 'Assinatura', rota: '/painel/assinatura' },
 ] as const
 
@@ -70,60 +69,9 @@ const PaginaConfiguracoes = () => {
 
         {/* Conteúdo */}
         <div className="space-y-4">
-          {aba === 'geral' && (
-            <Card className="rounded-2xl border-border shadow-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Sparkles className="h-4 w-4 text-primary" /> Estabelecimento
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-sm text-muted-foreground">
-                <p>Em breve: nome, segmento, horário de funcionamento, endereço, logotipo e redes sociais.</p>
-                <Button variant="outline" className="rounded-full">
-                  <Settings className="mr-1.5 h-4 w-4" />
-                  Configurar agora
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {aba === 'perfil' && (
-            <Card className="rounded-2xl border-border shadow-card">
-              <CardHeader>
-                <CardTitle className="text-lg">Meu perfil</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Em breve: nome de exibição, foto, telefone de contato e preferências pessoais.
-              </CardContent>
-            </Card>
-          )}
-
-          {aba === 'seguranca' && (
-            <Card className="rounded-2xl border-border shadow-card">
-              <CardHeader>
-                <CardTitle className="text-lg">Segurança</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Em breve: alterar senha, autenticação em dois fatores, sessões ativas.
-              </CardContent>
-            </Card>
-          )}
-
-          {aba === 'permissoes' && (
-            <Card className="rounded-2xl border-border shadow-card">
-              <CardHeader>
-                <CardTitle className="text-lg">Permissões</CardTitle>
-              </CardHeader>
-              <CardContent className="text-sm text-muted-foreground">
-                Gerencie perfis e acessos da equipe.
-                <div className="mt-3">
-                  <Button onClick={() => navigate('/painel/configuracoes/permissoes')} className="rounded-full bg-gradient-primary shadow-elegant">
-                    Abrir gestão de permissões
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {aba === 'geral' && <AbaEstabelecimento />}
+          {aba === 'perfil' && <AbaMeuPerfil />}
+          {aba === 'seguranca' && <AbaSeguranca />}
         </div>
       </div>
     </div>
