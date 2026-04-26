@@ -463,9 +463,8 @@ const PaginaTenants = () => {
                       <SelectValue placeholder="Sem plano" />
                     </SelectTrigger>
                     <SelectContent>
-                      {planos.map((p) => (
-                        <SelectItem key={p.id} value={p.nome}>{p.nome}</SelectItem>
-                      ))}
+                      <SelectItem value="freemium">Freemium</SelectItem>
+                      <SelectItem value="profissional">Profissional</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
