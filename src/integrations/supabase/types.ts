@@ -495,6 +495,131 @@ export type Database = {
           },
         ]
       }
+      lotes_estoque: {
+        Row: {
+          criado_em: string | null
+          custo_unitario: number
+          data_compra: string
+          data_validade: string | null
+          fornecedor: string | null
+          id: string
+          nota_fiscal: string | null
+          numero_lote: string | null
+          produto_id: string
+          quantidade: number
+          tenant_id: string
+        }
+        Insert: {
+          criado_em?: string | null
+          custo_unitario: number
+          data_compra: string
+          data_validade?: string | null
+          fornecedor?: string | null
+          id?: string
+          nota_fiscal?: string | null
+          numero_lote?: string | null
+          produto_id: string
+          quantidade: number
+          tenant_id: string
+        }
+        Update: {
+          criado_em?: string | null
+          custo_unitario?: number
+          data_compra?: string
+          data_validade?: string | null
+          fornecedor?: string | null
+          id?: string
+          nota_fiscal?: string | null
+          numero_lote?: string | null
+          produto_id?: string
+          quantidade?: number
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lotes_estoque_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lotes_estoque_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      movimentacoes_estoque: {
+        Row: {
+          agendamento_id: string | null
+          criado_em: string | null
+          criado_por_usuario_id: string
+          id: string
+          lote_id: string | null
+          motivo: string | null
+          produto_id: string
+          quantidade: number
+          tenant_id: string
+          tipo: string
+        }
+        Insert: {
+          agendamento_id?: string | null
+          criado_em?: string | null
+          criado_por_usuario_id: string
+          id?: string
+          lote_id?: string | null
+          motivo?: string | null
+          produto_id: string
+          quantidade: number
+          tenant_id: string
+          tipo: string
+        }
+        Update: {
+          agendamento_id?: string | null
+          criado_em?: string | null
+          criado_por_usuario_id?: string
+          id?: string
+          lote_id?: string | null
+          motivo?: string | null
+          produto_id?: string
+          quantidade?: number
+          tenant_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "movimentacoes_estoque_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "agendamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimentacoes_estoque_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       perfis_permissao: {
         Row: {
           atualizado_em: string
@@ -555,6 +680,120 @@ export type Database = {
             columns: ["perfil_id"]
             isOneToOne: false
             referencedRelation: "perfis_permissao"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string | null
+          categoria: string | null
+          codigo_barras: string | null
+          codigo_interno: string | null
+          criado_em: string | null
+          custo_medio: number
+          descricao: string | null
+          estoque_atual: number
+          estoque_minimo: number | null
+          foto_url: string | null
+          id: string
+          margem_lucro: number | null
+          nome: string
+          preco_venda: number | null
+          tenant_id: string
+          tipo: string
+          unidade_id: string
+          unidade_medida: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string | null
+          categoria?: string | null
+          codigo_barras?: string | null
+          codigo_interno?: string | null
+          criado_em?: string | null
+          custo_medio?: number
+          descricao?: string | null
+          estoque_atual?: number
+          estoque_minimo?: number | null
+          foto_url?: string | null
+          id?: string
+          margem_lucro?: number | null
+          nome: string
+          preco_venda?: number | null
+          tenant_id: string
+          tipo?: string
+          unidade_id: string
+          unidade_medida?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string | null
+          categoria?: string | null
+          codigo_barras?: string | null
+          codigo_interno?: string | null
+          criado_em?: string | null
+          custo_medio?: number
+          descricao?: string | null
+          estoque_atual?: number
+          estoque_minimo?: number | null
+          foto_url?: string | null
+          id?: string
+          margem_lucro?: number | null
+          nome?: string
+          preco_venda?: number | null
+          tenant_id?: string
+          tipo?: string
+          unidade_id?: string
+          unidade_medida?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "produtos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "produtos_unidade_id_fkey"
+            columns: ["unidade_id"]
+            isOneToOne: false
+            referencedRelation: "unidades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos_por_servico: {
+        Row: {
+          produto_id: string
+          quantidade_padrao: number
+          servico_id: string
+        }
+        Insert: {
+          produto_id: string
+          quantidade_padrao: number
+          servico_id: string
+        }
+        Update: {
+          produto_id?: string
+          quantidade_padrao?: number
+          servico_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "produtos_por_servico_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "produtos_por_servico_servico_id_fkey"
+            columns: ["servico_id"]
+            isOneToOne: false
+            referencedRelation: "servicos"
             referencedColumns: ["id"]
           },
         ]
