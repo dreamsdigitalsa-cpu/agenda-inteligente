@@ -31,7 +31,7 @@ export const Logo = ({ className, alt = 'StudioFlow' }: LogoProps) => {
     <img
       src={src}
       alt={alt}
-      className={cn('h-10 w-auto select-none', className)}
+      className={cn('h-12 w-auto shrink-0 select-none object-contain', className)}
       draggable={false}
     />
   )
