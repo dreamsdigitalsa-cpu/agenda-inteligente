@@ -35,16 +35,19 @@ export function useTenant(): EstadoTenant {
         .select('id, auth_user_id, tenant_id, unidade_id, nome, email, ativo')
         .eq('auth_user_id', authUserId)
         .maybeSingle()
-      if (errUsuario) throw errUsuario
-
-      // Busca roles
+      
+      // Se não existe na tabela 'usuarios', pode ser um super_admin sem vínculo a tenant
+      // mas precisamos saber se ele tem a role no 'user_roles'
       const { data: rolesRows, error: errRoles } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', authUserId)
+      
       if (errRoles) throw errRoles
       const roles = (rolesRows ?? []).map((r) => r.role as AppRole)
       const isSuperAdmin = roles.includes('super_admin')
+
+      if (errUsuario && !isSuperAdmin) throw errUsuario
 
       let tenant: Tenant | null = null
       if (usuario?.tenant_id || isSuperAdmin) {
@@ -79,15 +82,15 @@ export function useTenant(): EstadoTenant {
       setEstado({
         tenant,
         assinatura,
-        usuario: usuario
+        usuario: (usuario || isSuperAdmin)
           ? {
-              id: usuario.id,
-              authUserId: usuario.auth_user_id,
-              tenantId: usuario.tenant_id,
-              unidadeId: usuario.unidade_id,
-              nome: usuario.nome,
-              email: usuario.email,
-              ativo: usuario.ativo,
+              id: usuario?.id || authUserId, // Se for super admin sem perfil, usa o authUserId como fallback
+              authUserId: usuario?.auth_user_id || authUserId,
+              tenantId: usuario?.tenant_id || null,
+              unidadeId: usuario?.unidade_id || null,
+              nome: usuario?.nome || 'Super Admin',
+              email: usuario?.email || '',
+              ativo: usuario?.ativo ?? true,
               roles,
             }
           : null,
