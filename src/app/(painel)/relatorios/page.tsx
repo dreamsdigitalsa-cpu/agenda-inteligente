@@ -1220,7 +1220,7 @@ function AbaFluxo({ tenantId, inicio, fim }: AbaFluxoProps) {
 // ─── Página principal ─────────────────────────────────────────────────────────
 
 const PaginaRelatorios = () => {
-  const { usuario }       = useTenant()
+  const { usuario, carregando: tenantCarregando } = useTenant()
   const { temPermissao }  = usePermissao()
 
   const [aba, setAba]       = useState<AbaRelatorio>('resumo')
@@ -1233,7 +1233,7 @@ const PaginaRelatorios = () => {
   const { inicio, fim } = useMemo(() => calcularIntervalo(periodo), [periodo])
 
   // Aguarda carregamento do usuário
-  if (!usuario) {
+  if (tenantCarregando) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <Loader2 className="h-7 w-7 animate-spin text-muted-foreground" />
