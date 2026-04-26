@@ -29,6 +29,7 @@ import {
   CarouselItem, 
   type CarouselApi
 } from '@/components/ui/carousel'
+import logoStudioFlow from '@/assets/studioflow-logo.png'
 
 // ── Schema Zod ────────────────────────────────────────────────────────────────
 
