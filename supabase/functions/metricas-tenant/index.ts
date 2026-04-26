@@ -25,65 +25,171 @@ serve(async (req) => {
     // Buscar tenant_id ativo do usuário
     const { data: perfil, error: perfilError } = await supabase
       .from('usuarios')
-      .select('tenant_id')
+      .select('id, tenant_id, unidade_id')
       .eq('id', user.id)
       .single()
 
     if (perfilError || !perfil) throw new Error('Tenant não encontrado')
 
     const tenantId = perfil.tenant_id
-    const hoje = new Date().toISOString().split('T')[0]
+    const unidadeId = perfil.unidade_id
+    const hoje = new Date()
+    const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()).toISOString()
+    const fimHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23, 59, 59, 999).toISOString()
 
-    // 1. Receita do dia (Agendamentos concluídos hoje)
-    // Nota: Como não temos tabela de 'lancamentos' financeira explícita nos arquivos lidos, 
-    // vamos basear no valor dos agendamentos concluídos para este exemplo.
-    const { data: agendamentosHoje, error: errorReceita } = await supabase
+    const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString()
+    const primeiroDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1).toISOString()
+    const ultimoDiaMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0, 23, 59, 59, 999).toISOString()
+
+    // ─── 1. KPIs FINANCEIROS (MÊS ATUAL) ───────────────────────────────────
+    
+    // Receitas e Despesas do mês atual
+    const { data: lancamentosMes } = await supabase
+      .from('lancamentos')
+      .select('tipo, valor, categoria, criado_em')
+      .eq('tenant_id', tenantId)
+      .gte('criado_em', primeiroDiaMes)
+
+    const receitaMes = lancamentosMes
+      ?.filter(l => l.tipo === 'receita')
+      .reduce((acc, curr) => acc + (curr.valor || 0), 0) || 0
+    
+    const despesaMes = lancamentosMes
+      ?.filter(l => l.tipo === 'despesa')
+      .reduce((acc, curr) => acc + (curr.valor || 0), 0) || 0
+
+    const lucroMes = receitaMes - despesaMes
+
+    // Ticket Médio do mês
+    const { count: agendamentosConcluidosMes } = await supabase
+      .from('agendamentos')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .eq('status', 'concluido')
+      .gte('data_hora_inicio', primeiroDiaMes)
+
+    const ticketMedioMes = agendamentosConcluidosMes && agendamentosConcluidosMes > 0 
+      ? receitaMes / agendamentosConcluidosMes 
+      : 0
+
+    // ─── 2. VARIAÇÃO VS MÊS ANTERIOR ───────────────────────────────────────
+    
+    const { data: lancamentosMesAnterior } = await supabase
+      .from('lancamentos')
+      .select('tipo, valor')
+      .eq('tenant_id', tenantId)
+      .gte('criado_em', primeiroDiaMesAnterior)
+      .lte('criado_em', ultimoDiaMesAnterior)
+
+    const receitaMesAnterior = lancamentosMesAnterior
+      ?.filter(l => l.tipo === 'receita')
+      .reduce((acc, curr) => acc + (curr.valor || 0), 0) || 0
+
+    const variacaoReceita = receitaMesAnterior > 0 
+      ? ((receitaMes - receitaMesAnterior) / receitaMesAnterior) * 100 
+      : 0
+
+    // ─── 3. DADOS PARA GRÁFICOS E LISTAS ───────────────────────────────────
+
+    // Receita por dia (últimos 30 dias)
+    const trintaDiasAtras = new Date()
+    trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30)
+    
+    const { data: lancamentos30Dias } = await supabase
+      .from('lancamentos')
+      .select('tipo, valor, criado_em')
+      .eq('tenant_id', tenantId)
+      .eq('tipo', 'receita')
+      .gte('criado_em', trintaDiasAtras.toISOString())
+
+    const graficoReceita = Array.from({ length: 30 }, (_, i) => {
+      const d = new Date()
+      d.setDate(d.getDate() - (29 - i))
+      const dataStr = d.toISOString().split('T')[0]
+      const total = lancamentos30Dias
+        ?.filter(l => l.criado_em.startsWith(dataStr))
+        .reduce((acc, curr) => acc + (curr.valor || 0), 0) || 0
+      return { data: dataStr, total }
+    })
+
+    // Despesas por categoria (Top 5)
+    const despesasPorCat = lancamentosMes
+      ?.filter(l => l.tipo === 'despesa')
+      .reduce((acc: any, curr) => {
+        acc[curr.categoria] = (acc[curr.categoria] || 0) + curr.valor
+        return acc
+      }, {})
+
+    const topDespesas = Object.entries(despesasPorCat || {})
+      .map(([categoria, valor]) => ({ categoria, valor: valor as number }))
+      .sort((a, b) => b.valor - a.valor)
+      .slice(0, 5)
+
+    // Próximas contas a vencer (Placeholder - assumindo que existe ou virá de lancamentos futuros/contas_pagar)
+    // Se não houver tabela contas_pagar, simulamos com lancamentos agendados se existirem
+    const proximasContas = [] 
+
+    // ─── 4. ALERTAS ────────────────────────────────────────────────────────
+
+    // Caixa aberto hoje?
+    const { data: caixaHoje } = await supabase
+      .from('caixa_sessoes')
+      .select('id')
+      .eq('tenant_id', tenantId)
+      .eq('unidade_id', unidadeId)
+      .gte('abertura_em', inicioHoje)
+      .lte('abertura_em', fimHoje)
+      .maybeSingle()
+
+    // Comissões pendentes (Mês atual)
+    // Placeholder - lógica depende da implementação do módulo de comissões
+    const comissoesPendentes = 0
+
+    // Lançamentos sem categoria (se categoria for nula ou 'outros'/'pendente')
+    const { count: lancamentosSemCategoria } = await supabase
+      .from('lancamentos')
+      .select('*', { count: 'exact', head: true })
+      .eq('tenant_id', tenantId)
+      .or('categoria.eq.outros,categoria.is.null')
+
+    // ─── 5. DADOS ORIGINAIS (KPIs DO DIA) ──────────────────────────────────
+    
+    const { data: agendamentosHoje } = await supabase
       .from('agendamentos')
       .select('valor_total')
       .eq('tenant_id', tenantId)
       .eq('status', 'concluido')
-      .gte('data', hoje)
-      .lt('data', new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0])
+      .gte('data_hora_inicio', inicioHoje)
+      .lte('data_hora_inicio', fimHoje)
 
     const receitaDia = agendamentosHoje?.reduce((acc, curr) => acc + (curr.valor_total || 0), 0) || 0
-    const agendamentosConcluidos = agendamentosHoje?.length || 0
-    const ticketMedio = agendamentosConcluidos > 0 ? receitaDia / agendamentosConcluidos : 0
-
-    // 2. Comissões pendentes (Placeholder - assumindo lógica de negócio)
-    const comissoesPendentes = 0 // Implementar lógica real quando as tabelas financeiras forem mapeadas
-
-    // 3. Receita dos últimos 7 dias para o gráfico
-    const seteDiasAtras = new Date()
-    seteDiasAtras.setDate(seteDiasAtras.getDate() - 7)
-    
-    const { data: dadosGraficoRaw } = await supabase
-      .from('agendamentos')
-      .select('valor_total, data')
-      .eq('tenant_id', tenantId)
-      .eq('status', 'concluido')
-      .gte('data', seteDiasAtras.toISOString().split('T')[0])
-
-    // Agrupar por data
-    const ultimos7Dias = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date()
-      d.setDate(d.getDate() - i)
-      return d.toISOString().split('T')[0]
-    }).reverse()
-
-    const graficoReceita = ultimos7Dias.map(data => {
-      const total = dadosGraficoRaw
-        ?.filter(a => a.data === data)
-        .reduce((acc, curr) => acc + (curr.valor_total || 0), 0) || 0
-      return { data, total }
-    })
+    const agendamentosConcluidosHoje = agendamentosHoje?.length || 0
+    const ticketMedioHoje = agendamentosConcluidosHoje > 0 ? receitaDia / agendamentosConcluidosHoje : 0
 
     return new Response(
       JSON.stringify({
+        // KPIs do Dia (Página Início)
         receita_dia: receitaDia,
-        ticket_medio: ticketMedio,
-        agendamentos_concluidos: agendamentosConcluidos,
-        comissoes_pendentes: comissoesPendentes,
-        grafico_receita: graficoReceita,
+        ticket_medio_dia: ticketMedioHoje,
+        agendamentos_concluidos_dia: agendamentosConcluidosHoje,
+        
+        // KPIs do Mês (Página Financeiro)
+        receita_mes: receitaMes,
+        despesa_mes: despesaMes,
+        lucro_mes: lucroMes,
+        ticket_medio_mes: ticketMedioMes,
+        variacao_receita: variacaoReceita,
+        
+        // Gráficos e Listas
+        grafico_receita_30d: graficoReceita,
+        top_despesas: topDespesas,
+        proximas_contas: proximasContas,
+        
+        // Alertas
+        caixa_aberto_hoje: !!caixaHoje,
+        comissoes_mes: comissoesPendentes,
+        pendencias_categorizacao: lancamentosSemCategoria || 0,
+        
         timestamp: new Date().toISOString()
       }),
       { 
