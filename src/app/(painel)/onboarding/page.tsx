@@ -96,7 +96,7 @@ const SUGESTOES_SERVICOS: Record<SegmentoTenant, ServicoForm[]> = {
 
 const LIMITE_FREEMIUM_PROFISSIONAIS = 2
 const LIMITE_MAX_PROFISSIONAIS = 10
-const TOTAL_ETAPAS = 5
+const TOTAL_ETAPAS = 6
 
 // Gera um slug a partir do nome do estabelecimento (sem acentos, kebab-case)
 function gerarSlug(nome: string): string {
