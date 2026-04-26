@@ -13,12 +13,15 @@ import { Badge } from '@/components/ui/badge'
 import { 
   ArrowRight, 
   Sparkles, 
-  LayoutDashboard, 
   Smartphone,
   CheckCircle2,
   Newspaper,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 import { 
   Carousel, 
