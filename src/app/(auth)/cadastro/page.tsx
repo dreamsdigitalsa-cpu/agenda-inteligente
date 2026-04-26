@@ -39,12 +39,18 @@ const cadastroSchema = z.object({
     .max(128, 'Senha muito longa')
     .regex(/[A-Za-z]/, 'Senha deve conter pelo menos uma letra')
     .regex(/[0-9]/, 'Senha deve conter pelo menos um número'),
+  confirmarSenha: z
+    .string()
+    .min(1, 'Confirmação de senha é obrigatória'),
   nomeEstabelecimento: z
     .string()
     .trim()
     .min(2, 'Nome do estabelecimento deve ter pelo menos 2 caracteres')
     .max(100, 'Nome do estabelecimento muito longo'),
   segmento: z.enum(SEGMENTOS_VALIDOS, { required_error: 'Selecione um segmento' }),
+}).refine((data) => data.senha === data.confirmarSenha, {
+  message: "As senhas não coincidem",
+  path: ["confirmarSenha"],
 })
 
 type CadastroForm = z.infer<typeof cadastroSchema>
