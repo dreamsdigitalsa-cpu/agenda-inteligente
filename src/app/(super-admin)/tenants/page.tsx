@@ -180,15 +180,26 @@ const PaginaTenants = () => {
   async function mudarPlano(tenant: Tenant, novoPlanoNome: string) {
     setAcaoEmAndamento(tenant.id + '-plano')
     try {
-      await supabase
+      // O banco espera 'freemium' ou 'profissional' de acordo com o enum plano_tenant
+      const planoParaBanco = novoPlanoNome.toLowerCase().includes('profissional') || novoPlanoNome.toLowerCase() === 'pro' 
+        ? 'profissional' 
+        : 'freemium'
+
+      const { error } = await supabase
         .from('tenants')
-        .update({ plano: novoPlanoNome } as any)
+        .update({ plano: planoParaBanco } as any)
         .eq('id', tenant.id)
+
+      if (error) {
+        console.error('Erro ao atualizar plano:', error)
+        alert('Erro ao salvar plano: ' + error.message)
+        return
+      }
 
       await carregar()
       if (tenantSelecionado?.id === tenant.id) {
         setTenantSelecionado((prev) =>
-          prev ? { ...prev, plano: novoPlanoNome } : prev
+          prev ? { ...prev, plano: planoParaBanco } : prev
         )
       }
     } finally {
