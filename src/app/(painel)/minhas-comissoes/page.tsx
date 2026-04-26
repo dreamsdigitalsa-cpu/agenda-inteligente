@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useProfissional } from '@/hooks/useProfissional'
 import { supabase } from '@/lib/supabase/cliente'
+import { CardKPI } from '@/componentes/ui/CardKPI'
+import { DollarSign, TrendingUp, Clock, CheckCircle2 } from 'lucide-react'
 
 /**
  * Interface para os itens de comissão
@@ -90,6 +92,38 @@ export default function MinhasComissoes() {
     buscar()
   }, [profissional?.id, profCarregando])
 
+  /**
+   * Cálculo dos KPIs baseado nos dados carregados
+   */
+  const kpis = useMemo(() => {
+    const hoje = new Date()
+    const inicioMesAtual = new Date(hoje.getFullYear(), hoje.getMonth(), 1)
+    const inicioMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1)
+    const fimMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0, 23, 59, 59)
+
+    const pendenteMesAtual = comissoes
+      .filter(c => c.status === 'pendente' && new Date(c.criado_em) >= inicioMesAtual)
+      .reduce((s, c) => s + c.valor_calculado, 0)
+
+    const pagaMesAtual = comissoes
+      .filter(c => c.status === 'paga' && new Date(c.criado_em) >= inicioMesAtual)
+      .reduce((s, c) => s + c.valor_calculado, 0)
+
+    const totalMesAnterior = comissoes
+      .filter(c => {
+        const d = new Date(c.criado_em)
+        return d >= inicioMesAnterior && d <= fimMesAnterior
+      })
+      .reduce((s, c) => s + c.valor_calculado, 0)
+
+    const totalAtual = pendenteMesAtual + pagaMesAtual
+    const variacao = totalMesAnterior > 0
+      ? ((totalAtual - totalMesAnterior) / totalMesAnterior) * 100
+      : 0
+
+    return { pendenteMesAtual, pagaMesAtual, totalMesAnterior, variacao }
+  }, [comissoes])
+
   // Estado de carregamento inicial do perfil
   if (profCarregando) return (
     <div className="p-4 space-y-4">
@@ -126,6 +160,29 @@ export default function MinhasComissoes() {
       <div>
         <h1 className="text-2xl font-bold">Minhas comissões</h1>
         <p className="text-sm text-muted-foreground">Acompanhe seus ganhos por serviço realizado</p>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-4">
+        <CardKPI
+          titulo="Pendente este mês"
+          valor={`R$ ${kpis.pendenteMesAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          icone={Clock}
+        />
+        <CardKPI
+          titulo="Pago este mês"
+          valor={`R$ ${kpis.pagaMesAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          icone={CheckCircle2}
+        />
+        <CardKPI
+          titulo="Mês anterior"
+          valor={`R$ ${kpis.totalMesAnterior.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          icone={DollarSign}
+        />
+        <CardKPI
+          titulo="Variação"
+          valor={`${kpis.variacao >= 0 ? '+' : ''}${kpis.variacao.toFixed(1)}%`}
+          icone={TrendingUp}
+        />
       </div>
 
       <Card>
