@@ -70,7 +70,7 @@ export const LayoutPainel = () => {
         {/* Cabeçalho mobile com gatilho da sidebar */}
         <div className="flex items-center justify-between border-b border-border bg-background px-4 py-3 md:hidden">
           <div className="flex items-center gap-2">
-            <Logo className="h-12 w-auto max-w-[210px]" />
+            <Logo className="h-9 w-auto max-w-[160px]" />
           </div>
           <Sheet>
             <SheetTrigger asChild>
