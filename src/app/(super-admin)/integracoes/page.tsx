@@ -159,9 +159,10 @@ const PaginaIntegracoes = () => {
   const [salvandoLig,   setSalvandoLig]   = useState(false)
   const [erroLig,       setErroLig]       = useState<string | null>(null)
 
-  // Pagamento
-  const [pagProvider,   setPagProvider]   = useState<'stripe' | 'asaas' | 'mercadopago'>('stripe')
+  // Pagamento (Gateways)
+  const [pagProvider,   setPagProvider]   = useState<'stripe' | 'asaas' | 'pagarme'>('stripe')
   const [pagApiKey,     setPagApiKey]     = useState('')
+  const [pagPublicKey,  setPagPublicKey]  = useState('')
   const [pagWebhook,    setPagWebhook]    = useState('')
   const [salvandoPag,   setSalvandoPag]   = useState(false)
   const [erroPag,       setErroPag]       = useState<string | null>(null)
