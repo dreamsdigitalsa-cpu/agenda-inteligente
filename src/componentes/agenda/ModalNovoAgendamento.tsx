@@ -34,6 +34,8 @@ interface Props {
   onFechar: () => void
   onCriado: () => void
   dataInicial?: Date
+  /** Pré-seleciona um profissional (usado no painel do profissional logado). */
+  profissionalIdPreSelecionado?: string
 }
 
 interface ClienteBusca {
@@ -42,7 +44,13 @@ interface ClienteBusca {
   telefone: string
 }
 
-export function ModalNovoAgendamento({ aberto, onFechar, onCriado, dataInicial }: Props) {
+export function ModalNovoAgendamento({
+  aberto,
+  onFechar,
+  onCriado,
+  dataInicial,
+  profissionalIdPreSelecionado,
+}: Props) {
   const { tenant } = useTenant()
   const { profissionais } = useProfissionais()
   const { servicos } = useServicos()
@@ -51,7 +59,7 @@ export function ModalNovoAgendamento({ aberto, onFechar, onCriado, dataInicial }
   const [resultados, setResultados] = useState<ClienteBusca[]>([])
   const [clienteId, setClienteId] = useState<string | null>(null)
   const [clienteNome, setClienteNome] = useState('')
-  const [profId, setProfId] = useState('')
+  const [profId, setProfId] = useState(profissionalIdPreSelecionado ?? '')
   const [servId, setServId] = useState('')
   const [data, setData] = useState(() =>
     (dataInicial ?? new Date()).toISOString().slice(0, 10),
@@ -60,6 +68,12 @@ export function ModalNovoAgendamento({ aberto, onFechar, onCriado, dataInicial }
   const [obs, setObs] = useState('')
   const [conflito, setConflito] = useState(false)
   const [salvando, setSalvando] = useState(false)
+
+  // Atualiza profId se a prop mudar (ex.: trocar de profissional logado)
+  useEffect(() => {
+    if (profissionalIdPreSelecionado) setProfId(profissionalIdPreSelecionado)
+  }, [profissionalIdPreSelecionado])
+
 
   const servico = useMemo(() => servicos.find((s) => s.id === servId), [servicos, servId])
 
