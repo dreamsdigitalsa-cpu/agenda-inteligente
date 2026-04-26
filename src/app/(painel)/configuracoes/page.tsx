@@ -9,14 +9,17 @@ import {
   Phone,
   Shield,
   User,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AbaEstabelecimento } from '@/componentes/configuracoes/AbaEstabelecimento'
 import { AbaMeuPerfil } from '@/componentes/configuracoes/AbaMeuPerfil'
 import { AbaSeguranca } from '@/componentes/configuracoes/AbaSeguranca'
+import { AbaUsuarios } from '@/componentes/configuracoes/AbaUsuarios'
 
 const ABAS = [
   { id: 'geral', icone: Building2, rotulo: 'Estabelecimento' },
+  { id: 'usuarios', icone: Users, rotulo: 'Usuários' },
   { id: 'perfil', icone: User, rotulo: 'Meu perfil' },
   { id: 'notificacoes', icone: Bell, rotulo: 'Notificações', rota: '/painel/configuracoes/notificacoes' },
   { id: 'ligacao-ia', icone: Phone, rotulo: 'Ligação IA', rota: '/painel/configuracoes/ligacao-ia' },
@@ -70,6 +73,7 @@ const PaginaConfiguracoes = () => {
         {/* Conteúdo */}
         <div className="space-y-4">
           {aba === 'geral' && <AbaEstabelecimento />}
+          {aba === 'usuarios' && <AbaUsuarios />}
           {aba === 'perfil' && <AbaMeuPerfil />}
           {aba === 'seguranca' && <AbaSeguranca />}
         </div>
