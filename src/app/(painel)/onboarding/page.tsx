@@ -578,7 +578,19 @@ const PaginaOnboarding = () => {
               </Card>
             )}
 
-            {etapa === 5 && (
+            {etapa === 5 && tenant && (
+              <Card>
+                <CardContent className="p-6 space-y-6">
+                  {tenant.segmento === 'barbearia' && <EtapaBarbearia ref={refSegmento} />}
+                  {tenant.segmento === 'salao'     && <EtapaSalao     ref={refSegmento} />}
+                  {tenant.segmento === 'estetica'  && <EtapaEstetica  ref={refSegmento} />}
+                  {tenant.segmento === 'tatuagem'  && <EtapaTatuagem  ref={refSegmento} />}
+                  {tenant.segmento === 'manicure'  && <EtapaManicure  ref={refSegmento} />}
+                </CardContent>
+              </Card>
+            )}
+
+            {etapa === 6 && (
               <Card>
                 <CardContent className="p-6 space-y-6 text-center">
                   <div>
