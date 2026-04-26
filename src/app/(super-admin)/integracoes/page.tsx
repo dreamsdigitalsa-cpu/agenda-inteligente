@@ -527,7 +527,7 @@ const PaginaIntegracoes = () => {
           )}
           <div className="space-y-1.5">
             <Label className="text-zinc-400 text-xs">Provedor Principal</Label>
-            <Select value={pagProvider} onValueChange={(v) => setPagProvider(v as any)}>
+            <Select value={pagProvider} onValueChange={(v) => setPagProvider(v as 'stripe' | 'asaas' | 'pagarme')}>
               <SelectTrigger className="bg-zinc-800 border-zinc-700 w-full">
                 <SelectValue />
               </SelectTrigger>
