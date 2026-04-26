@@ -315,6 +315,63 @@ export default function PaginaEquipeSuperAdmin() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Modal de Permissões */}
+      <Dialog open={isPermissoesDialogOpen} onOpenChange={setIsPermissoesDialogOpen}>
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Configurar Permissões: {membroSelecionado?.nome}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {CATALOGO_PERMISSOES.map((perm) => (
+                <div 
+                  key={perm.codigo}
+                  className="flex items-start space-x-3 p-3 rounded-lg border border-zinc-800 bg-zinc-800/50 hover:bg-zinc-800 transition-colors cursor-pointer"
+                  onClick={() => togglePermissao(perm.codigo)}
+                >
+                  <Checkbox 
+                    checked={permissoesSelecionadas.includes(perm.codigo)}
+                    onCheckedChange={() => togglePermissao(perm.codigo)}
+                    className="mt-1 border-zinc-600 data-[state=checked]:bg-violet-600 data-[state=checked]:border-violet-600"
+                  />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none text-zinc-200">
+                      {perm.rotulo}
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      {perm.categoria}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter className="sticky bottom-0 bg-zinc-900 pt-4 border-t border-zinc-800">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsPermissoesDialogOpen(false)}
+              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => salvarPermissoesMutation.mutate()}
+              disabled={salvarPermissoesMutation.isPending}
+              className="bg-violet-600 hover:bg-violet-700 text-white"
+            >
+              {salvarPermissoesMutation.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Check className="mr-2 h-4 w-4" />
+              )}
+              Salvar Alterações
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
