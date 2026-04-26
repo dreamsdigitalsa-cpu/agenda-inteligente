@@ -4,7 +4,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/cliente'
 import {
   LayoutDashboard, Building2, CreditCard,
-  Plug, BarChart3, LogOut, Shield,
+  Plug, BarChart3, LogOut, Shield, Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 

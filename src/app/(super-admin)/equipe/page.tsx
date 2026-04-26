@@ -51,7 +51,7 @@ export default function PaginaEquipeSuperAdmin() {
       
       // Filtrar apenas quem tem role super_admin ou admin global
       return data.filter(u => 
-        u.user_roles?.some((r: any) => r.role === 'super_admin')
+        (u.user_roles as any)?.some((r: any) => r.role === 'super_admin')
       )
     },
   })
