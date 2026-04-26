@@ -526,50 +526,48 @@ const PaginaIntegracoes = () => {
             </div>
           )}
           <div className="space-y-1.5">
-            <Label className="text-zinc-400 text-xs">Provedor</Label>
-            <Select value={pagProvider} onValueChange={(v) => setPagProvider(v as 'stripe' | 'asaas' | 'mercadopago')}>
-              <SelectTrigger className="bg-zinc-800 border-zinc-700 w-48">
+            <Label className="text-zinc-400 text-xs">Provedor Principal</Label>
+            <Select value={pagProvider} onValueChange={(v) => setPagProvider(v as any)}>
+              <SelectTrigger className="bg-zinc-800 border-zinc-700 w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="stripe">Stripe</SelectItem>
                 <SelectItem value="asaas">Asaas</SelectItem>
-                <SelectItem value="mercadopago">Mercado Pago</SelectItem>
+                <SelectItem value="pagarme">Pagar.me</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <InputSenha
-            id="pag_key"
-            label={pagProvider === 'stripe' ? 'Secret Key (sk_...)' : pagProvider === 'asaas' ? 'API Key Asaas' : 'Access Token'}
-            value={pagApiKey}
-            onChange={setPagApiKey}
-            placeholder={pagProvider === 'stripe' ? 'sk_live_...' : 'Token da API'}
-          />
-          <Campo
-            id="pag_webhook"
-            label="Webhook Secret"
-            value={pagWebhook}
-            onChange={setPagWebhook}
-            placeholder={pagProvider === 'stripe' ? 'whsec_...' : 'Segredo do webhook'}
-            mono
-          />
+
+          <div className="grid gap-3">
+            <InputSenha 
+              id="pag_api_key" 
+              label="API Key / Secret Key" 
+              value={pagApiKey} 
+              onChange={setPagApiKey} 
+              placeholder={pagProvider === 'stripe' ? 'sk_live_...' : 'Token da API'}
+            />
+            <Campo id="pag_pub_key" label="Public Key (Opcional)" value={pagPublicKey} onChange={setPagPublicKey} placeholder="pk_..." />
+            <InputSenha id="pag_webhook" label="Webhook Secret / Token" value={pagWebhook} onChange={setPagWebhook} />
+          </div>
+
           <Button
             disabled={salvandoPag}
             onClick={async () => {
               setErroPag(null)
               const err = await salvarCredenciais(
                 'pagamento_credenciais',
-                { provider: pagProvider, api_key: pagApiKey, webhook_secret: pagWebhook || undefined },
+                { provider: pagProvider, api_key: pagApiKey, public_key: pagPublicKey, webhook_secret: pagWebhook },
                 setSalvandoPag,
                 carregar,
               )
               if (err) setErroPag(err)
-              else { setPagApiKey(''); setPagWebhook('') }
+              else { setPagApiKey(''); setPagPublicKey(''); setPagWebhook('') }
             }}
-            className="bg-violet-600 hover:bg-violet-700"
+            className="bg-violet-600 hover:bg-violet-700 w-full"
           >
             <Save className="h-4 w-4 mr-2" />
-            {salvandoPag ? 'Criptografando...' : 'Salvar credenciais'}
+            {salvandoPag ? 'Criptografando...' : 'Salvar configurações de pagamento'}
           </Button>
         </CardContent>
       </Card>
