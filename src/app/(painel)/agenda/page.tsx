@@ -25,6 +25,7 @@ function inicioDaSemana(d: Date): Date {
 }
 
 const PaginaAgenda = () => {
+  const { tenant, carregando: tenantCarregando } = useTenant()
   const [data, setData] = useState<Date>(() => new Date())
   const [modo, setModo] = useState<ModoAgenda>('dia')
   const [selecionados, setSelecionados] = useState<string[]>([])
@@ -59,6 +60,14 @@ const PaginaAgenda = () => {
 
   const toggleProf = (id: string) =>
     setSelecionados((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]))
+
+  if (tenantCarregando) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4 p-4">

@@ -28,7 +28,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 
 const PaginaFinanceiro = () => {
-  const { tenant } = useTenant()
+  const { tenant, carregando: tenantCarregando } = useTenant()
   const { temPermissao } = usePermissao()
   const navigate = useNavigate()
   
@@ -41,7 +41,7 @@ const PaginaFinanceiro = () => {
       if (error) throw error
       return data
     },
-    enabled: !!tenant?.id && temAcesso,
+    enabled: !!tenant?.id && !tenantCarregando && temAcesso,
     staleTime: 0 // Dados financeiros sempre fresh
   })
 

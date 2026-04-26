@@ -700,7 +700,7 @@ const PaginaCaixa = () => {
     }
 
     verificarCaixaDoDia()
-  }, [usuario?.tenantId])
+  }, [usuario?.tenantId, usuarioCarregando])
 
   // ── Abrir caixa ──────────────────────────────────────────────────────────────
   const abrirCaixa = async () => {
