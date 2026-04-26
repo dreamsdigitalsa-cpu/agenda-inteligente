@@ -115,6 +115,64 @@ export default function PaginaEquipeSuperAdmin() {
     setRole('super_admin')
   }
 
+  const handleOpenPermissoes = async (membro: any) => {
+    setMembroSelecionado(membro)
+    setIsPermissoesDialogOpen(true)
+    
+    // Buscar permissões atuais do usuário
+    const { data, error } = await supabase
+      .from('permissoes_do_perfil')
+      .select('codigo_permissao')
+      .eq('perfil_id', membro.id) // Na estrutura atual, usamos o ID do usuário se não houver perfil_id
+    
+    if (data) {
+      setPermissoesSelecionadas(data.map(p => p.codigo_permissao))
+    } else {
+      setPermissoesSelecionadas([])
+    }
+  }
+
+  const salvarPermissoesMutation = useMutation({
+    mutationFn: async () => {
+      if (!membroSelecionado) return
+
+      // Limpar permissões antigas
+      await supabase
+        .from('permissoes_do_perfil')
+        .delete()
+        .eq('perfil_id', membroSelecionado.id)
+
+      // Inserir novas permissões
+      if (permissoesSelecionadas.length > 0) {
+        const insertData = permissoesSelecionadas.map(codigo => ({
+          perfil_id: membroSelecionado.id,
+          codigo_permissao: codigo
+        }))
+        
+        const { error } = await supabase
+          .from('permissoes_do_perfil')
+          .insert(insertData)
+        
+        if (error) throw error
+      }
+    },
+    onSuccess: () => {
+      toast.success('Permissões atualizadas com sucesso!')
+      setIsPermissoesDialogOpen(false)
+    },
+    onError: (error: any) => {
+      toast.error('Erro ao atualizar permissões: ' + error.message)
+    }
+  })
+
+  const togglePermissao = (codigo: string) => {
+    setPermissoesSelecionadas(prev => 
+      prev.includes(codigo) 
+        ? prev.filter(c => c !== codigo) 
+        : [...prev, codigo]
+    )
+  }
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
