@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -13,11 +14,20 @@ import {
   ArrowRight, 
   Sparkles, 
   LayoutDashboard, 
-  Bell, 
   Smartphone,
   CheckCircle2,
-  Newspaper
+  Newspaper,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext,
+  type CarouselApi
+} from '@/components/ui/carousel'
 
 // ── Schema Zod ────────────────────────────────────────────────────────────────
 
