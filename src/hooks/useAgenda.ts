@@ -1,6 +1,10 @@
 // Hook para consumo da agenda — busca agendamentos do dia (ou intervalo)
 // e mantém atualização em tempo real via Supabase Realtime.
 // Sem cache (POLITICA_CACHE.AGENDA_DO_DIA = 0).
+//
+// Suporta filtros opcionais:
+//   - profissionalId: restringe à agenda de um único profissional (usado no painel do profissional)
+//   - incluirBloqueios: também carrega bloqueios_agenda no mesmo intervalo
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase/cliente'
 import { useTenant } from './useTenant'
@@ -24,22 +28,52 @@ export interface AgendamentoDetalhado {
   servico_nome?: string
 }
 
-export function useAgenda(inicio: Date, fim: Date) {
+// Bloqueio de agenda (folga, almoço, atestado, etc.)
+export interface BloqueioAgenda {
+  id: string
+  tenant_id: string
+  profissional_id: string
+  inicio: string
+  fim: string
+  tipo: string
+  motivo: string | null
+}
+
+export interface OpcoesAgenda {
+  profissionalId?: string
+  incluirBloqueios?: boolean
+}
+
+export function useAgenda(inicio: Date, fim: Date, opcoes?: OpcoesAgenda) {
   const { tenant } = useTenant()
   const [agendamentos, setAgendamentos] = useState<AgendamentoDetalhado[]>([])
+  const [bloqueios, setBloqueios] = useState<BloqueioAgenda[]>([])
   const [carregando, setCarregando] = useState(true)
   const [atualizadoAgora, setAtualizadoAgora] = useState(false)
+
+  // Extrai opções (estabiliza como primitivos para o useCallback)
+  const profissionalIdFiltro = opcoes?.profissionalId
+  const incluirBloqueios = !!opcoes?.incluirBloqueios
 
   const carregar = useCallback(async () => {
     if (!tenant?.id) return
     setCarregando(true)
-    const { data, error } = await supabase
+
+    // Query base de agendamentos
+    let query = supabase
       .from('agendamentos')
       .select('*')
       .eq('tenant_id', tenant.id)
       .gte('data_hora_inicio', inicio.toISOString())
       .lt('data_hora_inicio', fim.toISOString())
       .order('data_hora_inicio', { ascending: true })
+
+    // Filtro opcional: agenda de um único profissional
+    if (profissionalIdFiltro) {
+      query = query.eq('profissional_id', profissionalIdFiltro)
+    }
+
+    const { data, error } = await query
 
     if (!error && data) {
       // Enriquecer com nomes (cliente, profissional, serviço) em paralelo
@@ -65,8 +99,29 @@ export function useAgenda(inicio: Date, fim: Date) {
         })) as AgendamentoDetalhado[],
       )
     }
+
+    // Carrega bloqueios no mesmo intervalo (opcional)
+    if (incluirBloqueios) {
+      let qb = supabase
+        .from('bloqueios_agenda')
+        .select('id, tenant_id, profissional_id, inicio, fim, tipo, motivo')
+        .eq('tenant_id', tenant.id)
+        // intersecta o intervalo [inicio, fim): bloqueio.inicio < fim AND bloqueio.fim > inicio
+        .lt('inicio', fim.toISOString())
+        .gt('fim', inicio.toISOString())
+
+      if (profissionalIdFiltro) {
+        qb = qb.eq('profissional_id', profissionalIdFiltro)
+      }
+
+      const { data: bloqs } = await qb
+      setBloqueios((bloqs ?? []) as BloqueioAgenda[])
+    } else {
+      setBloqueios([])
+    }
+
     setCarregando(false)
-  }, [tenant?.id, inicio.toISOString(), fim.toISOString()])
+  }, [tenant?.id, inicio.toISOString(), fim.toISOString(), profissionalIdFiltro, incluirBloqueios])
 
   useEffect(() => {
     carregar()
@@ -93,5 +148,5 @@ export function useAgenda(inicio: Date, fim: Date) {
     }
   }, [tenant?.id, carregar])
 
-  return { agendamentos, carregando, atualizadoAgora, recarregar: carregar }
+  return { agendamentos, bloqueios, carregando, atualizadoAgora, recarregar: carregar }
 }
