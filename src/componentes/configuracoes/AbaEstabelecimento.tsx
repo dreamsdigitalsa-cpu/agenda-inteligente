@@ -20,7 +20,7 @@ const DIAS = [
 ] as const
 
 export function AbaEstabelecimento() {
-  const { tenant } = useTenant()
+  const { tenant, carregando: tenantCarregando } = useTenant()
   const [carregando, setCarregando] = useState(true)
   const [salvando, setSalvando] = useState(false)
   const [config, setConfig] = useState<any>(null)
@@ -37,7 +37,10 @@ export function AbaEstabelecimento() {
 
   useEffect(() => {
     async function carregar() {
-      if (!tenant?.id) return
+      if (!tenant?.id) {
+        if (!tenantCarregando) setCarregando(false)
+        return
+      }
       try {
         const { data, error } = await supabase
           .from('configuracoes_tenant')
@@ -55,30 +58,31 @@ export function AbaEstabelecimento() {
             telefone: data.telefone || '',
             endereco: data.endereco || '',
             corPrincipal: data.cor_principal || '#7c3aed',
-            slugPublico: data.slug_publico || tenant.slug || '',
+            slugPublico: data.slug_publico || '',
             horarios: (data.horario_funcionamento as any) || form.horarios
           })
         } else {
-          setForm(f => ({ ...f, nome: tenant.nome || '', slugPublico: tenant.slug || '' }))
+          setForm(f => ({ ...f, nome: tenant.nome || '', slugPublico: '' }))
         }
-      } catch (e) {
+      } catch (e: any) {
         console.error(e)
+        toast.error('Erro ao carregar configurações.')
       } finally {
         setCarregando(false)
       }
     }
-    carregar()
-  }, [tenant])
+    if (!tenantCarregando) carregar()
+  }, [tenant?.id, tenantCarregando])
 
   const handleSalvar = async () => {
     if (!tenant?.id) return
     setSalvando(true)
     try {
       // 1. Atualizar nome do tenant se mudou
-      if (form.nome !== tenant.nome || form.slugPublico !== tenant.slug) {
+      if (form.nome !== tenant.nome) {
         const { error: tErr } = await supabase
           .from('tenants')
-          .update({ nome: form.nome, slug: form.slugPublico })
+          .update({ nome: form.nome })
           .eq('id', tenant.id)
         if (tErr) throw tErr
       }
@@ -107,7 +111,9 @@ export function AbaEstabelecimento() {
     }
   }
 
-  if (carregando) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>
+  if (tenantCarregando || carregando) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>
+  
+  if (!tenant) return <div className="p-12 text-center text-muted-foreground">Você precisa estar vinculado a um estabelecimento.</div>
 
   return (
     <Card className="rounded-2xl border-border shadow-card">

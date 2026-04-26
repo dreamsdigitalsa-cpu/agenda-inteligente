@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,13 +10,23 @@ import { Loader2, Save, User as UserIcon, Lock } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export function AbaMeuPerfil() {
-  const { usuario } = useTenant()
+  const { usuario, carregando: tenantCarregando } = useTenant()
   const [salvando, setSalvando] = useState(false)
   const [form, setForm] = useState({
-    nome: usuario?.nome || '',
-    telefone: '', // TODO: buscar do banco se houver
+    nome: '',
+    telefone: '', 
     especialidades: ''
   })
+
+  useEffect(() => {
+    if (usuario) {
+      setForm(f => ({
+        ...f,
+        nome: usuario.nome || '',
+        // Outros campos viriam daqui se existissem na interface
+      }))
+    }
+  }, [usuario])
 
   const handleSalvar = async () => {
     if (!usuario?.id) return
@@ -39,6 +49,10 @@ export function AbaMeuPerfil() {
       setSalvando(false)
     }
   }
+
+  if (tenantCarregando) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>
+
+  if (!usuario) return <div className="p-12 text-center text-muted-foreground">Usuário não encontrado.</div>
 
   return (
     <div className="space-y-6">

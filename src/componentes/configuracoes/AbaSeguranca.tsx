@@ -6,8 +6,10 @@ import { Shield, Clock, Smartphone, LogOut, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { useTenant } from '@/hooks/useTenant'
 
 export function AbaSeguranca() {
+  const { usuario, carregando: tenantCarregando } = useTenant()
   const [carregando, setCarregando] = useState(false)
   
   // Como não temos acesso fácil a sessões ativas do auth.users via client JS puro (requer Admin API),
@@ -29,6 +31,10 @@ export function AbaSeguranca() {
       setCarregando(false)
     }
   }
+
+  if (tenantCarregando) return <div className="flex justify-center p-12"><Loader2 className="animate-spin" /></div>
+
+  if (!usuario) return <div className="p-12 text-center text-muted-foreground">Usuário não encontrado.</div>
 
   return (
     <div className="space-y-6">
