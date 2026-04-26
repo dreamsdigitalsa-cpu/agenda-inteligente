@@ -26,6 +26,7 @@ import Cadastro from "@/app/(auth)/cadastro/page"
 import RecuperarSenha from "@/app/(auth)/recuperar-senha/page"
 import RedefinirSenha from "@/app/(auth)/redefinir-senha/page"
 import ConfirmarEmail from "@/app/(auth)/confirmar-email/page"
+import AceitarConvite from "@/app/(auth)/aceitar-convite/page"
 
 // Painel
 import PaginaInicio from "@/app/(painel)/inicio/page"
@@ -96,6 +97,7 @@ const App = () => (
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
           <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/confirmar-email" element={<ConfirmarEmail />} />
+          <Route path="/aceitar-convite" element={<AceitarConvite />} />
 
           {/* Painel (protegido) */}
           <Route element={<RotaProtegida />}>
