@@ -64,6 +64,7 @@ import PaginaTenants from "@/app/(super-admin)/tenants/page"
 import PaginaPlanos from "@/app/(super-admin)/planos/page"
 import PaginaIntegracoes from "@/app/(super-admin)/integracoes/page"
 import PaginaFinanceiroGlobal from "@/app/(super-admin)/financeiro/page"
+import PaginaEquipeSuperAdmin from "@/app/(super-admin)/equipe/page"
 import PaginaImpersonar from "@/app/(super-admin)/impersonar/page"
 
 // Guards e layouts
@@ -146,6 +147,7 @@ const App = () => (
               <Route path="planos" element={<PaginaPlanos />} />
               <Route path="integracoes" element={<PaginaIntegracoes />} />
               <Route path="financeiro" element={<PaginaFinanceiroGlobal />} />
+              <Route path="equipe" element={<PaginaEquipeSuperAdmin />} />
               <Route path="impersonar" element={<PaginaImpersonar />} />
             </Route>
           </Route>

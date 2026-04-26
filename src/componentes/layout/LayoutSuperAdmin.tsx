@@ -14,6 +14,7 @@ const itensNav = [
   { href: '/super-admin/planos',      icone: CreditCard,      rotulo: 'Planos'      },
   { href: '/super-admin/integracoes', icone: Plug,            rotulo: 'Integrações' },
   { href: '/super-admin/financeiro',  icone: BarChart3,       rotulo: 'Financeiro'  },
+  { href: '/super-admin/equipe',      icone: Users,           rotulo: 'Minha Equipe' },
   { href: '/painel/agenda',           icone: Shield,          rotulo: 'Painel Normal' },
 ]
 
