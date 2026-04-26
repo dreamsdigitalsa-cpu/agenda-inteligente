@@ -25,12 +25,10 @@ interface Features {
 interface Plano {
   id:                    string
   nome:                  string
-  slug:                  string
-  preco_centavos:        number
-  max_agendamentos_mes:  number | null
-  max_profissionais:     number | null
-  max_unidades:          number | null
-  features:              Features
+  slug?:                 string // Slug não existe na tabela planos, vou usar o nome ou ID
+  preco:                 number
+  limites:               Record<string, number | null>
+  features:              string[]
   ativo:                 boolean
   tenants_count?:        number
 }
@@ -53,9 +51,9 @@ const FEATURES_PADRAO: Features = {
   api_acesso:           false,
 }
 
-function fmtPreco(centavos: number) {
-  if (centavos === 0) return 'Grátis'
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(centavos / 100)
+function fmtPreco(valor: number) {
+  if (valor === 0) return 'Grátis'
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
 }
 
 // ── Modal de criação/edição ───────────────────────────────────────────────────
@@ -71,7 +69,7 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
   const editando = !!plano
 
   const [nome,     setNome]     = useState('')
-  const [slug,     setSlug]     = useState('')
+  // const [slug,     setSlug]     = useState('') // Tabela planos não tem slug
   const [preco,    setPreco]    = useState('')
   const [maxAg,    setMaxAg]    = useState('')
   const [maxProf,  setMaxProf]  = useState('')
@@ -83,12 +81,19 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
   useEffect(() => {
     if (aberto) {
       setNome(plano?.nome ?? '')
-      setSlug(plano?.slug ?? '')
-      setPreco(plano ? String(plano.preco_centavos / 100) : '')
-      setMaxAg(plano?.max_agendamentos_mes != null ? String(plano.max_agendamentos_mes) : '')
-      setMaxProf(plano?.max_profissionais != null ? String(plano.max_profissionais) : '')
-      setMaxUnit(plano?.max_unidades != null ? String(plano.max_unidades) : '')
-      setFeatures(plano?.features ?? { ...FEATURES_PADRAO })
+      // setSlug(plano?.slug ?? '')
+      setPreco(plano ? String(plano.preco) : '')
+      setMaxAg(plano?.limites?.max_agendamentos_mes != null ? String(plano.limites.max_agendamentos_mes) : '')
+      setMaxProf(plano?.limites?.max_profissionais != null ? String(plano.limites.max_profissionais) : '')
+      setMaxUnit(plano?.limites?.max_unidades != null ? String(plano.limites.max_unidades) : '')
+      // No banco features é string[], no front é Record<string, boolean>
+      const featuresMap: Features = { ...FEATURES_PADRAO }
+      if (plano?.features) {
+        plano.features.forEach(f => {
+          if (f in featuresMap) featuresMap[f as keyof Features] = true
+        })
+      }
+      setFeatures(featuresMap)
       setErro(null)
     }
   }, [aberto, plano])
@@ -98,22 +103,27 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
   }
 
   async function salvar() {
-    if (!nome.trim() || !slug.trim()) {
+    if (!nome.trim()) {
       setErro('Nome e slug são obrigatórios.')
       return
     }
-    const precoCentavos = Math.round(parseFloat(preco || '0') * 100)
+    const precoFinal = parseFloat(preco || '0')
     setSalvando(true)
     setErro(null)
     try {
+      const selectedFeatures = Object.entries(features)
+        .filter(([_, enabled]) => enabled)
+        .map(([key]) => key)
+
       const payload = {
         nome:                  nome.trim(),
-        slug:                  slug.trim(),
-        preco_centavos:        precoCentavos,
-        max_agendamentos_mes:  maxAg   ? parseInt(maxAg)   : null,
-        max_profissionais:     maxProf ? parseInt(maxProf) : null,
-        max_unidades:          maxUnit ? parseInt(maxUnit) : null,
-        features,
+        preco:                 precoFinal,
+        limites: {
+          max_agendamentos_mes:  maxAg   ? parseInt(maxAg)   : null,
+          max_profissionais:     maxProf ? parseInt(maxProf) : null,
+          max_unidades:          maxUnit ? parseInt(maxUnit) : null,
+        },
+        features: selectedFeatures,
       }
 
       if (editando && plano) {
@@ -160,19 +170,9 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
                 value={nome}
                 onChange={(e) => {
                   setNome(e.target.value)
-                  if (!editando) setSlug(gerarSlug(e.target.value))
                 }}
-                className="bg-zinc-800 border-zinc-700"
+                className="bg-zinc-800 border-zinc-700 col-span-2"
                 placeholder="Ex: Profissional"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-zinc-400 text-xs">Slug (único)</Label>
-              <Input
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className="bg-zinc-800 border-zinc-700 font-mono text-sm"
-                placeholder="profissional"
               />
             </div>
           </div>
@@ -256,23 +256,23 @@ const PaginaPlanos = () => {
       const { data, error } = (await supabase
         .from('planos' as never)
         .select('*')
-        .order('preco_centavos')
+        .order('preco')
       ) as unknown as { data: Plano[] | null; error: unknown }
       if (error) throw new Error(String(error))
 
       // Contar tenants por plano
       const { data: tenantsData } = (await supabase
         .from('tenants' as never)
-        .select('plano_id')
+        .select('plano')
         .neq('status', 'cancelado')
-      ) as unknown as { data: { plano_id: string | null }[] | null }
+      ) as unknown as { data: { plano: string | null }[] | null }
 
       const contagem: Record<string, number> = {}
       for (const t of tenantsData ?? []) {
-        if (t.plano_id) contagem[t.plano_id] = (contagem[t.plano_id] ?? 0) + 1
+        if (t.plano) contagem[t.plano] = (contagem[t.plano] ?? 0) + 1
       }
 
-      setPlanos((data ?? []).map((p) => ({ ...p, tenants_count: contagem[p.id] ?? 0 })))
+      setPlanos((data ?? []).map((p) => ({ ...p, tenants_count: contagem[p.nome] ?? 0 })))
     } catch (e) {
       setErro(String(e))
     } finally {
@@ -346,8 +346,8 @@ const PaginaPlanos = () => {
                     <Pencil className="h-3.5 w-3.5" />
                   </Button>
                 </div>
-                <p className="text-2xl font-bold text-violet-300">{fmtPreco(plano.preco_centavos)}</p>
-                <p className="text-xs text-zinc-500 font-mono">{plano.slug}</p>
+                <p className="text-2xl font-bold text-violet-300">{fmtPreco(plano.preco)}</p>
+                {/* <p className="text-xs text-zinc-500 font-mono">{plano.slug}</p> */}
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Limites */}
@@ -355,16 +355,16 @@ const PaginaPlanos = () => {
                   <div className="flex justify-between">
                     <span>Agend./mês</span>
                     <span className="text-zinc-300">
-                      {plano.max_agendamentos_mes ?? '∞'}
+                      {plano.limites?.max_agendamentos_mes ?? '∞'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Profissionais</span>
-                    <span className="text-zinc-300">{plano.max_profissionais ?? '∞'}</span>
+                    <span className="text-zinc-300">{plano.limites?.max_profissionais ?? '∞'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Unidades</span>
-                    <span className="text-zinc-300">{plano.max_unidades ?? '∞'}</span>
+                    <span className="text-zinc-300">{plano.limites?.max_unidades ?? '∞'}</span>
                   </div>
                 </div>
 
@@ -372,10 +372,10 @@ const PaginaPlanos = () => {
                 <div className="border-t border-zinc-800 pt-3 space-y-1">
                   {FEATURES_LABELS.map(({ key, label }) => (
                     <div key={key} className="flex items-center gap-2 text-xs">
-                      <span className={plano.features?.[key] ? 'text-emerald-400' : 'text-zinc-600'}>
-                        {plano.features?.[key] ? '✓' : '✗'}
+                      <span className={plano.features?.includes(key) ? 'text-emerald-400' : 'text-zinc-600'}>
+                        {plano.features?.includes(key) ? '✓' : '✗'}
                       </span>
-                      <span className={plano.features?.[key] ? 'text-zinc-300' : 'text-zinc-600'}>
+                      <span className={plano.features?.includes(key) ? 'text-zinc-300' : 'text-zinc-600'}>
                         {label}
                       </span>
                     </div>
