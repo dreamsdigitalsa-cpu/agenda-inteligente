@@ -835,6 +835,42 @@ export type Database = {
         }
         Relationships: []
       }
+      lancamentos_financeiros_admin: {
+        Row: {
+          categoria: string
+          criado_em: string
+          data_lancamento: string
+          descricao: string | null
+          id: string
+          status: string
+          tipo: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          criado_em?: string
+          data_lancamento?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          tipo: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          criado_em?: string
+          data_lancamento?: string
+          descricao?: string | null
+          id?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       lotes_estoque: {
         Row: {
           criado_em: string | null
