@@ -54,6 +54,7 @@ const grupoPrincipal: ItemMenu[] = [
     filhos: [
       { href: '/painel/financeiro', rotulo: 'Resumo' },
       { href: '/painel/financeiro/caixa', rotulo: 'Caixa' },
+      { href: '/painel/financeiro/lancamentos', rotulo: 'Lançamentos' },
     ],
   },
   { href: '/painel/estoque', icone: Package, rotulo: 'Estoque' },
