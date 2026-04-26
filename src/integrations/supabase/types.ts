@@ -208,6 +208,88 @@ export type Database = {
           },
         ]
       }
+      combos_servicos: {
+        Row: {
+          ativo: boolean
+          atualizado_em: string | null
+          criado_em: string | null
+          duracao_minutos: number
+          id: string
+          nome: string
+          preco: number
+          servicos_ids: string[]
+          tenant_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          atualizado_em?: string | null
+          criado_em?: string | null
+          duracao_minutos: number
+          id?: string
+          nome: string
+          preco: number
+          servicos_ids?: string[]
+          tenant_id: string
+        }
+        Update: {
+          ativo?: boolean
+          atualizado_em?: string | null
+          criado_em?: string | null
+          duracao_minutos?: number
+          id?: string
+          nome?: string
+          preco?: number
+          servicos_ids?: string[]
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "combos_servicos_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      configuracoes_segmento: {
+        Row: {
+          atualizado_em: string | null
+          configuracoes: Json
+          configurado: boolean
+          criado_em: string | null
+          id: string
+          segmento: string
+          tenant_id: string
+        }
+        Insert: {
+          atualizado_em?: string | null
+          configuracoes?: Json
+          configurado?: boolean
+          criado_em?: string | null
+          id?: string
+          segmento: string
+          tenant_id: string
+        }
+        Update: {
+          atualizado_em?: string | null
+          configuracoes?: Json
+          configurado?: boolean
+          criado_em?: string | null
+          id?: string
+          segmento?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "configuracoes_segmento_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       configuracoes_tenant: {
         Row: {
           atualizado_em: string
