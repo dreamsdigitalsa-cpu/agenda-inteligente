@@ -68,6 +68,9 @@ const SEGMENTOS_LABELS: Record<Segmento, string> = {
 const Cadastro = () => {
   const navegar = useNavigate()
   const [params] = useSearchParams()
+  const [mostrarSenha, setMostrarSenha] = useState(false)
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false)
+
   const segmentoInicial = (
     SEGMENTOS_VALIDOS.includes(params.get('segmento') as Segmento)
       ? params.get('segmento')
@@ -84,6 +87,7 @@ const Cadastro = () => {
       nome:                '',
       email:               '',
       senha:               '',
+      confirmarSenha:      '',
       nomeEstabelecimento: '',
       segmento:            segmentoInicial,
     },
@@ -95,7 +99,6 @@ const Cadastro = () => {
       email,
       password: senha,
       options: {
-        // Se Confirm Email estiver ativo no futuro, redireciona pra cá
         emailRedirectTo: `${window.location.origin}/confirmar-email`,
         data: { nome, nomeEstabelecimento, segmento },
       },
@@ -110,18 +113,14 @@ const Cadastro = () => {
       return
     }
     
-    // 2) Verifica se já tem sessão (Confirm Email DESATIVADO)
-    // Se tiver: cria tenant agora. Se não: redireciona pra confirmar email.
     const { data: { session } } = await supabase.auth.getSession()
     
     if (!session) {
-      // Confirm Email está habilitado — usuário precisa confirmar
       toast.success('Conta criada! Verifique seu e-mail para ativar.')
       navegar('/login')
       return
     }
     
-    // 3) Confirm Email está desabilitado — sessão já está ativa, criar tenant agora
     toast.loading('Criando seu estabelecimento...', { id: 'criar-tenant' })
     
     const { data: resultado, error: errFn } = await supabase.functions.invoke('criar-tenant', {
@@ -133,12 +132,11 @@ const Cadastro = () => {
     if (errFn || resultado?.erro) {
       console.error('[cadastro] erro criar-tenant:', errFn, resultado)
       toast.error(`Erro ao configurar estabelecimento: ${errFn?.message || resultado?.detalhe || 'tente novamente'}`)
-      // Faz logout para evitar usuário órfão
       await supabase.auth.signOut()
       return
     }
     
-    toast.success('Bem-vindo ao HubBeleza!')
+    toast.success('Bem-vindo ao StudioFlow!')
     navegar('/onboarding')
   }
 
