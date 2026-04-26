@@ -350,15 +350,16 @@ const PaginaTenants = () => {
                   {tenantsFiltrados.map((t) => (
                     <tr
                       key={t.id}
-                      className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors"
+                      className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors cursor-pointer group"
+                      onClick={() => impersonar(t)}
                     >
-                      <td className="px-4 py-3 font-medium text-zinc-100">{t.nome}</td>
+                      <td className="px-4 py-3 font-medium text-zinc-100 group-hover:text-violet-400 transition-colors">{t.nome}</td>
                       <td className="px-4 py-3 text-zinc-400">{t.segmento ?? '—'}</td>
                       <td className="px-4 py-3 text-zinc-400">{t.plano ?? '—'}</td>
                       <td className="px-4 py-3"><BadgeStatus status={t.status} /></td>
                       <td className="px-4 py-3 text-right text-zinc-300">{t.agendamentos_mes}</td>
                       <td className="px-4 py-3 text-zinc-400">{fmt(t.criado_em)}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1">
                           <Button
                             size="sm"
