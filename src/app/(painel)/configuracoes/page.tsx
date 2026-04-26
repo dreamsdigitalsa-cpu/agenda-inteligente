@@ -16,6 +16,7 @@ import { AbaEstabelecimento } from '@/componentes/configuracoes/AbaEstabelecimen
 import { AbaMeuPerfil } from '@/componentes/configuracoes/AbaMeuPerfil'
 import { AbaSeguranca } from '@/componentes/configuracoes/AbaSeguranca'
 import { AbaUsuarios } from '@/componentes/configuracoes/AbaUsuarios'
+import AbaPermissoes from './permissoes/page'
 
 const ABAS = [
   { id: 'geral', icone: Building2, rotulo: 'Estabelecimento' },
@@ -24,7 +25,7 @@ const ABAS = [
   { id: 'notificacoes', icone: Bell, rotulo: 'Notificações', rota: '/painel/configuracoes/notificacoes' },
   { id: 'ligacao-ia', icone: Phone, rotulo: 'Ligação IA', rota: '/painel/configuracoes/ligacao-ia' },
   { id: 'seguranca', icone: Lock, rotulo: 'Segurança' },
-  { id: 'permissoes', icone: Shield, rotulo: 'Permissões', rota: '/painel/configuracoes/permissoes' },
+  { id: 'permissoes', icone: Shield, rotulo: 'Permissões' },
   { id: 'assinatura', icone: CreditCard, rotulo: 'Assinatura', rota: '/painel/assinatura' },
 ] as const
 
@@ -76,6 +77,7 @@ const PaginaConfiguracoes = () => {
           {aba === 'usuarios' && <AbaUsuarios />}
           {aba === 'perfil' && <AbaMeuPerfil />}
           {aba === 'seguranca' && <AbaSeguranca />}
+          {aba === 'permissoes' && <AbaPermissoes />}
         </div>
       </div>
     </div>
