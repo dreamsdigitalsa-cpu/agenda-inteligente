@@ -588,7 +588,7 @@ function LinhaLancamento({ l }: { l: LancamentoCaixa }) {
 // ─── Página principal ─────────────────────────────────────────────────────────
 
 const PaginaCaixa = () => {
-  const { usuario } = useTenant()
+  const { usuario, carregando: usuarioCarregando } = useTenant()
   const { temPermissao } = usePermissao()
 
   const [estadoCaixa, setEstadoCaixa] = useState<EstadoCaixa>('carregando')
@@ -626,7 +626,14 @@ const PaginaCaixa = () => {
 
   // ── Carrega sessão do dia ao montar e ao trocar de usuário ──────────────────
   useEffect(() => {
-    if (!usuario?.tenantId) return
+    if (usuarioCarregando) return
+
+    if (!usuario?.tenantId) {
+      setEstadoCaixa('sem_caixa')
+      setSessao(null)
+      setLancamentos([])
+      return
+    }
 
     async function verificarCaixaDoDia() {
       setEstadoCaixa('carregando')
