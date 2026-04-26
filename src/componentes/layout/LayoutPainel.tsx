@@ -1,7 +1,7 @@
 // Layout visual do painel autenticado (tenant).
 // Renderizado dentro de <RotaProtegida> e envolve as páginas filhas via <Outlet />.
 // Exibe banner de impersonação quando um super admin está visualizando o tenant.
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/cliente'
 import { AlertTriangle, Menu, ShieldCheck, Sparkles } from 'lucide-react'
 import { usePermissao } from '@/hooks/usePermissao'
@@ -11,6 +11,17 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/componentes/Logo'
 import { BannerAssinaturaVencida } from '@/componentes/assinatura/BannerAssinaturaVencida'
+import { useEffect } from 'react'
+import { toast } from 'sonner'
+
+const ROTAS_BLOQUEADAS_PROFISSIONAL = [
+  '/painel/financeiro',
+  '/painel/relatorios',
+  '/painel/estoque',
+  '/painel/clientes',
+  '/painel/agenda',
+  '/painel/fila',
+]
 
 function BannerImpersonacao() {
   const navigate = useNavigate()
@@ -61,7 +72,22 @@ function BannerImpersonacao() {
 }
 
 export const LayoutPainel = () => {
-  const { ehSuperAdmin } = usePermissao()
+  const { ehSuperAdmin, ehAdmin, ehProfissional } = usePermissao()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const ehProfissionalPuro = ehProfissional && !ehAdmin
+
+  useEffect(() => {
+    if (!ehProfissionalPuro) return
+    const rotaAtual = location.pathname
+    const bloqueada = ROTAS_BLOQUEADAS_PROFISSIONAL.some(r => rotaAtual.startsWith(r))
+    
+    if (bloqueada) {
+      toast.error('Acesso restrito. Redirecionando para sua agenda.')
+      navigate('/painel/minha-agenda', { replace: true })
+    }
+  }, [location.pathname, ehProfissionalPuro, navigate])
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">

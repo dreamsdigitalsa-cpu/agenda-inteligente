@@ -20,6 +20,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTenant } from '@/hooks/useTenant'
+import { usePermissao } from '@/hooks/usePermissao'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Collapsible,
@@ -62,6 +64,13 @@ const grupoPrincipal: ItemMenu[] = [
   { href: '/painel/relatorios', icone: BarChart3, rotulo: 'Relatórios' },
 ]
 
+const grupoProfissional: ItemMenu[] = [
+  { rotulo: 'Início',           href: '/painel/inicio',          icone: Home },
+  { rotulo: 'Minha agenda',     href: '/painel/minha-agenda',    icone: Calendar },
+  { rotulo: 'Meus clientes',    href: '/painel/meus-clientes',   icone: Users },
+  { rotulo: 'Minhas comissões', href: '/painel/minhas-comissoes', icone: DollarSign },
+]
+
 const grupoTatuagem: ItemMenu[] = [
   { href: '/painel/tatuagem/orcamentos', icone: FileText, rotulo: 'Orçamentos' },
   { href: '/painel/tatuagem/portfolio', icone: ImageIcon, rotulo: 'Portfólio' },
@@ -79,6 +88,19 @@ const grupoPreferencias: ItemMenu[] = [
     ],
   },
   { href: '/painel/assinatura', icone: CreditCard, rotulo: 'Minha assinatura' },
+]
+
+const grupoPreferenciasProfissional: ItemMenu[] = [
+  {
+    rotulo: 'Configurações', 
+    icone: Settings,
+    href: '/painel/configuracoes',
+    filhos: [
+      { rotulo: 'Meu perfil',   href: '/painel/configuracoes?aba=meu-perfil' },
+      { rotulo: 'Meu horário',  href: '/painel/configuracoes/meu-horario' },
+      { rotulo: 'Segurança',    href: '/painel/configuracoes?aba=seguranca' },
+    ]
+  },
 ]
 
 interface ItemProps {
@@ -163,8 +185,21 @@ function ItemSidebar({ item, pathname }: ItemProps) {
 
 export function SidebarPainel() {
   const { tenant } = useTenant()
+  const { ehAdmin, ehProfissional, ehSuperAdmin } = usePermissao()
   const location = useLocation()
-  const isTattoo = tenant?.segmento === 'tatuagem'
+  
+  const ehProfissionalPuro = ehProfissional && !ehAdmin
+  const tenantSegmento = tenant?.segmento
+
+  const menusPrincipais = ehProfissionalPuro 
+    ? grupoProfissional 
+    : grupoPrincipal
+
+  const menusPreferencias = ehProfissionalPuro 
+    ? grupoPreferenciasProfissional 
+    : grupoPreferencias
+
+  const mostrarGrupoTatuagem = !ehProfissionalPuro && tenantSegmento === 'tatuagem'
 
   // % fictícia de setup — pode ser conectada a dados reais depois
   const progressoSetup = useMemo(() => 60, [])
@@ -174,9 +209,28 @@ export function SidebarPainel() {
       {/* Marca */}
       <div className="flex items-center gap-2.5 px-6 py-5">
         <Logo className="h-10 w-auto max-w-[180px]" />
-        <span className="ml-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-          Painel
-        </span>
+        <div className="flex flex-col">
+          <span className="ml-1 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+            Painel
+          </span>
+          <div className="flex gap-1 ml-1 mt-0.5">
+            {ehSuperAdmin && (
+              <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-amber-500/10 text-amber-600 border-amber-500/20">
+                Super Admin
+              </Badge>
+            )}
+            {ehAdmin && !ehSuperAdmin && (
+              <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20">
+                Admin
+              </Badge>
+            )}
+            {ehProfissionalPuro && (
+              <Badge variant="outline" className="text-[9px] px-1 py-0 h-4 bg-blue-500/10 text-blue-600 border-blue-500/20">
+                Profissional
+              </Badge>
+            )}
+          </div>
+        </div>
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
@@ -184,12 +238,12 @@ export function SidebarPainel() {
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Menu principal
           </p>
-          {grupoPrincipal.map((it) => (
+          {menusPrincipais.map((it) => (
             <ItemSidebar key={it.href} item={it} pathname={location.pathname} />
           ))}
         </div>
 
-        {isTattoo && (
+        {mostrarGrupoTatuagem && (
           <div className="space-y-0.5">
             <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               Tattoo studio
@@ -204,7 +258,7 @@ export function SidebarPainel() {
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Preferências
           </p>
-          {grupoPreferencias.map((it) => (
+          {menusPreferencias.map((it) => (
             <ItemSidebar key={it.href} item={it} pathname={location.pathname} />
           ))}
         </div>
