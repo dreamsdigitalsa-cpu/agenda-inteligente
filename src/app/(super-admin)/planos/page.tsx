@@ -244,19 +244,17 @@ const PaginaPlanos = () => {
     setCarregando(true)
     setErro(null)
     try {
-      const { data, error } = (await supabase
-        .from('planos' as never)
+      const { data, error } = await supabase
+        .from('planos')
         .select('*')
         .order('preco')
-      ) as unknown as { data: Plano[] | null; error: unknown }
-      if (error) throw new Error(String(error))
+      if (error) throw error
 
       // Contar tenants por plano
-      const { data: tenantsData } = (await supabase
-        .from('tenants' as never)
+      const { data: tenantsData } = await supabase
+        .from('tenants')
         .select('plano')
         .neq('status', 'cancelado')
-      ) as unknown as { data: { plano: string | null }[] | null }
 
       const contagem: Record<string, number> = {}
       for (const t of tenantsData ?? []) {
