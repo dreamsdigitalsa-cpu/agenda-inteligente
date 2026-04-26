@@ -22,7 +22,7 @@ serve(async (req) => {
     const { data: tenant, error: errT } = await supabaseAdmin
       .from('tenants')
       .select('id')
-      .eq('slug_publico', slug)
+      .eq('slug', slug)
       .single()
     
     if (errT || !tenant) throw new Error('Estabelecimento não encontrado')

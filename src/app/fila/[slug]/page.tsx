@@ -27,8 +27,8 @@ export default function PaginaFilaPublica() {
     async function carregar() {
       const { data: t } = await supabase
         .from('tenants')
-        .select('id, nome, slug_publico')
-        .eq('slug_publico', slug)
+        .select('id, nome, slug')
+        .eq('slug', slug)
         .single()
       
       if (t) {
