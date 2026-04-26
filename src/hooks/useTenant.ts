@@ -35,16 +35,19 @@ export function useTenant(): EstadoTenant {
         .select('id, auth_user_id, tenant_id, unidade_id, nome, email, ativo')
         .eq('auth_user_id', authUserId)
         .maybeSingle()
-      if (errUsuario) throw errUsuario
-
-      // Busca roles
+      
+      // Se não existe na tabela 'usuarios', pode ser um super_admin sem vínculo a tenant
+      // mas precisamos saber se ele tem a role no 'user_roles'
       const { data: rolesRows, error: errRoles } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', authUserId)
+      
       if (errRoles) throw errRoles
       const roles = (rolesRows ?? []).map((r) => r.role as AppRole)
       const isSuperAdmin = roles.includes('super_admin')
+
+      if (errUsuario && !isSuperAdmin) throw errUsuario
 
       let tenant: Tenant | null = null
       if (usuario?.tenant_id || isSuperAdmin) {
