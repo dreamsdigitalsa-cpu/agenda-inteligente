@@ -219,7 +219,7 @@ export default function PaginaInicio() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs font-bold">{ag.hora_inicio.slice(0, 5)}</p>
+                          <p className="text-xs font-bold">{format(new Date(ag.data_hora_inicio), 'HH:mm')}</p>
                           <p className="text-[10px] text-muted-foreground">Prof: {ag.profissional_nome}</p>
                         </div>
                       </div>
@@ -258,7 +258,7 @@ export default function PaginaInicio() {
             />
             <CardKPI 
               titulo="Cancelamentos/Faltas"
-              valor={agendamentosDia?.filter(a => a.profissional_id === usuario?.id && (a.status === 'cancelado' || a.status === 'falta')).length || 0}
+              valor={agendamentosDia?.filter(a => a.profissional_id === usuario?.id && (a.status === 'cancelado' || a.status === 'faltou')).length || 0}
               icone={<XCircle className="h-4 w-4 text-destructive" />}
             />
           </div>
@@ -273,7 +273,7 @@ export default function PaginaInicio() {
                   {agendamentosDia?.filter(a => a.profissional_id === usuario?.id).map((ag) => (
                     <div key={ag.id} className="flex items-center gap-4 p-4 rounded-xl border bg-card hover:border-primary/50 transition-all group">
                       <div className="h-12 w-12 rounded-lg bg-primary/10 flex flex-col items-center justify-center shrink-0">
-                        <span className="text-xs font-bold text-primary">{ag.hora_inicio.slice(0, 5)}</span>
+                        <span className="text-xs font-bold text-primary">{format(new Date(ag.data_hora_inicio), 'HH:mm')}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold truncate">{ag.cliente_nome}</h4>
@@ -302,7 +302,7 @@ export default function PaginaInicio() {
                 {(() => {
                   const proximo = agendamentosDia
                     ?.filter(a => a.profissional_id === usuario?.id && a.status !== 'concluido')
-                    ?.sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio))[0]
+                    ?.sort((a, b) => a.data_hora_inicio.localeCompare(b.data_hora_inicio))[0]
                   
                   if (!proximo) return <p className="mt-4 italic opacity-80">Nenhum próximo cliente</p>
 
@@ -314,7 +314,7 @@ export default function PaginaInicio() {
                       </div>
                       <div className="flex items-center gap-2 text-lg font-bold">
                         <Clock className="h-5 w-5" />
-                        {proximo.hora_inicio.slice(0, 5)}
+                        {format(new Date(proximo.data_hora_inicio), 'HH:mm')}
                       </div>
                       <Button variant="secondary" className="w-full font-bold rounded-xl" onClick={() => navigate('/painel/agenda')}>
                         Abrir Agenda
@@ -392,7 +392,7 @@ export default function PaginaInicio() {
                     <div key={ag.id} className="p-4 flex items-center justify-between">
                       <div className="min-w-0">
                         <p className="text-sm font-semibold truncate">{ag.cliente_nome}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase">{ag.hora_inicio.slice(0, 5)} • {ag.profissional_nome}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase">{format(new Date(ag.data_hora_inicio), 'HH:mm')} • {ag.profissional_nome}</p>
                       </div>
                       <div className={cn(
                         "px-1.5 py-0.5 rounded text-[9px] font-bold uppercase",
