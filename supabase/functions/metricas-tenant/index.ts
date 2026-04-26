@@ -26,16 +26,16 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     )
 
-    const token = authHeader.replace('Bearer ', '')
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token)
-    if (claimsError || !claimsData?.claims) {
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    if (userError || !userData?.user) {
+      console.error('[metricas-tenant] auth error:', userError)
       return new Response(JSON.stringify({ error: 'Não autorizado' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       })
     }
 
-    const userId = claimsData.claims.sub
+    const userId = userData.user.id
 
     // Buscar tenant_id do usuário (via auth_user_id)
     const { data: perfil, error: perfilError } = await supabase
