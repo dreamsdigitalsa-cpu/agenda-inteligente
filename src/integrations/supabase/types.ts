@@ -145,6 +145,57 @@ export type Database = {
           },
         ]
       }
+      bloqueios_agenda: {
+        Row: {
+          criado_em: string
+          criado_por_usuario_id: string
+          fim: string
+          id: string
+          inicio: string
+          motivo: string | null
+          profissional_id: string
+          tenant_id: string
+          tipo: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por_usuario_id: string
+          fim: string
+          id?: string
+          inicio: string
+          motivo?: string | null
+          profissional_id: string
+          tenant_id: string
+          tipo?: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por_usuario_id?: string
+          fim?: string
+          id?: string
+          inicio?: string
+          motivo?: string | null
+          profissional_id?: string
+          tenant_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bloqueios_agenda_profissional_id_fkey"
+            columns: ["profissional_id"]
+            isOneToOne: false
+            referencedRelation: "profissionais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bloqueios_agenda_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clientes: {
         Row: {
           ativo: boolean
@@ -706,6 +757,60 @@ export type Database = {
           },
         ]
       }
+      horarios_profissional: {
+        Row: {
+          ativo: boolean
+          criado_em: string
+          dia_semana: number
+          hora_fim: string
+          hora_inicio: string
+          id: string
+          intervalo_fim: string | null
+          intervalo_inicio: string | null
+          profissional_id: string
+          tenant_id: string
+        }
+        Insert: {
+          ativo?: boolean
+          criado_em?: string
+          dia_semana: number
+          hora_fim: string
+          hora_inicio: string
+          id?: string
+          intervalo_fim?: string | null
+          intervalo_inicio?: string | null
+          profissional_id: string
+          tenant_id: string
+        }
+        Update: {
+          ativo?: boolean
+          criado_em?: string
+          dia_semana?: number
+          hora_fim?: string
+          hora_inicio?: string
+          id?: string
+          intervalo_fim?: string | null
+          intervalo_inicio?: string | null
+          profissional_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "horarios_profissional_profissional_id_fkey"
+            columns: ["profissional_id"]
+            isOneToOne: false
+            referencedRelation: "profissionais"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "horarios_profissional_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       integracoes_plataforma: {
         Row: {
           ativo: boolean | null
@@ -1118,35 +1223,50 @@ export type Database = {
         Row: {
           ativo: boolean
           atualizado_em: string
+          bio: string | null
+          comissao_tipo: string
+          comissao_valor: number
           criado_em: string
           especialidade: string | null
+          foto_url: string | null
           id: string
           nome: string
           slug: string | null
           telefone: string | null
           tenant_id: string
+          usuario_id: string | null
         }
         Insert: {
           ativo?: boolean
           atualizado_em?: string
+          bio?: string | null
+          comissao_tipo?: string
+          comissao_valor?: number
           criado_em?: string
           especialidade?: string | null
+          foto_url?: string | null
           id?: string
           nome: string
           slug?: string | null
           telefone?: string | null
           tenant_id: string
+          usuario_id?: string | null
         }
         Update: {
           ativo?: boolean
           atualizado_em?: string
+          bio?: string | null
+          comissao_tipo?: string
+          comissao_valor?: number
           criado_em?: string
           especialidade?: string | null
+          foto_url?: string | null
           id?: string
           nome?: string
           slug?: string | null
           telefone?: string | null
           tenant_id?: string
+          usuario_id?: string | null
         }
         Relationships: [
           {
@@ -1154,6 +1274,13 @@ export type Database = {
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profissionais_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "usuarios"
             referencedColumns: ["id"]
           },
         ]
