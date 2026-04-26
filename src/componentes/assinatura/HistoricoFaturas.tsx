@@ -62,7 +62,7 @@ export function HistoricoFaturas({ faturas }: HistoricoFaturasProps) {
               </TableCell>
               <TableCell>{formatarMoeda(f.valor)}</TableCell>
               <TableCell>
-                <Badge variant={f.status === 'paga' ? 'success' : 'secondary'} className="rounded-full">
+                <Badge className={`rounded-full ${f.status === 'paga' ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : 'bg-secondary'}`}>
                   {f.status.charAt(0).toUpperCase() + f.status.slice(1)}
                 </Badge>
               </TableCell>

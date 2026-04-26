@@ -143,7 +143,7 @@ const PaginaAssinatura = () => {
           <p className="text-sm text-muted-foreground">Gerencie seu plano e visualize seu histórico de pagamentos.</p>
         </div>
         {assinatura?.status === 'ativa' && (
-          <Badge variant="success" className="rounded-full px-4 py-1 text-sm font-semibold">
+          <Badge className="rounded-full px-4 py-1 text-sm font-semibold bg-emerald-500 hover:bg-emerald-600 text-white border-none">
             Assinatura Ativa
           </Badge>
         )}
@@ -221,7 +221,7 @@ const PaginaAssinatura = () => {
                 <span className="text-sm text-muted-foreground">Método de Pagamento:</span>
                 <div className="flex items-center gap-2 font-bold">
                   <CreditCard className="h-4 w-4" />
-                  <span>•••• {assinatura.metodo_pagamento?.last4 || '****'}</span>
+                  <span>•••• {((assinatura.metodo_pagamento as any)?.last4) || '****'}</span>
                 </div>
               </div>
               <div className="pt-4 flex flex-wrap gap-2">
