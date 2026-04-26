@@ -79,6 +79,72 @@ export type Database = {
           },
         ]
       }
+      assinaturas_tenant: {
+        Row: {
+          atualizado_em: string | null
+          criado_em: string | null
+          fim_trial: string | null
+          gateway: string
+          gateway_customer_id: string | null
+          gateway_subscription_id: string | null
+          id: string
+          inicio_trial: string | null
+          metodo_pagamento: Json | null
+          plano_id: string
+          proxima_cobranca: string | null
+          status: string
+          tenant_id: string
+          ultimo_pagamento: string | null
+        }
+        Insert: {
+          atualizado_em?: string | null
+          criado_em?: string | null
+          fim_trial?: string | null
+          gateway: string
+          gateway_customer_id?: string | null
+          gateway_subscription_id?: string | null
+          id?: string
+          inicio_trial?: string | null
+          metodo_pagamento?: Json | null
+          plano_id: string
+          proxima_cobranca?: string | null
+          status?: string
+          tenant_id: string
+          ultimo_pagamento?: string | null
+        }
+        Update: {
+          atualizado_em?: string | null
+          criado_em?: string | null
+          fim_trial?: string | null
+          gateway?: string
+          gateway_customer_id?: string | null
+          gateway_subscription_id?: string | null
+          id?: string
+          inicio_trial?: string | null
+          metodo_pagamento?: Json | null
+          plano_id?: string
+          proxima_cobranca?: string | null
+          status?: string
+          tenant_id?: string
+          ultimo_pagamento?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assinaturas_tenant_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "planos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assinaturas_tenant_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clientes: {
         Row: {
           ativo: boolean
@@ -408,6 +474,63 @@ export type Database = {
           },
         ]
       }
+      faturas: {
+        Row: {
+          assinatura_id: string
+          criado_em: string | null
+          gateway_invoice_id: string | null
+          id: string
+          pago_em: string | null
+          status: string
+          tenant_id: string
+          url_boleto: string | null
+          url_nota_fiscal: string | null
+          valor: number
+          vencimento: string
+        }
+        Insert: {
+          assinatura_id: string
+          criado_em?: string | null
+          gateway_invoice_id?: string | null
+          id?: string
+          pago_em?: string | null
+          status: string
+          tenant_id: string
+          url_boleto?: string | null
+          url_nota_fiscal?: string | null
+          valor: number
+          vencimento: string
+        }
+        Update: {
+          assinatura_id?: string
+          criado_em?: string | null
+          gateway_invoice_id?: string | null
+          id?: string
+          pago_em?: string | null
+          status?: string
+          tenant_id?: string
+          url_boleto?: string | null
+          url_nota_fiscal?: string | null
+          valor?: number
+          vencimento?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faturas_assinatura_id_fkey"
+            columns: ["assinatura_id"]
+            isOneToOne: false
+            referencedRelation: "assinaturas_tenant"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faturas_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fila_espera: {
         Row: {
           chamado_em: string | null
@@ -494,6 +617,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      integracoes_plataforma: {
+        Row: {
+          ativo: boolean | null
+          atualizado_em: string | null
+          configuracoes: Json
+          id: string
+          nome: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          atualizado_em?: string | null
+          configuracoes: Json
+          id?: string
+          nome: string
+        }
+        Update: {
+          ativo?: boolean | null
+          atualizado_em?: string | null
+          configuracoes?: Json
+          id?: string
+          nome?: string
+        }
+        Relationships: []
       }
       lotes_estoque: {
         Row: {
@@ -683,6 +830,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      planos: {
+        Row: {
+          ativo: boolean | null
+          criado_em: string | null
+          descricao: string | null
+          features: string[] | null
+          id: string
+          intervalo: string
+          limites: Json | null
+          nome: string
+          preco: number
+        }
+        Insert: {
+          ativo?: boolean | null
+          criado_em?: string | null
+          descricao?: string | null
+          features?: string[] | null
+          id?: string
+          intervalo?: string
+          limites?: Json | null
+          nome: string
+          preco: number
+        }
+        Update: {
+          ativo?: boolean | null
+          criado_em?: string | null
+          descricao?: string | null
+          features?: string[] | null
+          id?: string
+          intervalo?: string
+          limites?: Json | null
+          nome?: string
+          preco?: number
+        }
+        Relationships: []
       }
       produtos: {
         Row: {
@@ -1214,6 +1397,7 @@ export type Database = {
     }
     Functions: {
       get_tenant_atual: { Args: never; Returns: string }
+      has_perm: { Args: { perm_codigo: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
