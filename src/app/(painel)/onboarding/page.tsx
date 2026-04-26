@@ -1,12 +1,20 @@
-// Fluxo de onboarding pós-cadastro (5 etapas).
+// Fluxo de onboarding pós-cadastro (6 etapas).
 // Tela cheia, fora do LayoutPainel, com barra de progresso no topo.
 // Cada etapa salva no banco ao avançar; o usuário pode pular qualquer etapa.
-import { useEffect, useMemo, useState } from 'react'
+//
+// Etapas:
+// 1. Horário de funcionamento
+// 2. Profissionais
+// 3. Serviços
+// 4. Identidade visual
+// 5. Configurações específicas do segmento (NOVA — adapta por tipo de negócio)
+// 6. Link público de agendamento
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import {
-  Check, ChevronRight, Copy, Loader2, MessageCircle, Plus, Trash2, Upload,
+  Check, ChevronRight, Copy, Loader2, MessageCircle, Plus, SkipForward, Trash2, Upload,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/cliente'
@@ -24,6 +32,13 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
 import type { SegmentoTenant } from '@/tipos/tenant'
+// Componentes da etapa 5 (configurações específicas por segmento)
+import EtapaBarbearia from '@/modulos/_onboarding-segmento/EtapaBarbearia'
+import EtapaSalao from '@/modulos/_onboarding-segmento/EtapaSalao'
+import EtapaEstetica from '@/modulos/_onboarding-segmento/EtapaEstetica'
+import EtapaTatuagem from '@/modulos/_onboarding-segmento/EtapaTatuagem'
+import EtapaManicure from '@/modulos/_onboarding-segmento/EtapaManicure'
+import type { RefEtapaSegmento } from '@/modulos/_onboarding-segmento/tipos'
 
 // ---------- Tipos locais ----------
 interface HorarioDia {
@@ -81,7 +96,7 @@ const SUGESTOES_SERVICOS: Record<SegmentoTenant, ServicoForm[]> = {
 
 const LIMITE_FREEMIUM_PROFISSIONAIS = 2
 const LIMITE_MAX_PROFISSIONAIS = 10
-const TOTAL_ETAPAS = 5
+const TOTAL_ETAPAS = 6
 
 // Gera um slug a partir do nome do estabelecimento (sem acentos, kebab-case)
 function gerarSlug(nome: string): string {
@@ -121,7 +136,10 @@ const PaginaOnboarding = () => {
   const [corPrincipal, setCorPrincipal] = useState('#7c3aed')
   const [endereco, setEndereco] = useState('')
 
-  // Etapa 5 — slug derivado do nome do tenant
+  // Etapa 5 — configurações específicas do segmento (ref para chamar save())
+  const refSegmento = useRef<RefEtapaSegmento>(null)
+
+  // Etapa 6 — slug derivado do nome do tenant
   const slug = useMemo(() => (tenant ? gerarSlug(tenant.nome) : ''), [tenant])
   const linkCompleto = `${window.location.origin}/agendar/${slug}`
 
@@ -132,9 +150,9 @@ const PaginaOnboarding = () => {
     }
   }, [tenant]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Confetti ao chegar na etapa 5
+  // Confetti ao chegar na última etapa (link público)
   useEffect(() => {
-    if (etapa === 5) {
+    if (etapa === TOTAL_ETAPAS) {
       confetti({ particleCount: 120, spread: 80, origin: { y: 0.3 } })
     }
   }, [etapa])
@@ -225,6 +243,11 @@ const PaginaOnboarding = () => {
         if (etapa === 2) await salvarProfissionais()
         if (etapa === 3) await salvarServicos()
         if (etapa === 4) await salvarIdentidade()
+        // Etapa 5: dispara o save() do componente do segmento via ref.
+        // Cada componente cuida do upsert em configuracoes_segmento.
+        if (etapa === 5 && refSegmento.current) {
+          await refSegmento.current.save()
+        }
       }
       setEtapa((e) => e + 1)
     } catch (e) {
@@ -555,7 +578,19 @@ const PaginaOnboarding = () => {
               </Card>
             )}
 
-            {etapa === 5 && (
+            {etapa === 5 && tenant && (
+              <Card>
+                <CardContent className="p-6 space-y-6">
+                  {tenant.segmento === 'barbearia' && <EtapaBarbearia ref={refSegmento} />}
+                  {tenant.segmento === 'salao'     && <EtapaSalao     ref={refSegmento} />}
+                  {tenant.segmento === 'estetica'  && <EtapaEstetica  ref={refSegmento} />}
+                  {tenant.segmento === 'tatuagem'  && <EtapaTatuagem  ref={refSegmento} />}
+                  {tenant.segmento === 'manicure'  && <EtapaManicure  ref={refSegmento} />}
+                </CardContent>
+              </Card>
+            )}
+
+            {etapa === 6 && (
               <Card>
                 <CardContent className="p-6 space-y-6 text-center">
                   <div>
@@ -593,7 +628,13 @@ const PaginaOnboarding = () => {
         {etapa < TOTAL_ETAPAS && (
           <div className="flex items-center justify-between mt-6">
             <Button variant="ghost" onClick={() => avancar(true)} disabled={salvando}>
-              Pular por agora
+              {etapa === 5 ? (
+                <>
+                  <SkipForward className="h-4 w-4" /> Pular configurações do segmento
+                </>
+              ) : (
+                'Pular por agora'
+              )}
             </Button>
             <Button onClick={() => avancar(false)} disabled={salvando}>
               {salvando ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Próximo <ChevronRight className="h-4 w-4" /></>}
