@@ -8,11 +8,6 @@ import {
   DollarSign, 
   Users, 
   Plus, 
-  Filter,
-  Calendar,
-  MoreHorizontal,
-  ArrowUpRight,
-  ArrowDownRight,
   Loader2
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -75,7 +70,6 @@ export default function PaginaFinanceiroGlobal() {
     try {
       setLoading(true)
       
-      // 1. Carregar Lançamentos Manuais
       const { data: dataLancamentos, error: errorLancamentos } = await supabase
         .from('lancamentos_financeiros_admin')
         .select('*')
@@ -84,7 +78,6 @@ export default function PaginaFinanceiroGlobal() {
       if (errorLancamentos) throw errorLancamentos
       setLancamentos(dataLancamentos || [])
 
-      // 2. Carregar Faturas (Receita de Tenants)
       const { data: dataFaturas, error: errorFaturas } = await supabase
         .from('faturas')
         .select('valor, status')
@@ -92,7 +85,6 @@ export default function PaginaFinanceiroGlobal() {
 
       if (errorFaturas) throw errorFaturas
 
-      // 3. Carregar Tenants Ativos para Métricas
       const { count: totalTenants, error: errorTenants } = await supabase
         .from('tenants')
         .select('*', { count: 'exact', head: true })
@@ -100,7 +92,6 @@ export default function PaginaFinanceiroGlobal() {
 
       if (errorTenants) throw errorTenants
 
-      // Calcular Métricas
       const receitaFaturas = dataFaturas?.reduce((acc, f) => acc + Number(f.valor), 0) || 0
       const receitaManuais = dataLancamentos?.filter(l => l.tipo === 'receita' && l.status === 'pago')
         .reduce((acc, l) => acc + Number(l.valor), 0) || 0
@@ -111,8 +102,8 @@ export default function PaginaFinanceiroGlobal() {
         receitaTotal: receitaFaturas + receitaManuais,
         despesaTotal: despesaManuais,
         saldoTotal: (receitaFaturas + receitaManuais) - despesaManuais,
-        mrr: receitaFaturas, // Simplificado
-        churnRate: 2.5, // Mock
+        mrr: receitaFaturas,
+        churnRate: 2.5,
         tenantsAtivos: totalTenants || 0
       })
 
@@ -170,21 +161,21 @@ export default function PaginaFinanceiroGlobal() {
 
   if (loading) {
     return (
-      <div className=\"flex h-[400px] items-center justify-center\">
-        <Loader2 className=\"h-8 w-8 animate-spin text-primary\" />
+      <div className="flex h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className=\"flex-1 space-y-6 p-8 pt-6\">
-      <div className=\"flex items-center justify-between\">
-        <h2 className=\"text-3xl font-bold tracking-tight\">Painel Financeiro Global</h2>
-        <div className=\"flex items-center space-x-2\">
+    <div className="flex-1 space-y-6 p-8 pt-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold tracking-tight">Painel Financeiro Global</h2>
+        <div className="flex items-center space-x-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className=\"mr-2 h-4 w-4\" />
+                <Plus className="mr-2 h-4 w-4" />
                 Novo Lançamento
               </Button>
             </DialogTrigger>
@@ -195,57 +186,57 @@ export default function PaginaFinanceiroGlobal() {
                   Adicione uma receita ou despesa manual ao fluxo do Super Admin.
                 </DialogDescription>
               </DialogHeader>
-              <div className=\"grid gap-4 py-4\">
-                <div className=\"grid grid-cols-2 gap-4\">
-                  <div className=\"space-y-2\">
-                    <label className=\"text-sm font-medium\">Tipo</label>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Tipo</label>
                     <Select 
                       value={novoLancamento.tipo} 
                       onValueChange={(v) => setNovoLancamento({...novoLancamento, tipo: v as any})}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder=\"Selecione\" />
+                        <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value=\"receita\">Receita</SelectItem>
-                        <SelectItem value=\"despesa\">Despesa</SelectItem>
+                        <SelectItem value="receita">Receita</SelectItem>
+                        <SelectItem value="despesa">Despesa</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className=\"space-y-2\">
-                    <label className=\"text-sm font-medium\">Valor</label>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Valor</label>
                     <Input 
-                      type=\"number\" 
-                      placeholder=\"0.00\"
+                      type="number" 
+                      placeholder="0.00"
                       onChange={(e) => setNovoLancamento({...novoLancamento, valor: parseFloat(e.target.value)})}
                     />
                   </div>
                 </div>
-                <div className=\"space-y-2\">
-                  <label className=\"text-sm font-medium\">Categoria</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Categoria</label>
                   <Input 
-                    placeholder=\"Ex: Marketing, Servidores, Assinatura\"
+                    placeholder="Ex: Marketing, Servidores, Assinatura"
                     onChange={(e) => setNovoLancamento({...novoLancamento, categoria: e.target.value})}
                   />
                 </div>
-                <div className=\"space-y-2\">
-                  <label className=\"text-sm font-medium\">Descrição</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Descrição</label>
                   <Input 
-                    placeholder=\"Opcional\"
+                    placeholder="Opcional"
                     onChange={(e) => setNovoLancamento({...novoLancamento, descricao: e.target.value})}
                   />
                 </div>
-                <div className=\"space-y-2\">
-                  <label className=\"text-sm font-medium\">Data</label>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Data</label>
                   <Input 
-                    type=\"date\"
+                    type="date"
                     value={novoLancamento.data_lancamento}
                     onChange={(e) => setNovoLancamento({...novoLancamento, data_lancamento: e.target.value})}
                   />
                 </div>
               </div>
               <DialogFooter>
-                <Button variant=\"outline\" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
+                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
                 <Button onClick={salvarLancamento}>Salvar</Button>
               </DialogFooter>
             </DialogContent>
@@ -253,51 +244,51 @@ export default function PaginaFinanceiroGlobal() {
         </div>
       </div>
 
-      <div className=\"grid gap-4 md:grid-cols-2 lg:grid-cols-4\">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader className=\"flex flex-row items-center justify-between space-y-0 pb-2\">
-            <CardTitle className=\"text-sm font-medium\">Receita Total</CardTitle>
-            <TrendingUp className=\"h-4 w-4 text-emerald-500\" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
+            <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className=\"text-2xl font-bold\">{formatarMoeda(metricas.receitaTotal)}</div>
-            <p className=\"text-xs text-muted-foreground\">+12% em relação ao mês anterior</p>
+            <div className="text-2xl font-bold">{formatarMoeda(metricas.receitaTotal)}</div>
+            <p className="text-xs text-muted-foreground">+12% em relação ao mês anterior</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className=\"flex flex-row items-center justify-between space-y-0 pb-2\">
-            <CardTitle className=\"text-sm font-medium\">Despesa Operacional</CardTitle>
-            <TrendingDown className=\"h-4 w-4 text-red-500\" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Despesa Operacional</CardTitle>
+            <TrendingDown className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className=\"text-2xl font-bold\">{formatarMoeda(metricas.despesaTotal)}</div>
-            <p className=\"text-xs text-muted-foreground\">Lançamentos manuais e custos fixos</p>
+            <div className="text-2xl font-bold">{formatarMoeda(metricas.despesaTotal)}</div>
+            <p className="text-xs text-muted-foreground">Lançamentos manuais e custos fixos</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className=\"flex flex-row items-center justify-between space-y-0 pb-2\">
-            <CardTitle className=\"text-sm font-medium\">MRR (Receita Recorrente)</CardTitle>
-            <DollarSign className=\"h-4 w-4 text-muted-foreground\" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">MRR (Receita Recorrente)</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className=\"text-2xl font-bold\">{formatarMoeda(metricas.mrr)}</div>
-            <p className=\"text-xs text-muted-foreground\">Assinaturas ativas de tenants</p>
+            <div className="text-2xl font-bold">{formatarMoeda(metricas.mrr)}</div>
+            <p className="text-xs text-muted-foreground">Assinaturas ativas de tenants</p>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className=\"flex flex-row items-center justify-between space-y-0 pb-2\">
-            <CardTitle className=\"text-sm font-medium\">Tenants Ativos</CardTitle>
-            <Users className=\"h-4 w-4 text-muted-foreground\" />
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tenants Ativos</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className=\"text-2xl font-bold\">{metricas.tenantsAtivos}</div>
-            <p className=\"text-xs text-muted-foreground\">Base de clientes atual</p>
+            <div className="text-2xl font-bold">{metricas.tenantsAtivos}</div>
+            <p className="text-xs text-muted-foreground">Base de clientes atual</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className=\"grid gap-4 md:grid-cols-7\">
-        <Card className=\"col-span-4\">
+      <div className="grid gap-4 md:grid-cols-7">
+        <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Últimas Movimentações</CardTitle>
             <CardDescription>Fluxo de caixa consolidado do sistema.</CardDescription>
@@ -309,13 +300,13 @@ export default function PaginaFinanceiroGlobal() {
                   <TableHead>Data</TableHead>
                   <TableHead>Categoria</TableHead>
                   <TableHead>Tipo</TableHead>
-                  <TableHead className=\"text-right\">Valor</TableHead>
+                  <TableHead className="text-right">Valor</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {lancamentos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className=\"text-center py-8 text-muted-foreground\">
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                       Nenhum lançamento manual encontrado.
                     </TableCell>
                   </TableRow>
@@ -324,15 +315,15 @@ export default function PaginaFinanceiroGlobal() {
                     <TableRow key={l.id}>
                       <TableCell>{format(new Date(l.data_lancamento), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
                       <TableCell>
-                        <div className=\"font-medium\">{l.categoria}</div>
-                        <div className=\"text-xs text-muted-foreground\">{l.descricao}</div>
+                        <div className="font-medium">{l.categoria}</div>
+                        <div className="text-xs text-muted-foreground">{l.descricao}</div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={l.tipo === 'receita' ? 'secondary' : 'destructive'}>
                           {l.tipo === 'receita' ? 'Receita' : 'Despesa'}
                         </Badge>
                       </TableCell>
-                      <TableCell className=\"text-right\">
+                      <TableCell className="text-right">
                         <span className={l.tipo === 'receita' ? 'text-emerald-600' : 'text-red-600'}>
                           {l.tipo === 'receita' ? '+' : '-'} {formatarMoeda(Number(l.valor))}
                         </span>
@@ -345,37 +336,37 @@ export default function PaginaFinanceiroGlobal() {
           </CardContent>
         </Card>
 
-        <Card className=\"col-span-3\">
+        <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Dados dos Tenants</CardTitle>
             <CardDescription>Resumo financeiro por cliente.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className=\"space-y-8\">
-              <div className=\"flex items-center\">
-                <div className=\"ml-4 space-y-1\">
-                  <p className=\"text-sm font-medium leading-none\">Custo de Aquisição (CAC)</p>
-                  <p className=\"text-sm text-muted-foreground\">R$ 450,00 por tenant</p>
+            <div className="space-y-8">
+              <div className="flex items-center">
+                <div className="ml-4 space-y-1">
+                  <p className="text-sm font-medium leading-none">Custo de Aquisição (CAC)</p>
+                  <p className="text-sm text-muted-foreground">R$ 450,00 por tenant</p>
                 </div>
-                <div className=\"ml-auto font-medium text-emerald-600\">Estável</div>
+                <div className="ml-auto font-medium text-emerald-600">Estável</div>
               </div>
-              <div className=\"flex items-center\">
-                <div className=\"ml-4 space-y-1\">
-                  <p className=\"text-sm font-medium leading-none\">Churn Rate</p>
-                  <p className=\"text-sm text-muted-foreground\">{metricas.churnRate}% mensal</p>
+              <div className="flex items-center">
+                <div className="ml-4 space-y-1">
+                  <p className="text-sm font-medium leading-none">Churn Rate</p>
+                  <p className="text-sm text-muted-foreground">{metricas.churnRate}% mensal</p>
                 </div>
-                <div className=\"ml-auto font-medium text-red-600\">+0.2%</div>
+                <div className="ml-auto font-medium text-red-600">+0.2%</div>
               </div>
-              <div className=\"flex items-center\">
-                <div className=\"ml-4 space-y-1\">
-                  <p className=\"text-sm font-medium leading-none\">Ticket Médio</p>
-                  <p className=\"text-sm text-muted-foreground\">{formatarMoeda(metricas.mrr / (metricas.tenantsAtivos || 1))}</p>
+              <div className="flex items-center">
+                <div className="ml-4 space-y-1">
+                  <p className="text-sm font-medium leading-none">Ticket Médio</p>
+                  <p className="text-sm text-muted-foreground">{formatarMoeda(metricas.mrr / (metricas.tenantsAtivos || 1))}</p>
                 </div>
-                <div className=\"ml-auto font-medium\">Crescente</div>
+                <div className="ml-auto font-medium">Crescente</div>
               </div>
             </div>
-            <div className=\"mt-8\">
-               <Button variant=\"outline\" className=\"w-full\">Ver Relatório Detalhado</Button>
+            <div className="mt-8">
+               <Button variant="outline" className="w-full">Ver Relatório Detalhado</Button>
             </div>
           </CardContent>
         </Card>
