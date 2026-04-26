@@ -132,9 +132,9 @@ export default function FilaTVPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-zinc-400 text-sm">ESPERA</p>
-                    <p className="text-2xl font-mono">
-                      {formatDistanceToNow(new Date(item.entradaEm), { locale: ptBR })}
+                    <p className="text-zinc-400 text-sm">ESPERA EST.</p>
+                    <p className="text-2xl font-mono text-primary">
+                      ~{(index + 1) * 15} min
                     </p>
                   </div>
                 </div>
