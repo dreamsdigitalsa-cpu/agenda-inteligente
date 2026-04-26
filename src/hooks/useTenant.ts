@@ -9,6 +9,7 @@ import type { UsuarioLogado, AppRole } from '@/tipos/usuario'
 interface EstadoTenant {
   tenant: Tenant | null
   usuario: UsuarioLogado | null
+  assinatura: any | null
   carregando: boolean
   erro: string | null
 }
@@ -17,13 +18,14 @@ export function useTenant(): EstadoTenant {
   const [estado, setEstado] = useState<EstadoTenant>({
     tenant: null,
     usuario: null,
+    assinatura: null,
     carregando: true,
     erro: null,
   })
 
   const carregar = useCallback(async (authUserId: string | null) => {
     if (!authUserId) {
-      setEstado({ tenant: null, usuario: null, carregando: false, erro: null })
+      setEstado({ tenant: null, usuario: null, assinatura: null, carregando: false, erro: null })
       return
     }
     try {
@@ -62,9 +64,17 @@ export function useTenant(): EstadoTenant {
           }
         }
       }
+      
+      // Busca status da assinatura
+      const { data: assinatura } = await supabase
+        .from('assinaturas_tenant')
+        .select('*')
+        .eq('tenant_id', usuario?.tenant_id)
+        .maybeSingle()
 
       setEstado({
         tenant,
+        assinatura,
         usuario: usuario
           ? {
               id: usuario.id,
