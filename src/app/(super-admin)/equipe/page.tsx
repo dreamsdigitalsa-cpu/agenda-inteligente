@@ -28,7 +28,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
-import { UserPlus, Mail, Shield, Trash2, Loader2, Users } from 'lucide-react'
+import { UserPlus, Mail, Shield, Trash2, Loader2, Users, Settings2, Check } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { CATALOGO_PERMISSOES } from '@/tipos/permissao'
 
 export default function PaginaEquipeSuperAdmin() {
   const queryClient = useQueryClient()
