@@ -37,6 +37,9 @@ export default function PaginaEquipeSuperAdmin() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [role, setRole] = useState<'super_admin' | 'admin'>('super_admin')
+  const [permissoesSelecionadas, setPermissoesSelecionadas] = useState<string[]>([])
+  const [isPermissoesDialogOpen, setIsPermissoesDialogOpen] = useState(false)
+  const [membroSelecionado, setMembroSelecionado] = useState<any>(null)
 
   const { data: equipe, isLoading } = useQuery({
     queryKey: ['equipe-super-admin'],
