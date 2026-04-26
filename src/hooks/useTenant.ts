@@ -44,14 +44,18 @@ export function useTenant(): EstadoTenant {
         .eq('user_id', authUserId)
       if (errRoles) throw errRoles
       const roles = (rolesRows ?? []).map((r) => r.role as AppRole)
+      const isSuperAdmin = roles.includes('super_admin')
 
       let tenant: Tenant | null = null
-      if (usuario?.tenant_id) {
-        const { data: t, error: errT } = await supabase
+      if (usuario?.tenant_id || isSuperAdmin) {
+        const query = supabase
           .from('tenants')
           .select('id, nome, segmento, plano, status, criado_em')
-          .eq('id', usuario.tenant_id)
-          .maybeSingle()
+        
+        const { data: t, error: errT } = usuario?.tenant_id 
+          ? await query.eq('id', usuario.tenant_id).maybeSingle()
+          : await query.limit(1).maybeSingle() // Super Admin sem tenant_id fixo vê o primeiro ou pode trocar
+          
         if (errT) throw errT
         if (t) {
           tenant = {

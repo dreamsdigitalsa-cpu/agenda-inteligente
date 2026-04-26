@@ -2,7 +2,7 @@
 // Suporta submenus colapsáveis, indicador lateral no item ativo,
 // card "Setup do perfil" no rodapé e tema claro/escuro automático.
 import { useMemo, useState, type ComponentType } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   BarChart3,
   Calendar,
@@ -15,6 +15,7 @@ import {
   ListOrdered,
   Package,
   Settings,
+  ShieldCheck,
   Sparkles,
   Users,
 } from 'lucide-react'
@@ -187,6 +188,7 @@ export function SidebarPainel() {
   const { tenant } = useTenant()
   const { ehAdmin, ehProfissional, ehSuperAdmin } = usePermissao()
   const location = useLocation()
+  const navigate = useNavigate()
   
   const ehProfissionalPuro = ehProfissional && !ehAdmin
   const tenantSegmento = tenant?.segmento
@@ -234,6 +236,19 @@ export function SidebarPainel() {
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-2">
+        {ehSuperAdmin && (
+          <div className="px-3 pb-2">
+            <Button 
+              onClick={() => navigate('/super-admin/dashboard')}
+              variant="outline" 
+              className="w-full justify-start gap-2 border-violet-500/30 bg-violet-500/5 text-violet-600 hover:bg-violet-500/10 hover:text-violet-700"
+              size="sm"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase tracking-tight">Painel Admin</span>
+            </Button>
+          </div>
+        )}
         <div className="space-y-0.5">
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Menu principal

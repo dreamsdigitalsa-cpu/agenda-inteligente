@@ -1,7 +1,7 @@
 // Header global do painel autenticado.
 // Inclui busca, notificações, alternador de tema e menu de perfil.
 import { useNavigate } from 'react-router-dom'
-import { Bell, LogOut, Search, Settings as Cog, Sliders, User } from 'lucide-react'
+import { Bell, LogOut, Search, Settings as Cog, Sliders, User, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import { useTenant } from '@/hooks/useTenant'
+import { usePermissao } from '@/hooks/usePermissao'
 import { supabase } from '@/lib/supabase/cliente'
 import { iniciaisDoNome } from '@/lib/mascaras'
 import { BotaoTema } from '@/componentes/tema/BotaoTema'
@@ -22,6 +23,7 @@ import { BotaoTema } from '@/componentes/tema/BotaoTema'
 export function HeaderPainel() {
   const navigate = useNavigate()
   const { usuario } = useTenant()
+  const { ehSuperAdmin } = usePermissao()
 
   async function sair() {
     await supabase.auth.signOut()
@@ -84,6 +86,15 @@ export function HeaderPainel() {
               {usuario?.email ?? '—'}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {ehSuperAdmin && (
+              <>
+                <DropdownMenuItem onClick={() => navigate('/super-admin/dashboard')}>
+                  <ShieldCheck className="mr-2 h-4 w-4 text-violet-500" />
+                  Painel Admin
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
             <DropdownMenuItem onClick={() => navigate('/painel/configuracoes')}>
               <User className="mr-2 h-4 w-4" />
               Meu perfil
