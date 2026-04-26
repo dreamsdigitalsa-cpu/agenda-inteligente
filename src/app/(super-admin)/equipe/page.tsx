@@ -263,7 +263,8 @@ export default function PaginaEquipeSuperAdmin() {
                 <TableHead className="text-zinc-400">Nome</TableHead>
                 <TableHead className="text-zinc-400">E-mail</TableHead>
                 <TableHead className="text-zinc-400">Permissão</TableHead>
-                <TableHead className="text-zinc-400 text-right">Status</TableHead>
+                <TableHead className="text-zinc-400">Status</TableHead>
+                <TableHead className="text-zinc-400 text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
