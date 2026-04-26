@@ -26,6 +26,7 @@ import RedefinirSenha from "@/app/(auth)/redefinir-senha/page"
 import ConfirmarEmail from "@/app/(auth)/confirmar-email/page"
 
 // Painel
+import PaginaInicio from "@/app/(painel)/inicio/page"
 import PaginaAgenda from "@/app/(painel)/agenda/page"
 import PaginaClientes from "@/app/(painel)/clientes/page"
 import PaginaDetalheCliente from "@/app/(painel)/clientes/[id]/page"
@@ -92,7 +93,8 @@ const App = () => (
             <Route path="/onboarding" element={<PaginaOnboarding />} />
 
             <Route path="/painel" element={<LayoutPainel />}>
-              <Route index element={<Navigate to="agenda" replace />} />
+              <Route index element={<Navigate to="inicio" replace />} />
+              <Route path="inicio" element={<PaginaInicio />} />
               <Route path="agenda" element={<PaginaAgenda />} />
               <Route path="clientes" element={<PaginaClientes />} />
               <Route path="clientes/:id" element={<PaginaDetalheCliente />} />
