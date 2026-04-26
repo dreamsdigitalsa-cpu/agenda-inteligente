@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase/cliente'
 import type { AppRole } from '@/tipos/usuario'
 
 export function usePermissao() {
-  const { usuario } = useTenant()
+  const { usuario, carregando } = useTenant()
   const [permissoes, setPermissoes] = useState<string[]>([])
 
   // Carrega códigos de permissão do perfil do usuário (lido via join no banco).
@@ -76,6 +76,7 @@ export function usePermissao() {
     ehAdmin, 
     ehProfissional, 
     ehRecepcionista, 
-    permissoesUsuario: permissoes 
+    permissoesUsuario: permissoes,
+    carregando
   }
 }

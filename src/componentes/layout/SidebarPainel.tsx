@@ -186,7 +186,7 @@ function ItemSidebar({ item, pathname }: ItemProps) {
 
 export function SidebarPainel() {
   const { tenant } = useTenant()
-  const { ehAdmin, ehProfissional, ehSuperAdmin } = usePermissao()
+  const { ehAdmin, ehProfissional, ehSuperAdmin, carregando } = usePermissao()
   const location = useLocation()
   const navigate = useNavigate()
   
@@ -207,7 +207,10 @@ export function SidebarPainel() {
   const progressoSetup = useMemo(() => 60, [])
 
   return (
-    <aside className="hidden h-screen w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:flex">
+    <aside className={cn(
+      "hidden h-screen w-72 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:flex",
+      carregando && "opacity-50 pointer-events-none"
+    )}>
       {/* Marca */}
       <div className="flex items-center gap-2.5 px-6 py-5">
         <Logo className="h-10 w-auto max-w-[180px]" />
