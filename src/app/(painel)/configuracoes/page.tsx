@@ -7,14 +7,13 @@ import {
   CreditCard,
   Lock,
   Phone,
-  Settings,
   Shield,
-  Sparkles,
   User,
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { AbaEstabelecimento } from '@/componentes/configuracoes/AbaEstabelecimento'
+import { AbaMeuPerfil } from '@/componentes/configuracoes/AbaMeuPerfil'
+import { AbaSeguranca } from '@/componentes/configuracoes/AbaSeguranca'
 
 const ABAS = [
   { id: 'geral', icone: Building2, rotulo: 'Estabelecimento' },
