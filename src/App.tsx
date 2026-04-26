@@ -45,6 +45,10 @@ import PaginaAssinatura from "@/app/(painel)/assinatura/page"
 import PaginaOnboarding from "@/app/(painel)/onboarding/page"
 import PaginaFila from "@/app/(painel)/fila/page"
 import PaginaFilaTV from "@/app/(painel)/fila/tv/page"
+import PaginaMinhaAgenda from "@/app/(painel)/minha-agenda/page"
+import PaginaMeusClientes from "@/app/(painel)/meus-clientes/page"
+import PaginaMinhasComissoes from "@/app/(painel)/minhas-comissoes/page"
+import PaginaMeuHorario from "@/app/(painel)/configuracoes/meu-horario/page"
 
 // Tatuagem
 import PaginaTattooOrcamentos from "@/app/(painel)/tatuagem/orcamentos/page"
