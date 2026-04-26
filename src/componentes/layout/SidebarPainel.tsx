@@ -37,6 +37,7 @@ interface ItemMenu {
 }
 
 const grupoPrincipal: ItemMenu[] = [
+  { href: '/painel/inicio', icone: Home, rotulo: 'Início' },
   { href: '/painel/agenda', icone: Calendar, rotulo: 'Agenda' },
   {
     href: '/painel/clientes',
@@ -182,28 +183,6 @@ export function SidebarPainel() {
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             Menu principal
           </p>
-          <NavLink
-            to="/painel"
-            end
-            className={({ isActive }) =>
-              cn(
-                'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all',
-                isActive
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
-              )
-            }
-          >
-            {({ isActive }) => (
-              <>
-                {isActive && (
-                  <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary" />
-                )}
-                <Home className="h-4 w-4" />
-                Início
-              </>
-            )}
-          </NavLink>
           {grupoPrincipal.map((it) => (
             <ItemSidebar key={it.href} item={it} pathname={location.pathname} />
           ))}
