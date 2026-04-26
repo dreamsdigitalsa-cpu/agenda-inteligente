@@ -124,18 +124,16 @@ function ModalPlano({ plano, aberto, onFechar, onSalvar }: ModalPlanoProps) {
       }
 
       if (editando && plano) {
-        const { error } = await (supabase
-          .from('planos' as never)
-          .update(payload as never)
+        const { error } = await supabase
+          .from('planos')
+          .update(payload)
           .eq('id', plano.id)
-        ) as unknown as { error: unknown }
-        if (error) throw new Error(String(error))
+        if (error) throw error
       } else {
-        const { error } = await (supabase
-          .from('planos' as never)
-          .insert(payload as never)
-        ) as unknown as { error: unknown }
-        if (error) throw new Error(String(error))
+        const { error } = await supabase
+          .from('planos')
+          .insert(payload)
+        if (error) throw error
       }
       onSalvar()
       onFechar()
