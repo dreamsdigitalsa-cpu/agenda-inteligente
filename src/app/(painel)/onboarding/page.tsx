@@ -1,12 +1,20 @@
-// Fluxo de onboarding pós-cadastro (5 etapas).
+// Fluxo de onboarding pós-cadastro (6 etapas).
 // Tela cheia, fora do LayoutPainel, com barra de progresso no topo.
 // Cada etapa salva no banco ao avançar; o usuário pode pular qualquer etapa.
-import { useEffect, useMemo, useState } from 'react'
+//
+// Etapas:
+// 1. Horário de funcionamento
+// 2. Profissionais
+// 3. Serviços
+// 4. Identidade visual
+// 5. Configurações específicas do segmento (NOVA — adapta por tipo de negócio)
+// 6. Link público de agendamento
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import {
-  Check, ChevronRight, Copy, Loader2, MessageCircle, Plus, Trash2, Upload,
+  Check, ChevronRight, Copy, Loader2, MessageCircle, Plus, SkipForward, Trash2, Upload,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/cliente'
@@ -24,6 +32,13 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
 import type { SegmentoTenant } from '@/tipos/tenant'
+// Componentes da etapa 5 (configurações específicas por segmento)
+import EtapaBarbearia from '@/modulos/_onboarding-segmento/EtapaBarbearia'
+import EtapaSalao from '@/modulos/_onboarding-segmento/EtapaSalao'
+import EtapaEstetica from '@/modulos/_onboarding-segmento/EtapaEstetica'
+import EtapaTatuagem from '@/modulos/_onboarding-segmento/EtapaTatuagem'
+import EtapaManicure from '@/modulos/_onboarding-segmento/EtapaManicure'
+import type { RefEtapaSegmento } from '@/modulos/_onboarding-segmento/tipos'
 
 // ---------- Tipos locais ----------
 interface HorarioDia {
