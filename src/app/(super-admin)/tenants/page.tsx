@@ -180,10 +180,16 @@ const PaginaTenants = () => {
   async function mudarPlano(tenant: Tenant, novoPlanoNome: string) {
     setAcaoEmAndamento(tenant.id + '-plano')
     try {
-      await supabase
+      const { error } = await supabase
         .from('tenants')
         .update({ plano: novoPlanoNome } as any)
         .eq('id', tenant.id)
+
+      if (error) {
+        console.error('Erro ao atualizar plano:', error)
+        alert('Erro ao salvar plano: ' + error.message)
+        return
+      }
 
       await carregar()
       if (tenantSelecionado?.id === tenant.id) {
@@ -302,9 +308,8 @@ const PaginaTenants = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos planos</SelectItem>
-                {planos.map((p) => (
-                  <SelectItem key={p.id} value={p.nome}>{p.nome}</SelectItem>
-                ))}
+                <SelectItem value="freemium">Freemium</SelectItem>
+                <SelectItem value="profissional">Profissional</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -452,9 +457,8 @@ const PaginaTenants = () => {
                       <SelectValue placeholder="Sem plano" />
                     </SelectTrigger>
                     <SelectContent>
-                      {planos.map((p) => (
-                        <SelectItem key={p.id} value={p.nome}>{p.nome}</SelectItem>
-                      ))}
+                      <SelectItem value="freemium">Freemium</SelectItem>
+                      <SelectItem value="profissional">Profissional</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
