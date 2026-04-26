@@ -21,7 +21,7 @@ const ABAS = [
   { id: 'notificacoes', icone: Bell, rotulo: 'Notificações', rota: '/painel/configuracoes/notificacoes' },
   { id: 'ligacao-ia', icone: Phone, rotulo: 'Ligação IA', rota: '/painel/configuracoes/ligacao-ia' },
   { id: 'seguranca', icone: Lock, rotulo: 'Segurança' },
-  { id: 'permissoes', icone: Shield, rotulo: 'Permissões' },
+  { id: 'permissoes', icone: Shield, rotulo: 'Permissões', rota: '/painel/configuracoes/permissoes' },
   { id: 'assinatura', icone: CreditCard, rotulo: 'Assinatura', rota: '/painel/assinatura' },
 ] as const
 
