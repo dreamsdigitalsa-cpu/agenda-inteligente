@@ -15,3 +15,6 @@ verify_jwt = false
 
 [functions.agendamento-publico]
 verify_jwt = false
+
+[functions.metricas-tenant]
+verify_jwt = false
