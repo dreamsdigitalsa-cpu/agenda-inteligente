@@ -82,15 +82,15 @@ export function useTenant(): EstadoTenant {
       setEstado({
         tenant,
         assinatura,
-        usuario: usuario
+        usuario: (usuario || isSuperAdmin)
           ? {
-              id: usuario.id,
-              authUserId: usuario.auth_user_id,
-              tenantId: usuario.tenant_id,
-              unidadeId: usuario.unidade_id,
-              nome: usuario.nome,
-              email: usuario.email,
-              ativo: usuario.ativo,
+              id: usuario?.id || authUserId, // Se for super admin sem perfil, usa o authUserId como fallback
+              authUserId: usuario?.auth_user_id || authUserId,
+              tenantId: usuario?.tenant_id || null,
+              unidadeId: usuario?.unidade_id || null,
+              nome: usuario?.nome || 'Super Admin',
+              email: usuario?.email || '',
+              ativo: usuario?.ativo ?? true,
               roles,
             }
           : null,
