@@ -138,21 +138,12 @@ const Login = () => {
 
         <div className="w-full max-w-[420px] space-y-10 relative z-10">
           <div className="flex flex-col space-y-6 text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start gap-3">
-              <div className="bg-primary p-2.5 rounded-2xl shadow-xl shadow-primary/25 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-7 w-7 text-white"
-                >
-                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                </svg>
-              </div>
-              <span className="text-3xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase italic">StudioFlow</span>
+            <div className="flex items-center justify-center lg:justify-start">
+              <img 
+                src={logoStudioFlow} 
+                alt="StudioFlow — Inteligência em Gestão"
+                className="h-16 lg:h-20 w-auto object-contain drop-shadow-[0_8px_24px_rgba(139,92,246,0.35)] hover:scale-[1.02] transition-transform duration-500"
+              />
             </div>
             <div className="space-y-2">
               <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white">Bem-vindo de volta</h1>
