@@ -107,7 +107,7 @@ const Login = () => {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="senha">Senha</Label>
-                  <Link to="/recuperar-senha" name="forgot-password" className="text-xs text-primary hover:underline font-medium">
+                  <Link to="/recuperar-senha" className="text-xs text-primary hover:underline font-medium">
                     Esqueceu a senha?
                   </Link>
                 </div>
