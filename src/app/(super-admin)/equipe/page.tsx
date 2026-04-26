@@ -286,10 +286,21 @@ export default function PaginaEquipeSuperAdmin() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell>
                     <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400 border border-emerald-500/20">
                       Ativo
                     </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-zinc-400 hover:text-violet-400"
+                      onClick={() => handleOpenPermissoes(membro)}
+                    >
+                      <Settings2 className="h-4 w-4 mr-2" />
+                      Permissões
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
