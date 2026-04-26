@@ -265,7 +265,7 @@ const PaginaPlanos = () => {
         if (t.plano) contagem[t.plano] = (contagem[t.plano] ?? 0) + 1
       }
 
-      setPlanos((data ?? []).map((p) => ({ ...p, tenants_count: contagem[p.id] ?? 0 })))
+      setPlanos((data ?? []).map((p) => ({ ...p, tenants_count: contagem[p.nome] ?? 0 })))
     } catch (e) {
       setErro(e instanceof Error ? e.message : String(e))
     } finally {
