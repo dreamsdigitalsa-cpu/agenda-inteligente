@@ -32,8 +32,9 @@ import PaginaClientes from "@/app/(painel)/clientes/page"
 import PaginaDetalheCliente from "@/app/(painel)/clientes/[id]/page"
 import PaginaFinanceiro from "@/app/(painel)/financeiro/page"
 import PaginaCaixa from "@/app/(painel)/financeiro/caixa/page"
-import PaginaEstoque from "@/app/(painel)/estoque/page"
 import PaginaLancamentos from "@/app/(painel)/financeiro/lancamentos/page"
+import PaginaEstoque from "@/app/(painel)/estoque/page"
+import PaginaDetalheProduto from "@/app/(painel)/estoque/[id]/page"
 import PaginaRelatorios from "@/app/(painel)/relatorios/page"
 import PaginaConfiguracoes from "@/app/(painel)/configuracoes/page"
 import PaginaConfiguracoesNotificacoes from "@/app/(painel)/configuracoes/notificacoes/page"
@@ -103,6 +104,7 @@ const App = () => (
               <Route path="financeiro/caixa" element={<PaginaCaixa />} />
               <Route path="financeiro/lancamentos" element={<PaginaLancamentos />} />
               <Route path="estoque" element={<PaginaEstoque />} />
+              <Route path="estoque/:id" element={<PaginaDetalheProduto />} />
               <Route path="relatorios" element={<PaginaRelatorios />} />
               <Route path="configuracoes" element={<PaginaConfiguracoes />} />
               <Route path="configuracoes/notificacoes" element={<PaginaConfiguracoesNotificacoes />} />

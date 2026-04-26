@@ -190,6 +190,10 @@ serve(async (req) => {
         comissoes_mes: comissoesPendentes,
         pendencias_categorizacao: lancamentosSemCategoria || 0,
         
+        // Estoque (Alertas)
+        estoque_baixo: 0, // Implementação futura
+        validade_proxima: 0,
+        
         timestamp: new Date().toISOString()
       }),
       { 
