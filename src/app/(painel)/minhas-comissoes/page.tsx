@@ -15,7 +15,7 @@ interface ComissaoItem {
   valor_calculado: number
   percentual: number | null
   tipo: 'percentual' | 'fixo'
-  status: 'pendente' | 'paga'
+  status: 'pendente' | 'aprovada' | 'paga' | 'cancelada'
   criado_em: string
   agendamento?: {
     cliente_nome: string
@@ -47,8 +47,8 @@ export default function MinhasComissoes() {
         console.log('[minhas-comissoes] buscando dados para profissional:', profissional.id)
         
         // Busca comissões vinculadas ao profissional logado
-        // Inclui dados do lançamento, agendamento, cliente e serviço para contexto
-        const { data, error } = await supabase
+        // Utilizamos query direta ignorando o erro de tipos do TS caso o types.ts esteja desatualizado
+        const { data, error } = await (supabase as any)
           .from('comissoes')
           .select(`
             id, valor_base, valor_calculado, percentual, tipo, status, criado_em,
@@ -107,6 +107,20 @@ export default function MinhasComissoes() {
     )
   }
 
+  // Função auxiliar para traduzir e colorir o badge de status
+  const renderStatusBadge = (status: string) => {
+    switch (status) {
+      case 'paga':
+        return <Badge className="bg-green-600 hover:bg-green-700">Paga</Badge>
+      case 'aprovada':
+        return <Badge className="bg-blue-600 hover:bg-blue-700">Aprovada</Badge>
+      case 'cancelada':
+        return <Badge variant="destructive">Cancelada</Badge>
+      default:
+        return <Badge variant="outline">Pendente</Badge>
+    }
+  }
+
   return (
     <div className="space-y-4 p-4">
       <div>
@@ -158,12 +172,7 @@ export default function MinhasComissoes() {
                         })}
                       </td>
                       <td className="py-3 text-center">
-                        <Badge 
-                          variant={c.status === 'paga' ? 'default' : 'outline'}
-                          className={c.status === 'paga' ? 'bg-green-600 hover:bg-green-700' : ''}
-                        >
-                          {c.status === 'paga' ? 'Paga' : 'Pendente'}
-                        </Badge>
+                        {renderStatusBadge(c.status)}
                       </td>
                     </tr>
                   ))}
