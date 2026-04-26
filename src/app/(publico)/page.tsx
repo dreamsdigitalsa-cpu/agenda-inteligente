@@ -207,9 +207,9 @@ const LandingPage = () => {
       </div>
 
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md transition-all">
-        <nav className="container flex h-16 items-center justify-between">
+        <nav className="container flex h-24 items-center justify-between">
           <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
-            <Logo className="h-12 w-auto" />
+            <Logo className="h-16 w-auto max-w-[260px] sm:h-20 sm:max-w-[340px]" />
           </Link>
           <div className="hidden items-center gap-8 md:flex">
             <a href="#funcionalidades" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -871,7 +871,7 @@ const LandingPage = () => {
           <div className="grid gap-12 md:grid-cols-4 lg:grid-cols-5">
             <div className="md:col-span-2">
               <Link to="/" className="flex items-center gap-2" aria-label="StudioFlow">
-                <Logo className="h-12 w-auto" />
+                <Logo className="h-16 w-auto max-w-[280px]" />
               </Link>
               <p className="mt-6 max-w-sm text-lg text-muted-foreground leading-relaxed">
                 O ecossistema definitivo para gestão de negócios de beleza e bem-estar no Brasil. Modernidade, agilidade e inteligência para você crescer.
