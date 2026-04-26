@@ -118,10 +118,14 @@ const App = () => (
               <Route path="configuracoes/notificacoes" element={<PaginaConfiguracoesNotificacoes />} />
               <Route path="configuracoes/ligacao-ia" element={<PaginaConfiguracaoLigacaoIA />} />
               <Route path="assinatura" element={<PaginaAssinatura />} />
+              <Route path="minha-agenda" element={<PaginaMinhaAgenda />} />
+              <Route path="meus-clientes" element={<PaginaMeusClientes />} />
+              <Route path="minhas-comissoes" element={<PaginaMinhasComissoes />} />
+              <Route path="configuracoes/meu-horario" element={<PaginaMeuHorario />} />
               <Route path="fila" element={<PaginaFila />} />
               <Route path="fila/tv" element={<PaginaFilaTV />} />
               <Route path="estetica/ficha/:clienteId" element={<PaginaFichaEstetica />} />
-              
+
               {/* Tatuagem */}
               <Route path="tatuagem/orcamentos" element={<PaginaTattooOrcamentos />} />
               <Route path="tatuagem/portfolio" element={<PaginaTattooPortfolio />} />
