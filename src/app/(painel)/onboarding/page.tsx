@@ -628,7 +628,13 @@ const PaginaOnboarding = () => {
         {etapa < TOTAL_ETAPAS && (
           <div className="flex items-center justify-between mt-6">
             <Button variant="ghost" onClick={() => avancar(true)} disabled={salvando}>
-              Pular por agora
+              {etapa === 5 ? (
+                <>
+                  <SkipForward className="h-4 w-4" /> Pular configurações do segmento
+                </>
+              ) : (
+                'Pular por agora'
+              )}
             </Button>
             <Button onClick={() => avancar(false)} disabled={salvando}>
               {salvando ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Próximo <ChevronRight className="h-4 w-4" /></>}
