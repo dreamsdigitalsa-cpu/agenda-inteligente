@@ -533,6 +533,7 @@ export type Database = {
       }
       fila_espera: {
         Row: {
+          atraso_minutos: number | null
           chamado_em: string | null
           cliente_id: string | null
           cliente_nome: string
@@ -540,6 +541,7 @@ export type Database = {
           created_at: string
           entrada_em: string
           id: string
+          notificado_aproximacao: boolean | null
           posicao: number
           profissional_id: string | null
           servico_id: string | null
@@ -549,6 +551,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          atraso_minutos?: number | null
           chamado_em?: string | null
           cliente_id?: string | null
           cliente_nome: string
@@ -556,6 +559,7 @@ export type Database = {
           created_at?: string
           entrada_em?: string
           id?: string
+          notificado_aproximacao?: boolean | null
           posicao: number
           profissional_id?: string | null
           servico_id?: string | null
@@ -565,6 +569,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          atraso_minutos?: number | null
           chamado_em?: string | null
           cliente_id?: string | null
           cliente_nome?: string
@@ -572,6 +577,7 @@ export type Database = {
           created_at?: string
           entrada_em?: string
           id?: string
+          notificado_aproximacao?: boolean | null
           posicao?: number
           profissional_id?: string | null
           servico_id?: string | null
@@ -760,6 +766,51 @@ export type Database = {
           },
           {
             foreignKeyName: "movimentacoes_estoque_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notificacoes_fila: {
+        Row: {
+          criado_em: string | null
+          id: string
+          mensagem: string | null
+          registro_fila_id: string
+          status: string
+          tenant_id: string
+          tipo: string
+        }
+        Insert: {
+          criado_em?: string | null
+          id?: string
+          mensagem?: string | null
+          registro_fila_id: string
+          status?: string
+          tenant_id: string
+          tipo: string
+        }
+        Update: {
+          criado_em?: string | null
+          id?: string
+          mensagem?: string | null
+          registro_fila_id?: string
+          status?: string
+          tenant_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notificacoes_fila_registro_fila_id_fkey"
+            columns: ["registro_fila_id"]
+            isOneToOne: false
+            referencedRelation: "fila_espera"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notificacoes_fila_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
