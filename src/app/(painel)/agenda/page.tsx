@@ -12,6 +12,8 @@ import {
 } from '@/componentes/agenda'
 import { useAgenda, type AgendamentoDetalhado } from '@/hooks/useAgenda'
 import { useProfissionais } from '@/hooks/useProfissionais'
+import { useTenant } from '@/hooks/useTenant'
+import { Loader2 } from 'lucide-react'
 import type { ModoAgenda } from '@/componentes/agenda/CabecalhoAgenda'
 
 // Calcula início da semana (segunda-feira) a partir de uma data
