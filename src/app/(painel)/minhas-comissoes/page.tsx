@@ -166,22 +166,22 @@ export default function MinhasComissoes() {
         <CardKPI
           titulo="Pendente este mês"
           valor={`R$ ${kpis.pendenteMesAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          icone={Clock}
+          icone={<Clock className="h-4 w-4" />}
         />
         <CardKPI
           titulo="Pago este mês"
           valor={`R$ ${kpis.pagaMesAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          icone={CheckCircle2}
+          icone={<CheckCircle2 className="h-4 w-4" />}
         />
         <CardKPI
           titulo="Mês anterior"
           valor={`R$ ${kpis.totalMesAnterior.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
-          icone={DollarSign}
+          icone={<DollarSign className="h-4 w-4" />}
         />
         <CardKPI
           titulo="Variação"
           valor={`${kpis.variacao >= 0 ? '+' : ''}${kpis.variacao.toFixed(1)}%`}
-          icone={TrendingUp}
+          icone={<TrendingUp className="h-4 w-4" />}
         />
       </div>
 
