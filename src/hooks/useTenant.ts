@@ -94,6 +94,7 @@ export function useTenant(): EstadoTenant {
       setEstado({
         tenant: null,
         usuario: null,
+        assinatura: null,
         carregando: false,
         erro: e instanceof Error ? e.message : 'erro_desconhecido',
       })

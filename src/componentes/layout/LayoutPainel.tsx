@@ -10,6 +10,7 @@ import { HeaderPainel } from './HeaderPainel'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/componentes/Logo'
+import { BannerAssinaturaVencida } from '@/componentes/assinatura/BannerAssinaturaVencida'
 
 function BannerImpersonacao() {
   const navigate = useNavigate()
@@ -99,6 +100,7 @@ export const LayoutPainel = () => {
           </div>
         )}
         <BannerImpersonacao />
+        <BannerAssinaturaVencida />
 
         <HeaderPainel />
 
