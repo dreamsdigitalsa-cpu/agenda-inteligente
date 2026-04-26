@@ -21,7 +21,6 @@ import { cn } from '@/lib/utils'
 interface Plano {
   id:   string
   nome: string
-  slug: string
 }
 
 interface Tenant {
@@ -29,10 +28,9 @@ interface Tenant {
   nome:            string
   segmento:        string | null
   status:          string
-  plano_id:        string | null
+  plano:           string | null
   criado_em:       string
   agendamentos_mes: number
-  plano?:          { nome: string; slug: string } | null
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -90,29 +88,36 @@ const PaginaTenants = () => {
     try {
       const [{ data: tenantsRaw, error: errTenants }, { data: planosRaw, error: errPlanos }] =
         await Promise.all([
-          (supabase
-            .from('tenants' as never)
-            .select('id, nome, segmento, status, plano_id, criado_em, plano:planos(nome, slug)')
-            .order('criado_em', { ascending: false })
-          ) as unknown as Promise<{ data: Omit<Tenant, 'agendamentos_mes'>[] | null; error: unknown }>,
-          (supabase
-            .from('planos' as never)
-            .select('id, nome, slug')
-            .order('preco_centavos')
-          ) as unknown as Promise<{ data: Plano[] | null; error: unknown }>,
+          supabase
+            .from('tenants')
+            .select('id, nome, segmento, status, plano, criado_em')
+            .order('criado_em', { ascending: false }),
+          supabase
+            .from('planos')
+            .select('id, nome')
+            .order('preco')
         ])
 
-      if (errTenants) throw new Error(String(errTenants))
-      if (errPlanos)  throw new Error(String(errPlanos))
+      if (errTenants) {
+        console.error('Erro ao buscar tenants:', errTenants)
+        throw errTenants
+      }
+      if (errPlanos) {
+        console.error('Erro ao buscar planos:', errPlanos)
+        throw errPlanos
+      }
 
       // Contar agendamentos do mês atual por tenant
       const inicio = new Date()
       inicio.setDate(1); inicio.setHours(0, 0, 0, 0)
-      const { data: agendamentos } = (await supabase
-        .from('agendamentos' as never)
+      const { data: agendamentos, error: errAgend } = await supabase
+        .from('agendamentos')
         .select('tenant_id')
         .gte('criado_em', inicio.toISOString())
-      ) as unknown as { data: { tenant_id: string }[] | null }
+
+      if (errAgend) {
+        console.warn('Erro ao buscar agendamentos:', errAgend)
+      }
 
       const contagem: Record<string, number> = {}
       for (const a of agendamentos ?? []) {
@@ -141,7 +146,7 @@ const PaginaTenants = () => {
     if (busca && !t.nome.toLowerCase().includes(busca.toLowerCase())) return false
     if (filtroStatus   !== 'todos' && t.status !== filtroStatus)            return false
     if (filtroSegmento !== 'todos' && t.segmento !== filtroSegmento)        return false
-    if (filtroPlano    !== 'todos' && t.plano_id !== filtroPlano)           return false
+    if (filtroPlano    !== 'todos' && t.plano !== filtroPlano)           return false
     return true
   })
 
@@ -177,14 +182,13 @@ const PaginaTenants = () => {
     try {
       await (supabase
         .from('tenants' as never)
-        .update({ plano_id: novoPlanoId } as never)
+        .update({ plano: novoPlanoNome } as any)
         .eq('id', tenant.id)
-      ) as unknown as Promise<unknown>
+
       await carregar()
       if (tenantSelecionado?.id === tenant.id) {
-        const planoNovo = planos.find((p) => p.id === novoPlanoId)
         setTenantSelecionado((prev) =>
-          prev ? { ...prev, plano_id: novoPlanoId, plano: planoNovo ?? null } : prev
+          prev ? { ...prev, plano: novoPlanoNome } : prev
         )
       }
     } finally {
@@ -299,7 +303,7 @@ const PaginaTenants = () => {
               <SelectContent>
                 <SelectItem value="todos">Todos planos</SelectItem>
                 {planos.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+                  <SelectItem key={p.id} value={p.nome}>{p.nome}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -350,7 +354,7 @@ const PaginaTenants = () => {
                     >
                       <td className="px-4 py-3 font-medium text-zinc-100">{t.nome}</td>
                       <td className="px-4 py-3 text-zinc-400">{t.segmento ?? '—'}</td>
-                      <td className="px-4 py-3 text-zinc-400">{(t.plano as { nome: string } | null)?.nome ?? '—'}</td>
+                      <td className="px-4 py-3 text-zinc-400">{t.plano ?? '—'}</td>
                       <td className="px-4 py-3"><BadgeStatus status={t.status} /></td>
                       <td className="px-4 py-3 text-right text-zinc-300">{t.agendamentos_mes}</td>
                       <td className="px-4 py-3 text-zinc-400">{fmt(t.criado_em)}</td>
