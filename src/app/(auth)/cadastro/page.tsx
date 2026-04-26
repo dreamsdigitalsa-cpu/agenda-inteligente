@@ -2,6 +2,7 @@
 // Validação de input com Zod antes de chamar o Supabase Auth.
 // Cria usuário no Supabase Auth e em seguida chama a Edge Function
 // 'criar-tenant' para criar tenant + unidade + perfil + role 'admin'.
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -12,6 +13,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Eye, EyeOff, Lock, Mail, User, Store } from 'lucide-react'
+import logoStudioFlow from '@/assets/studioflow-logo.png'
 
 // ── Schema Zod ────────────────────────────────────────────────────────────────
 
