@@ -23,7 +23,7 @@ import { BotaoTema } from '@/componentes/tema/BotaoTema'
 export function HeaderPainel() {
   const navigate = useNavigate()
   const { usuario } = useTenant()
-  const { ehSuperAdmin } = usePermissao()
+  const { ehSuperAdmin, carregando } = usePermissao()
 
   async function sair() {
     await supabase.auth.signOut()
@@ -86,7 +86,7 @@ export function HeaderPainel() {
               {usuario?.email ?? '—'}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {ehSuperAdmin && (
+            {ehSuperAdmin && !carregando && (
               <>
                 <DropdownMenuItem onClick={() => navigate('/super-admin/dashboard')}>
                   <ShieldCheck className="mr-2 h-4 w-4 text-violet-500" />
