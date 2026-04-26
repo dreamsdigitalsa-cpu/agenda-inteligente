@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -13,11 +14,20 @@ import {
   ArrowRight, 
   Sparkles, 
   LayoutDashboard, 
-  Bell, 
   Smartphone,
   CheckCircle2,
-  Newspaper
+  Newspaper,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext,
+  type CarouselApi
+} from '@/components/ui/carousel'
 
 // ── Schema Zod ────────────────────────────────────────────────────────────────
 
@@ -39,8 +49,53 @@ type LoginForm = z.infer<typeof loginSchema>
 
 // ── Componente ────────────────────────────────────────────────────────────────
 
+const NOVIDADES = [
+  {
+    titulo: 'App do Cliente VIP',
+    descricao: 'Agora seus clientes podem agendar, comprar pacotes e ver o histórico direto em um app exclusivo com a sua marca.',
+    icone: <Smartphone className="h-6 w-6 text-blue-500" />,
+    bgIcone: 'bg-blue-500/10',
+    imagem: 'https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&q=80&w=1200',
+  },
+  {
+    titulo: 'Confirmação via WhatsApp v2',
+    descricao: 'Reduza faltas em até 40% com o novo fluxo de confirmação automática por IA.',
+    icone: <CheckCircle2 className="h-6 w-6 text-green-500" />,
+    bgIcone: 'bg-green-500/10',
+    imagem: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1200',
+  },
+  {
+    titulo: 'Marketing para Estúdios',
+    descricao: 'Confira as estratégias de marketing mais eficazes para 2024 usadas pelos estúdios de maior sucesso.',
+    icone: <Newspaper className="h-6 w-6 text-purple-500" />,
+    bgIcone: 'bg-purple-500/10',
+    imagem: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&q=80&w=1200',
+  },
+]
+
 const Login = () => {
   const navegar = useNavigate()
+  const [api, setApi] = useState<CarouselApi>()
+  const [atual, setAtual] = useState(0)
+
+  useEffect(() => {
+    if (!api) return
+
+    setAtual(api.selectedScrollSnap())
+
+    api.on('select', () => {
+      setAtual(api.selectedScrollSnap())
+    })
+  }, [api])
+
+  // Auto-play
+  useEffect(() => {
+    if (!api) return
+    const interval = setInterval(() => {
+      api.scrollNext()
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [api])
 
   const {
     register,
@@ -145,81 +200,109 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Coluna Direita: Novidades e Social Proof (Visível apenas em Desktop) */}
-      <div className="hidden lg:flex flex-col bg-muted/30 border-l relative overflow-hidden p-12 justify-between">
-        {/* Decorative Circles */}
-        <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] bg-primary/10 rounded-full blur-3xl" />
-
-        <div className="relative space-y-8">
-          <Badge variant="secondary" className="bg-primary/10 text-primary border-none py-1.5 px-3">
-            <Sparkles className="h-3.5 w-3.5 mr-1.5 fill-primary" />
-            O que há de novo no StudioFlow
-          </Badge>
-
-          <div className="grid gap-6">
-            <div className="group bg-background/60 backdrop-blur-sm border border-border/50 p-6 rounded-2xl transition-all hover:shadow-lg hover:border-primary/20">
-              <div className="flex gap-4">
-                <div className="bg-blue-500/10 p-3 rounded-xl h-fit">
-                  <Smartphone className="h-6 w-6 text-blue-500" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-lg">App do Cliente VIP</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Agora seus clientes podem agendar, comprar pacotes e ver o histórico direto em um app exclusivo com a sua marca.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="group bg-background/60 backdrop-blur-sm border border-border/50 p-6 rounded-2xl transition-all hover:shadow-lg hover:border-primary/20">
-              <div className="flex gap-4">
-                <div className="bg-green-500/10 p-3 rounded-xl h-fit">
-                  <CheckCircle2 className="h-6 w-6 text-green-500" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-lg">Confirmação via WhatsApp v2</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Reduza faltas em até 40% com o novo fluxo de confirmação automática por IA.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="group bg-background/60 backdrop-blur-sm border border-border/50 p-6 rounded-2xl transition-all hover:shadow-lg hover:border-primary/20">
-              <div className="flex gap-4">
-                <div className="bg-purple-500/10 p-3 rounded-xl h-fit">
-                  <Newspaper className="h-6 w-6 text-purple-500" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-bold text-lg">Blog: 5 dicas para escalar seu faturamento</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    Confira as estratégias de marketing mais eficazes para 2024 usadas pelos estúdios de maior sucesso.
-                  </p>
-                </div>
-              </div>
-            </div>
+      {/* Coluna Direita: Carrossel de Novidades */}
+      <div className="hidden lg:block relative overflow-hidden bg-zinc-900 border-l">
+        {/* Background Images Overlay */}
+        {NOVIDADES.map((item, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === atual ? 'opacity-40' : 'opacity-0'
+            }`}
+          >
+            <img
+              src={item.imagem}
+              alt=""
+              className="w-full h-full object-cover scale-110 blur-[2px]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
           </div>
-        </div>
+        ))}
 
-        <div className="relative pt-12">
-          <div className="bg-primary p-8 rounded-3xl text-primary-foreground space-y-4 shadow-2xl">
-            <div className="flex -space-x-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-primary bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground overflow-hidden">
-                  <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="avatar" />
+        <div className="relative h-full flex flex-col justify-between p-12">
+          <div className="space-y-8">
+            <Badge variant="secondary" className="bg-white/10 text-white border-none py-1.5 px-3 backdrop-blur-md">
+              <Sparkles className="h-3.5 w-3.5 mr-1.5 fill-white" />
+              Novidades StudioFlow
+            </Badge>
+
+            <Carousel setApi={setApi} className="w-full" opts={{ loop: true }}>
+              <CarouselContent>
+                {NOVIDADES.map((item, index) => (
+                  <CarouselItem key={index}>
+                    <div className="space-y-6">
+                      <div className={`${item.bgIcone} p-4 rounded-2xl h-fit w-fit backdrop-blur-sm border border-white/10`}>
+                        {item.icone}
+                      </div>
+                      <div className="space-y-2">
+                        <h2 className="text-4xl font-bold text-white tracking-tight">
+                          {item.titulo}
+                        </h2>
+                        <p className="text-xl text-zinc-300 leading-relaxed max-w-lg">
+                          {item.descricao}
+                        </p>
+                      </div>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              
+              <div className="flex items-center gap-4 mt-8">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/20 text-white transition-all"
+                    onClick={() => api?.scrollPrev()}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-10 w-10 rounded-full bg-white/5 border-white/10 hover:bg-white/20 text-white transition-all"
+                    onClick={() => api?.scrollNext()}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
                 </div>
-              ))}
-              <div className="w-10 h-10 rounded-full border-2 border-primary bg-primary-foreground/20 flex items-center justify-center text-[10px] font-bold">
-                +2k
+                
+                <div className="flex gap-1.5">
+                  {NOVIDADES.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        i === atual ? 'w-8 bg-primary' : 'w-2 bg-white/20'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-            <p className="text-lg font-medium leading-tight">
-              "O StudioFlow transformou a forma como gerencio minha equipe e atendimentos. Prático e intuitivo!"
-            </p>
-            <div className="flex items-center gap-2">
-              <div className="h-px w-8 bg-primary-foreground/30" />
-              <span className="text-sm font-semibold opacity-90">Mariana Costa, Studio Art</span>
+            </Carousel>
+          </div>
+
+          <div className="relative">
+            <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl text-white space-y-4 shadow-2xl overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <Sparkles className="h-24 w-24 text-white" />
+              </div>
+              <div className="flex -space-x-3 relative z-10">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-zinc-800 bg-zinc-700 flex items-center justify-center overflow-hidden">
+                    <img src={`https://i.pravatar.cc/100?img=${i+20}`} alt="avatar" />
+                  </div>
+                ))}
+                <div className="w-10 h-10 rounded-full border-2 border-zinc-800 bg-primary flex items-center justify-center text-[10px] font-bold text-white">
+                  +2k
+                </div>
+              </div>
+              <p className="text-lg font-medium leading-tight relative z-10">
+                "O StudioFlow transformou a forma como gerencio minha equipe e atendimentos. Prático e intuitivo!"
+              </p>
+              <div className="flex items-center gap-2 relative z-10">
+                <div className="h-px w-8 bg-white/30" />
+                <span className="text-sm font-semibold text-zinc-300">Mariana Costa, Studio Art</span>
+              </div>
             </div>
           </div>
         </div>
