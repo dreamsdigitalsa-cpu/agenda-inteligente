@@ -26,16 +26,22 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     )
 
-    const { data: userData, error: userError } = await supabase.auth.getUser()
-    if (userError || !userData?.user) {
-      console.error('[metricas-tenant] auth error:', userError)
+    // Decodifica o JWT para obter o sub (user id) sem depender de getUser()
+    // que pode falhar com a nova versão de signing keys (ES256)
+    let userId: string
+    try {
+      const token = authHeader.replace('Bearer ', '')
+      const payloadB64 = token.split('.')[1]
+      const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/')))
+      userId = payload.sub
+      if (!userId) throw new Error('sub ausente no JWT')
+    } catch (e) {
+      console.error('[metricas-tenant] erro ao decodificar JWT:', e)
       return new Response(JSON.stringify({ error: 'Não autorizado' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       })
     }
-
-    const userId = userData.user.id
 
     // Buscar tenant_id do usuário (via auth_user_id)
     const { data: perfil, error: perfilError } = await supabase
