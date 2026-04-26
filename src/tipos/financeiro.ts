@@ -1,20 +1,25 @@
-// Tipos do domínio financeiro
-// IMPORTANTE: valores monetários são sempre em centavos (inteiros).
-export type TipoMovimento = 'entrada' | 'saida'
-export type FormaPagamento =
-  | 'dinheiro'
-  | 'pix'
-  | 'cartao_credito'
-  | 'cartao_debito'
-  | 'transferencia'
+import { LucideIcon } from 'lucide-react'
 
-export interface MovimentoFinanceiro {
+export type TipoMovimento = 'receita' | 'despesa'
+export type StatusLancamento = 'pendente' | 'pago' | 'cancelado'
+
+export interface LancamentoFinanceiroAdmin {
   id: string
-  tenantId: string
-  caixaId: string
   tipo: TipoMovimento
-  valorCentavos: number
-  formaPagamento: FormaPagamento
-  descricao: string
-  criadoEm: string
+  categoria: string
+  valor: number
+  descricao: string | null
+  data_lancamento: string
+  status: StatusLancamento
+  criado_em: string
+  updated_at: string
+}
+
+export interface MetricasFinanceiras {
+  receitaTotal: number
+  despesaTotal: number
+  saldoTotal: number
+  mrr: number
+  churnRate: number
+  tenantsAtivos: number
 }
