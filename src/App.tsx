@@ -17,6 +17,8 @@ import LandingPage from "@/app/(publico)/page"
 import PreviewDemo from "@/app/(publico)/demo/[segmento]/page"
 import Precos from "@/app/(publico)/precos/page"
 import AgendamentoOnline from "@/app/agendar/[slug]/page"
+import PaginaFilaPublica from "@/app/fila/[slug]/page"
+import PaginaAcompanharFila from "@/app/fila/acompanhar/[id]/page"
 
 // Auth
 import Login from "@/app/(auth)/login/page"
@@ -81,6 +83,8 @@ const App = () => (
           <Route path="/demo/:segmento" element={<PreviewDemo />} />
           <Route path="/precos" element={<Precos />} />
           <Route path="/agendar/:slug" element={<AgendamentoOnline />} />
+          <Route path="/fila/:slug" element={<PaginaFilaPublica />} />
+          <Route path="/fila/acompanhar/:id" element={<PaginaAcompanharFila />} />
 
           {/* Autenticação */}
           <Route path="/login" element={<Login />} />

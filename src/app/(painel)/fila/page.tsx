@@ -201,29 +201,40 @@ export default function GestaoFilaPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Clientes na Fila</CardTitle>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="rounded-2xl border-none shadow-sm bg-primary/5">
+          <CardHeader className="pb-2 p-4">
+            <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Aguardando</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{fila.filter(i => i.status === 'aguardando').length}</div>
+          <CardContent className="p-4 pt-0">
+            <div className="text-3xl font-black text-primary">{fila.filter(i => i.status === 'aguardando').length}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Tempo de Espera Est.</CardTitle>
+        
+        <Card className="rounded-2xl border-none shadow-sm">
+          <CardHeader className="pb-2 p-4">
+            <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Atendidos Hoje</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{tempoEstimadoTotal} min</div>
+          <CardContent className="p-4 pt-0">
+            <div className="text-3xl font-black">{fila.filter(i => i.status === 'atendido').length}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Sendo Chamados</CardTitle>
+
+        <Card className="rounded-2xl border-none shadow-sm">
+          <CardHeader className="pb-2 p-4">
+            <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Espera Média</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{fila.filter(i => i.status === 'chamado').length}</div>
+          <CardContent className="p-4 pt-0">
+            <div className="text-3xl font-black">22 min</div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-none shadow-sm">
+          <CardHeader className="pb-2 p-4">
+            <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Cancelados</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 pt-0">
+            <div className="text-3xl font-black text-destructive">{fila.filter(i => i.status === 'cancelado').length}</div>
           </CardContent>
         </Card>
       </div>

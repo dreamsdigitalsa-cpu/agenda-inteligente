@@ -62,8 +62,12 @@ export default function FilaTVPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-12">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-3xl font-bold">
-            {tenant.nome.charAt(0)}
+          <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center overflow-hidden border border-zinc-800">
+            {tenant.logo_url ? (
+              <img src={tenant.logo_url} alt={tenant.nome} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-3xl font-bold text-primary">{tenant.nome.charAt(0)}</span>
+            )}
           </div>
           <div>
             <h1 className="text-4xl font-bold tracking-tight">{tenant.nome}</h1>
@@ -128,9 +132,9 @@ export default function FilaTVPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-zinc-400 text-sm">ESPERA</p>
-                    <p className="text-2xl font-mono">
-                      {formatDistanceToNow(new Date(item.entradaEm), { locale: ptBR })}
+                    <p className="text-zinc-400 text-sm">ESPERA EST.</p>
+                    <p className="text-2xl font-mono text-primary">
+                      ~{(index + 1) * 15} min
                     </p>
                   </div>
                 </div>
