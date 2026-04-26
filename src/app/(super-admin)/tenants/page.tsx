@@ -177,11 +177,11 @@ const PaginaTenants = () => {
     }
   }
 
-  async function mudarPlano(tenant: Tenant, novoPlanoId: string) {
+  async function mudarPlano(tenant: Tenant, novoPlanoNome: string) {
     setAcaoEmAndamento(tenant.id + '-plano')
     try {
-      await (supabase
-        .from('tenants' as never)
+      await supabase
+        .from('tenants')
         .update({ plano: novoPlanoNome } as any)
         .eq('id', tenant.id)
 
