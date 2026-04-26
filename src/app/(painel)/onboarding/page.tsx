@@ -243,6 +243,11 @@ const PaginaOnboarding = () => {
         if (etapa === 2) await salvarProfissionais()
         if (etapa === 3) await salvarServicos()
         if (etapa === 4) await salvarIdentidade()
+        // Etapa 5: dispara o save() do componente do segmento via ref.
+        // Cada componente cuida do upsert em configuracoes_segmento.
+        if (etapa === 5 && refSegmento.current) {
+          await refSegmento.current.save()
+        }
       }
       setEtapa((e) => e + 1)
     } catch (e) {
